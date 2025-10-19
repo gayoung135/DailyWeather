@@ -1,25 +1,44 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:gravity="center"
-    android:padding="24dp" android:layout_width="match_parent"
-    android:layout_height="match_parent" android:background="@drawable/bg_gradient">
+<?xml version="1.0" encoding="utf-8"?>
 
+<!-- fragment_select_question.xml -->
+<!-- 사용자가 질문(기분/스타일/외출 목적 등)을 진행할지 여부를 선택하는 화면 -->
+<!-- 예: “질문을 진행할까요?” → 예(진행) / 건너뛰기(바로 추천 화면) -->
+<!-- 요약: 질문 단계로 들어갈지 건너뛸지 선택하는 분기 화면 —
+     “예”는 질문으로, “건너뛰기”는 홈으로 이동 -->
+
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:padding="24dp"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_gradient">
+
+    <!-- 안내 문구 -->
+    <!-- 사용자에게 질문 진행 여부를 묻는 메시지 -->
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="질문을 진행할까요?"
-        android:textSize="20sp" android:textStyle="bold"
-        android:paddingBottom="16dp"/>
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:paddingBottom="16dp" />
 
+    <!-- 예 버튼 -->
+    <!-- 질문 시작 → QuestionFragment(질문 단계)로 이동 예정 -->
     <Button
         android:id="@+id/btnYes"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="예 (더미)"/>
+        android:text="예 (더미)" />
 
+    <!-- 건너뛰기 버튼 -->
+    <!-- 질문을 생략하고 바로 홈/추천 화면(HomeFragment)으로 이동 예정 -->
     <Button
         android:id="@+id/btnSkip"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="건너뛰기 (더미)"
-        android:layout_marginTop="8dp"/>
+        android:layout_marginTop="8dp" />
 </LinearLayout>

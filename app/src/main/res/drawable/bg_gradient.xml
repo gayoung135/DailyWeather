@@ -1,6 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!-- bg_gradient.xml -->
+<!-- 화면 배경으로 적용되는 하늘색(#E5F5FD) → 파란색(#77ADFE) 그라데이션 Drawable 리소스 -->
+<!-- angle="270" : 색상 진행 방향 (270° = 위 → 아래) -->
+
 <shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- gradient 태그: 색상 전환 정의 -->
     <gradient
         android:startColor="#E5F5FD"
-        android:endColor="#77ADFE"
-        android:angle="270" />
+    android:endColor="#77ADFE"
+    android:angle="270" />
+
 </shape>
