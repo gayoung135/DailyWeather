@@ -1,6 +1,18 @@
-<?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-             android:layout_width="match_parent"
-             android:layout_height="match_parent">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:gravity="center"
+    android:padding="24dp" android:layout_width="match_parent"
+    android:layout_height="match_parent" android:background="@drawable/bg_gradient">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="위치 수동 설정 (더미)"
+        android:textSize="20sp" android:textStyle="bold"
+        android:paddingBottom="16dp"/>
+
+    <Button
+        android:id="@+id/btnGoQuestion"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="선택 완료 → 질문 화면"/>
+</LinearLayout>

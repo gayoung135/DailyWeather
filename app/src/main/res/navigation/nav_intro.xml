@@ -1,6 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
-             xmlns:app="http://schemas.android.com/apk/res-auto"
-             android:id="@+id/nav_intro">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_intro"
+    app:startDestination="@id/splashFragment">
 
+    <!-- ① 스플래시 화면 -->
+    <fragment
+        android:id="@+id/splashFragment"
+        android:name="com.smartapp.dailyweather.ui.intro.SplashFragment"
+        android:label="SplashFragment">
+        <action
+            android:id="@+id/action_splash_to_locationGps"
+            app:destination="@id/locationGpsFragment" />
+    </fragment>
+
+    <!-- ② 위치 자동 설정 화면 -->
+    <fragment
+        android:id="@+id/locationGpsFragment"
+        android:name="com.smartapp.dailyweather.ui.intro.LocationGpsFragment"
+        android:label="LocationGpsFragment">
+        <action
+            android:id="@+id/action_locationGps_to_manualLocation"
+            app:destination="@id/manualLocationFragment" />
+        <action
+            android:id="@+id/action_locationGps_to_selectQuestion"
+            app:destination="@id/selectQuestionFragment" />
+    </fragment>
+
+    <!-- ③ 수동 위치 설정 화면 -->
+    <fragment
+        android:id="@+id/manualLocationFragment"
+        android:name="com.smartapp.dailyweather.ui.intro.ManualLocationFragment"
+        android:label="ManualLocationFragment">
+        <action
+            android:id="@+id/action_manualLocation_to_selectQuestion"
+            app:destination="@id/selectQuestionFragment" />
+    </fragment>
+
+    <!-- ④ 질문 스킵 여부 화면 -->
+    <fragment
+        android:id="@+id/selectQuestionFragment"
+        android:name="com.smartapp.dailyweather.ui.intro.SelectQuestionFragment"
+        android:label="SelectQuestionFragment" />
 </navigation>
