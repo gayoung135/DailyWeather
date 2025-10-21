@@ -1,11 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<!-- fragment_manual_location.xml -->
-<!-- 사용자가 자동 위치 설정을 거부하고 직접 지역을 선택하는 화면 -->
-<!-- 현재는 더미(기본 형태) 상태로, 실제 구현 시 Spinner나 검색 기능 추가 예정 -->
-<!-- 요약: 자동 위치 대신 사용자가 직접 지역을 선택하는 화면 —
-     현재는 더미 형태이며, “선택 완료” 시 질문 단계로 이동 -->
-
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
@@ -15,8 +9,6 @@
     android:layout_height="match_parent"
     android:background="@drawable/bg_gradient">
 
-    <!-- 수동 설정 안내 텍스트 -->
-    <!-- 사용자가 직접 지역을 선택해야 함을 알리는 메시지 -->
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -25,8 +17,6 @@
         android:textStyle="bold"
         android:paddingBottom="16dp" />
 
-    <!-- 선택 완료 버튼 -->
-    <!-- 클릭 시 다음 단계(질문 화면 SelectQuestionFragment)로 이동 -->
     <Button
         android:id="@+id/btnGoQuestion"
         android:layout_width="match_parent"

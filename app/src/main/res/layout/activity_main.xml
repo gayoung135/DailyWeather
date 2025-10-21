@@ -1,11 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<!-- activity_main.xml -->
-<!-- 앱 실행 시 가장 먼저 표시되는 MainActivity의 기본 레이아웃 -->
-<!-- 이 화면은 다른 프래그먼트들을 전환시키는 '네비게이션 호스트' 역할을 함 -->
-<!-- 요약: MainActivity의 루트 레이아웃으로,
-     앱 전체 프래그먼트 전환을 담당하는 NavHostFragment 컨테이너를 포함한 기본 화면 -->
-
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -15,10 +9,6 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <!-- NavHostFragment -->
-    <!-- 앱 내 모든 프래그먼트 화면 전환을 관리하는 컨테이너 -->
-    <!-- app:navGraph="@navigation/nav_intro" : Intro 관련 네비게이션 그래프를 불러옴 -->
-    <!-- app:defaultNavHost="true" : 뒤로가기 시 NavController가 기본 처리하도록 설정 -->
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/nav_host_fragment"
         android:name="androidx.navigation.fragment.NavHostFragment"

@@ -27,10 +27,12 @@
             </intent-filter>
         </activity>
 
+
         <service
             android:name=".MainActivity"
             android:foregroundServiceType="location">
         </service>
+
 
     </application>
 

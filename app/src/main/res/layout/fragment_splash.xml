@@ -1,19 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<!-- fragment_splash.xml -->
-<!-- 앱 실행 시 가장 처음 표시되는 스플래시 화면 -->
-<!-- 앱 로고가 가운데 표시되고, 일정 시간 후 자동으로 다음 화면(LocationGpsFragment)으로 전환됨 -->
-<!-- 요약: 앱 실행 시 잠깐 표시되는 로고 중심 스플래시 화면,
-     이후 자동으로 위치 설정 단계로 전환됨 -->
-
 <FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/bg_gradient">
 
-    <!-- 중앙 원형 카드 -->
-    <!-- 앱 로고를 돋보이게 감싸는 흰색 원형 배경 -->
     <LinearLayout
         android:layout_width="220dp"
         android:layout_height="220dp"
@@ -21,9 +13,6 @@
         android:gravity="center"
         android:background="@drawable/circle_white">
 
-        <!-- 앱 로고 이미지 -->
-        <!-- 앱 아이콘 (ic_launcher_foreground)을 표시 -->
-        <!-- contentDescription은 접근성(시각장애인 리더기)을 위한 설명 -->
         <ImageView
             android:layout_width="140dp"
             android:layout_height="140dp"

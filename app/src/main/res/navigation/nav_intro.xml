@@ -1,12 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<!-- nav_intro.xml -->
-<!-- 앱 인트로(도입부) 구간의 네비게이션 그래프 정의 파일 -->
-<!-- Splash → LocationGps → ManualLocation → SelectQuestion 순으로 이동 -->
-<!-- 프래그먼트 간 이동 경로(action)도 함께 정의됨 -->
-<!-- 요약: 앱 실행 직후부터 질문 선택 전까지의
-     인트로 구간 네비게이션 흐름을 정의한 XML 그래프 —
-     Splash → GPS → Manual → Question 순 -->
 
 <navigation
     xmlns:android="http://schemas.android.com/apk/res/android"
@@ -14,54 +7,45 @@
     android:id="@+id/nav_intro"
     app:startDestination="@id/splashFragment">
 
-    <!-- 앱 시작 시 표시되는 첫 화면 지정 (Splash) -->
 
-    <!-- ① Splash 화면 -->
-    <!-- 앱 로고를 잠시 보여준 뒤 자동으로 다음 화면(LocationGps)으로 이동 -->
     <fragment
         android:id="@+id/splashFragment"
         android:name="com.smartapp.dailyweather.ui.intro.SplashFragment"
         android:label="SplashFragment">
 
-        <!-- Splash → LocationGps 화면으로 이동 -->
+
         <action
             android:id="@+id/action_splash_to_locationGps"
             app:destination="@id/locationGpsFragment" />
     </fragment>
 
-    <!-- ② 위치 자동 설정 화면 -->
-    <!-- 사용자가 위치 권한을 허용하거나 직접 설정을 선택하는 화면 -->
+
     <fragment
         android:id="@+id/locationGpsFragment"
         android:name="com.smartapp.dailyweather.ui.intro.LocationGpsFragment"
         android:label="LocationGpsFragment">
 
-        <!-- ‘취소’ 버튼 클릭 시 → 수동 위치 설정 화면으로 이동 -->
+
         <action
             android:id="@+id/action_locationGps_to_manualLocation"
             app:destination="@id/manualLocationFragment" />
 
-        <!-- ‘허용’ 버튼 클릭 시 → 질문 스킵 여부 화면으로 이동 -->
         <action
             android:id="@+id/action_locationGps_to_selectQuestion"
             app:destination="@id/selectQuestionFragment" />
     </fragment>
 
-    <!-- ③ 수동 위치 설정 화면 -->
-    <!-- 자동 설정을 거부한 사용자가 직접 지역을 선택하는 화면 -->
+
     <fragment
         android:id="@+id/manualLocationFragment"
         android:name="com.smartapp.dailyweather.ui.intro.ManualLocationFragment"
         android:label="ManualLocationFragment">
 
-        <!-- 수동 설정 완료 시 → 질문 스킵 여부 화면으로 이동 -->
         <action
             android:id="@+id/action_manualLocation_to_selectQuestion"
             app:destination="@id/selectQuestionFragment" />
     </fragment>
 
-    <!-- ④ 질문 스킵 여부 화면 -->
-    <!-- 질문(기분, 스타일, 외출 목적 등) 진행 여부를 선택하는 마지막 인트로 단계 -->
     <fragment
         android:id="@+id/selectQuestionFragment"
         android:name="com.smartapp.dailyweather.ui.intro.SelectQuestionFragment"
