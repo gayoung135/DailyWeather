@@ -1,10 +1,14 @@
 package com.smartapp.dailyweather
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.lifecycleScope
+import com.smartapp.dailyweather.data.remote.RetrofitClient
+import kotlinx.coroutines.launch
 
 // 앱 실행 시 가장 먼저 호출되는 액티비티(Activity).
 // 모든 Fragment(Splash, LocationGps, ManualLocation 등)를 담는 "컨테이너" 역할을 함.
@@ -35,7 +39,53 @@ class MainActivity : AppCompatActivity() {
             // 원래의 insets 객체 반환 (필수)
             insets
         }
+
+        // 앱 실행 시 자동으로 단기예보 API 호출 테스트
+        testShortTermForecast()
+
+        // testGridConvert()
+        // 다른 API 테스트할 때 이걸 호출
     }
+
+    /**
+     * 단기예보 테스트
+     */
+    private fun testShortTermForecast() {
+        lifecycleScope.launch {
+            try {
+                // 오늘 날짜로 맞춰도 되고, 예시 값 그대로 사용 가능
+                val responseBody = RetrofitClient.weatherApi.getShortTermForecast(
+                    baseDate = "20251020", // yyyyMMdd
+                    baseTime = "0500",     // HHmm
+                    nx = 55,
+                    ny = 127
+                )
+                val result = responseBody.string()
+                Log.d("KMA_TEST", "단기예보 결과:\n$result")
+            } catch (e: Exception) {
+                Log.e("KMA_TEST", "에러 발생: ${e.message}", e)
+            }
+        }
+    }
+
+    /**
+     * 위도/경도 → 격자 변환 API 테스트
+     */
+    private fun testGridConvert() {
+        lifecycleScope.launch {
+            try {
+                val text = RetrofitClient.kmaConvertApi.convertLonLatToGrid(
+                    lon = 127.5,
+                    lat = 36.5
+                )
+                Log.d("KMA_TEST", "격자 변환 결과:\n$text")
+            } catch (e: Exception) {
+                Log.e("KMA_TEST", "에러 발생: ${e.message}", e)
+            }
+        }
+    }
+
+
 }
 
 //요약
