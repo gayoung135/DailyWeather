@@ -1,0 +1,238 @@
+{
+  "enum": {
+    "Category": ["OUTER", "TOP", "BOTTOM", "ACC","necessity"],
+    "Temp_range": ["-30~4", "5~9", "10~15", "16~19", "20~25", "26~30", "31~40"],
+    "Purpose": ["office", "celebration", "date", "travel", "none"],
+    "Like_Style": ["formal", "casual", "street", "lovely", "none"],
+    "Air_Quality": ["good", "normal", "bad", "hazard"],
+    "Rain_Level": ["none", "low", "medium", "high"]
+  },
+
+  "items": [
+    { "id": "o_long_puffer",    "kname": "롱 패딩",     "cate": "OUTER" },
+    { "id": "o_short_puffer",   "kname": "숏 패딩",     "cate": "OUTER" },
+    { "id": "o_shearling",      "kname": "무스탕",      "cate": "OUTER" },
+    { "id": "o_parka",          "kname": "파카",        "cate": "OUTER" },
+    { "id": "o_wool_coat",      "kname": "울 코트",     "cate": "OUTER" },
+    { "id": "o_duffle_coat",    "kname": "더플 코트",   "cate": "OUTER" },
+    { "id": "o_trench_coat",    "kname": "트렌치 코트", "cate": "OUTER" },
+    { "id": "o_field_jacket",   "kname": "야상",        "cate": "OUTER" },
+    { "id": "o_blazer",         "kname": "블레이저 자켓","cate": "OUTER" },
+    { "id": "o_denim_jacket",   "kname": "데님 자켓",   "cate": "OUTER" },
+    { "id": "o_fleece_jacket",  "kname": "플리스 자켓", "cate": "OUTER" },
+    { "id": "o_hood_zipup",     "kname": "후드 집업",   "cate": "OUTER" },
+    { "id": "o_long_cardigan",  "kname": "롱 가디건",   "cate": "OUTER" },
+    { "id": "o_short_jacket",   "kname": "숏 자켓",     "cate": "OUTER" },
+    { "id": "o_windbreaker",    "kname": "바람막이",    "cate": "OUTER" },
+    { "id": "o_track_jacket",   "kname": "트랙 자켓",   "cate": "OUTER" },
+    { "id": "o_vest",           "kname": "베스트",      "cate": "OUTER" },
+    { "id": "o_suede_jacket",   "kname": "스웨이드 자켓","cate": "OUTER" },
+
+    { "id": "t_sweatshirt",     "kname": "맨투맨",        "cate": "TOP" },
+    { "id": "t_hoodie",         "kname": "후드티",        "cate": "TOP" },
+    { "id": "t_turtleneck_knit","kname": "터틀넥 니트",   "cate": "TOP" },
+    { "id": "t_vneck_knit",     "kname": "브이넥 니트",   "cate": "TOP" },
+    { "id": "t_round_knit",     "kname": "라운드 니트",   "cate": "TOP" },
+    { "id": "t_zip_knit",       "kname": "집업 니트",     "cate": "TOP" },
+    { "id": "t_shirt",          "kname": "셔츠",          "cate": "TOP" },
+    { "id": "t_blouse",         "kname": "블라우스",      "cate": "TOP" },
+    { "id": "t_graphic_tee",    "kname": "그래픽 티셔츠", "cate": "TOP" },
+    { "id": "t_cardigan",       "kname": "가디건",        "cate": "TOP" },
+    { "id": "t_long_sleeve_tee","kname": "롱 슬리브 티셔츠","cate": "TOP" },
+    { "id": "t_stripe_tee",     "kname": "스트라이프 티셔츠","cate": "TOP" },
+    { "id": "t_polo",           "kname": "폴로 티셔츠",   "cate": "TOP" },
+    { "id": "t_linen_shirt",    "kname": "린넨 셔츠",     "cate": "TOP" },
+    { "id": "t_knit_short_sleeve","kname": "니트 반팔",   "cate": "TOP" },
+    { "id": "t_dryfit_tee",     "kname": "드라이 핏 티셔츠","cate": "TOP" },
+    { "id": "t_basic_tee",      "kname": "베이직 반팔티", "cate": "TOP" },
+    { "id": "t_crop_tee",       "kname": "크롭 티",       "cate": "TOP" },
+    { "id": "t_off_shoulder",   "kname": "오프 숄더",     "cate": "TOP" },
+    { "id": "t_sleeveless",     "kname": "민소매",        "cate": "TOP" },
+    { "id": "t_strap_sleeveless","kname": "슬리브리스",   "cate": "TOP" },
+
+    { "id": "b_fleece_pants",   "kname": "기모 바지",     "cate": "BOTTOM" },
+    { "id": "b_knit_pants",     "kname": "니트 바지",     "cate": "BOTTOM" },
+    { "id": "b_corduroy_pants", "kname": "코듀로이 바지", "cate": "BOTTOM" },
+    { "id": "b_leather_pants",  "kname": "레더 바지",     "cate": "BOTTOM" },
+    { "id": "b_slacks",         "kname": "슬랙스",        "cate": "BOTTOM" },
+    { "id": "b_wide_pants",     "kname": "와이드 바지",   "cate": "BOTTOM" },
+    { "id": "b_skinny_pants",   "kname": "스키니 바지",   "cate": "BOTTOM" },
+    { "id": "b_denim_pants",    "kname": "데님 바지",     "cate": "BOTTOM" },
+    { "id": "b_jogger_pants",   "kname": "조거 바지",     "cate": "BOTTOM" },
+    { "id": "b_training_pants", "kname": "트레이닝 바지", "cate": "BOTTOM" },
+    { "id": "b_overalls",       "kname": "멜빵 바지",     "cate": "BOTTOM" },
+    { "id": "b_baggy_pants",    "kname": "배기 바지",     "cate": "BOTTOM" },
+    { "id": "b_cargo_pants",    "kname": "카고 바지",     "cate": "BOTTOM" },
+    { "id": "b_linen_pants",    "kname": "린넨 바지",     "cate": "BOTTOM" },
+    { "id": "b_linen_slacks",   "kname": "린넨 슬랙스",   "cate": "BOTTOM" },
+    { "id": "b_shorts_3",       "kname": "3부 반바지",    "cate": "BOTTOM" },
+    { "id": "b_shorts_5",       "kname": "5부 반바지",    "cate": "BOTTOM" },
+    { "id": "b_shorts_7",       "kname": "7부 반바지",    "cate": "BOTTOM" },
+    { "id": "b_skirt",          "kname": "스커트",        "cate": "BOTTOM" },
+    { "id": "b_bermuda",         "kname": "버뮤다 바지",    "cate": "BOTTOM" },
+
+    { "id": "a_scarf",          "kname": "목도리",        "cate": "ACC" },
+    { "id": "a_earmuffs",       "kname": "귀마개",        "cate": "ACC" },
+    { "id": "a_fur_hat",        "kname": "털 모자",       "cate": "ACC" },
+    { "id": "a_gloves",         "kname": "장갑",          "cate": "ACC" },
+    { "id": "a_boots",          "kname": "부츠",          "cate": "ACC" },
+    { "id": "a_dress_shoes",    "kname": "구두",          "cate": "ACC" },
+    { "id": "a_loafers",        "kname": "로퍼",          "cate": "ACC" },
+    { "id": "a_watch",          "kname": "시계",          "cate": "ACC" },
+    { "id": "a_belt",           "kname": "벨트",          "cate": "ACC" },
+    { "id": "a_running_shoes",  "kname": "러닝화",        "cate": "ACC" },
+    { "id": "a_backpack",       "kname": "백팩",          "cate": "ACC" },
+    { "id": "a_tote_bag",       "kname": "토트백",        "cate": "ACC" },
+    { "id": "a_shoulder_bag",   "kname": "숄더백",        "cate": "ACC" },
+    { "id": "a_crossbody_bag",  "kname": "크로스백",      "cate": "ACC" },
+    { "id": "a_clutch_bag",     "kname": "클러치백",      "cate": "ACC" },
+    { "id": "a_ballcap",        "kname": "볼캡",          "cate": "ACC" },
+    { "id": "a_beanie",         "kname": "비니",          "cate": "ACC" },
+    { "id": "a_necklace",       "kname": "목걸이",        "cate": "ACC" },
+    { "id": "a_bracelet",       "kname": "팔찌",          "cate": "ACC" },
+    { "id": "a_earrings",       "kname": "귀걸이",        "cate": "ACC" },
+    { "id": "a_sneakers",       "kname": "스니커즈",      "cate": "ACC" },
+
+    { "id": "basic_mask",        "kname": "일반 마스크", "cate": "necessity"},
+    { "id": "kf94_mask",         "kname": "KF94 마스크", "cate" : "necessity"},
+    { "id": "hand_umbrella",     "kname": "휴대용 우산", "cate" :  "necessity"},
+    { "id": "long_umbrella",     "kname": "장우산", "cate" :  "necessity"}
+
+  ],
+
+  "temperature": {
+    "-30~4": {
+      "OUTER": ["o_long_puffer","o_short_puffer","o_shearling","o_parka","o_wool_coat","o_duffle_coat"],
+      "TOP": ["t_sweatshirt","t_hoodie","t_turtleneck_knit","t_round_knit","t_zip_knit","t_shirt","t_blouse","t_graphic_tee","t_cardigan"],
+      "BOTTOM": ["b_fleece_pants","b_knit_pants","b_corduroy_pants","b_leather_pants","b_slacks","b_wide_pants","b_denim_pants","b_jogger_pants","b_training_pants","b_overalls","b_cargo_pants"],
+      "ACC": ["a_scarf","a_earmuffs","a_fur_hat","a_boots","a_gloves"]
+    },
+    "5~9": {
+      "OUTER": ["o_short_puffer","o_shearling","o_parka","o_wool_coat","o_duffle_coat","o_trench_coat","o_field_jacket","o_fleece_jacket"],
+      "TOP": ["t_sweatshirt","t_hoodie","t_turtleneck_knit","t_vneck_knit","t_round_knit","t_zip_knit","t_shirt","t_blouse","t_graphic_tee","t_cardigan","t_long_sleeve_tee","t_stripe_tee"],
+      "BOTTOM": ["b_fleece_pants","b_knit_pants","b_corduroy_pants","b_leather_pants","b_slacks","b_wide_pants","b_denim_pants","b_jogger_pants","b_training_pants","b_overalls","b_cargo_pants"],
+      "ACC": ["a_scarf","a_boots","a_gloves","a_dress_shoes","a_loafers","a_watch","a_belt","a_running_shoes","a_backpack","a_tote_bag","a_shoulder_bag","a_crossbody_bag","a_clutch_bag","a_ballcap","a_beanie","a_necklace","a_bracelet","a_earrings","a_sneakers"]
+    },
+    "10~15": {
+      "OUTER": ["o_trench_coat","o_field_jacket","o_blazer","o_denim_jacket","o_fleece_jacket","o_short_jacket","o_track_jacket","o_suede_jacket"],
+      "TOP": ["t_sweatshirt","t_hoodie","t_turtleneck_knit","t_vneck_knit","t_round_knit","t_zip_knit","t_shirt","t_blouse","t_graphic_tee","t_cardigan","t_long_sleeve_tee","t_stripe_tee"],
+      "BOTTOM": ["b_knit_pants","b_corduroy_pants","b_leather_pants","b_slacks","b_wide_pants","b_skinny_pants","b_denim_pants","b_jogger_pants","b_training_pants","b_overalls","b_baggy_pants","b_cargo_pants"],
+      "ACC": ["a_dress_shoes","a_loafers","a_watch","a_belt","a_running_shoes","a_backpack","a_tote_bag","a_shoulder_bag","a_crossbody_bag","a_clutch_bag","a_ballcap","a_beanie","a_necklace","a_bracelet","a_earrings","a_sneakers"]
+    },
+    "16~19": {
+      "OUTER": ["o_blazer","o_denim_jacket","o_hood_zipup","o_long_cardigan","o_short_jacket","o_windbreaker","o_track_jacket","o_vest","o_suede_jacket"],
+      "TOP": ["t_sweatshirt","t_hoodie","t_turtleneck_knit","t_vneck_knit","t_round_knit","t_zip_knit","t_shirt","t_blouse","t_graphic_tee","t_cardigan","t_long_sleeve_tee","t_stripe_tee"],
+      "BOTTOM": ["b_leather_pants","b_slacks","b_wide_pants","b_skinny_pants","b_denim_pants","b_jogger_pants","b_training_pants","b_cargo_pants","b_skirt","b_shorts_7"],
+      "ACC": ["a_dress_shoes","a_loafers","a_watch","a_belt","a_running_shoes","a_backpack","a_tote_bag","a_shoulder_bag","a_crossbody_bag","a_clutch_bag","a_ballcap","a_beanie","a_necklace","a_bracelet","a_earrings","a_sneakers"]
+    },
+    "20~25": {
+      "OUTER": [],
+      "TOP": ["t_blouse","t_graphic_tee","t_long_sleeve_tee","t_stripe_tee","t_polo","t_linen_shirt","t_knit_short_sleeve","t_dryfit_tee","t_basic_tee"],
+      "BOTTOM": ["b_slacks","b_wide_pants","b_skinny_pants","b_denim_pants","b_training_pants","b_baggy_pants","b_cargo_pants","b_shorts_7","b_skirt","b_bermuda"],
+      "ACC": ["a_dress_shoes","a_loafers","a_watch","a_belt","a_running_shoes","a_backpack","a_tote_bag","a_shoulder_bag","a_crossbody_bag","a_clutch_bag","a_ballcap","a_beanie","a_necklace","a_bracelet","a_earrings","a_sneakers"]
+    },
+    "26~30": {
+      "OUTER": [],
+      "TOP": ["t_blouse","t_graphic_tee","t_stripe_tee","t_polo","t_linen_shirt","t_knit_short_sleeve","t_off_shoulder","t_dryfit_tee","t_basic_tee"],
+      "BOTTOM": ["b_wide_pants","b_skinny_pants","b_denim_pants","b_training_pants","b_linen_pants","b_linen_slacks","b_shorts_5","b_shorts_7","b_skirt","b_baggy_pants","b_bermuda"],
+      "ACC": ["a_dress_shoes","a_loafers","a_watch","a_belt","a_running_shoes","a_backpack","a_tote_bag","a_shoulder_bag","a_crossbody_bag","a_clutch_bag","a_ballcap","a_beanie","a_necklace","a_bracelet","a_earrings","a_sneakers"]
+    },
+    "31~40": {
+      "OUTER": [],
+      "TOP": ["t_blouse","t_graphic_tee","t_stripe_tee","t_polo","t_crop_tee","t_linen_shirt","t_off_shoulder","t_sleeveless","t_dryfit_tee","t_basic_tee","t_strap_sleeveless"],
+      "BOTTOM": ["b_wide_pants","b_training_pants","b_denim_pants","b_linen_pants","b_linen_slacks","b_shorts_3","b_shorts_5","b_shorts_7","b_skirt","b_baggy_pants","b_skinny_pants","b_bermuda"],
+      "ACC": ["a_dress_shoes","a_loafers","a_watch","a_belt","a_running_shoes","a_backpack","a_tote_bag","a_shoulder_bag","a_crossbody_bag","a_clutch_bag","a_ballcap","a_beanie","a_necklace","a_bracelet","a_earrings","a_sneakers"]
+    }
+  },
+  "purpose": {
+    "office": {
+      "OUTER": ["o_long_puffer","o_short_puffer","o_shearling","o_parka","o_wool_coat","o_trench_coat","o_blazer","o_denim_jacket","o_long_cardigan","o_vest","o_suede_jacket","o_short_jacket"],
+      "TOP": ["t_turtleneck_knit","t_vneck_knit","t_round_knit","t_zip_knit","t_shirt","t_blouse","t_cardigan","t_polo","t_linen_shirt","t_knit_short_sleeve","t_basic_tee"],
+      "BOTTOM": ["b_fleece_pants","b_knit_pants","b_slacks","b_wide_pants","b_denim_pants","b_baggy_pants","b_skirt","b_linen_pants","b_linen_slacks","b_bermuda"],
+      "ACC": ["a_scarf","a_earmuffs","a_fur_hat","a_gloves","a_boots","a_dress_shoes","a_loafers","a_watch","a_belt","a_backpack","a_tote_bag","a_shoulder_bag","a_crossbody_bag","a_clutch_bag","a_necklace","a_bracelet","a_earrings","a_running_shoes","a_sneakers"]
+    },
+    "celebration": {
+      "OUTER": ["o_long_puffer","o_short_puffer","o_shearling","o_parka","o_wool_coat","o_trench_coat","o_blazer","o_long_cardigan","o_short_jacket","o_suede_jacket"],
+      "TOP": ["t_turtleneck_knit","t_vneck_knit","t_round_knit","t_zip_knit","t_shirt","t_blouse","t_cardigan","t_linen_shirt","t_knit_short_sleeve","t_basic_tee"],
+      "BOTTOM": ["b_fleece_pants","b_knit_pants","b_slacks","b_wide_pants","b_denim_pants","b_skirt","b_baggy_pants","b_linen_pants","b_linen_slacks","b_bermuda"],
+      "ACC": ["a_scarf","a_gloves","a_boots","a_dress_shoes","a_loafers","a_watch","a_belt","a_tote_bag","a_shoulder_bag","a_crossbody_bag","a_clutch_bag","a_necklace","a_bracelet","a_earrings","a_sneakers"]
+    },
+    "date": {
+      "OUTER": ["o_short_puffer","o_shearling","o_duffle_coat","o_trench_coat","o_blazer","o_denim_jacket","o_fleece_jacket","o_long_cardigan","o_short_jacket","o_vest","o_suede_jacket"],
+      "TOP": ["t_sweatshirt","t_turtleneck_knit","t_vneck_knit","t_round_knit","t_zip_knit","t_shirt","t_blouse","t_cardigan","t_polo","t_crop_tee","t_linen_shirt","t_knit_short_sleeve","t_off_shoulder","t_basic_tee","t_strap_sleeveless"],
+      "BOTTOM": ["b_fleece_pants","b_knit_pants","b_corduroy_pants","b_leather_pants","b_slacks","b_wide_pants","b_skinny_pants","b_denim_pants","b_overalls","b_baggy_pants","b_cargo_pants","b_linen_pants","b_linen_slacks","b_shorts_3","b_shorts_5","b_shorts_7","b_skirt","b_bermuda"],
+      "ACC": ["a_scarf","a_earmuffs","a_fur_hat","a_gloves","a_boots","a_dress_shoes","a_loafers","a_watch","a_belt","a_tote_bag","a_shoulder_bag","a_crossbody_bag","a_clutch_bag","a_beanie","a_necklace","a_bracelet","a_earrings","a_running_shoes","a_sneakers"]
+    },
+    "travel": {
+      "OUTER": ["o_long_puffer","o_short_puffer","o_shearling","o_parka","o_wool_coat","o_duffle_coat","o_trench_coat","o_field_jacket","o_denim_jacket","o_fleece_jacket","o_hood_zipup","o_long_cardigan","o_short_jacket","o_windbreaker","o_track_jacket","o_vest","o_suede_jacket"],
+      "TOP": ["t_sweatshirt","t_hoodie","t_turtleneck_knit","t_vneck_knit","t_round_knit","t_zip_knit","t_shirt","t_blouse","t_graphic_tee","t_cardigan","t_long_sleeve_tee","t_stripe_tee","t_polo","t_crop_tee","t_linen_shirt","t_knit_short_sleeve","t_off_shoulder","t_sleeveless","t_dryfit_tee","t_basic_tee","t_strap_sleeveless"],
+      "BOTTOM": ["b_fleece_pants","b_knit_pants","b_corduroy_pants","b_leather_pants","b_slacks","b_wide_pants","b_skinny_pants","b_denim_pants","b_jogger_pants","b_overalls","b_baggy_pants","b_cargo_pants","b_linen_pants","b_linen_slacks","b_shorts_3","b_shorts_5","b_shorts_7","b_skirt","b_bermuda"],
+      "ACC": ["a_scarf","a_earmuffs","a_fur_hat","a_gloves","a_boots","a_watch","a_belt","a_backpack","a_tote_bag","a_shoulder_bag","a_crossbody_bag","a_clutch_bag","a_ballcap","a_beanie","a_necklace","a_bracelet","a_earrings","a_running_shoes","a_sneakers"]
+    },
+    "none": { "OUTER": [], "TOP": [], "BOTTOM": [], "ACC": [] }
+  },
+
+  "style": {
+    "formal": {
+      "OUTER": ["o_parka","o_wool_coat","o_trench_coat","o_blazer","o_long_cardigan","o_short_jacket","o_vest","o_suede_jacket"],
+      "TOP": ["t_turtleneck_knit","t_vneck_knit","t_round_knit","t_zip_knit","t_shirt","t_blouse","t_cardigan","t_long_sleeve_tee","t_polo","t_knit_short_sleeve","t_linen_shirt","t_basic_tee"],
+      "BOTTOM": ["b_fleece_pants","b_knit_pants","b_slacks","b_wide_pants","b_denim_pants","b_baggy_pants","b_linen_pants","b_linen_slacks","b_bermuda"],
+      "ACC": ["a_scarf","a_earmuffs","a_fur_hat","a_gloves","a_boots","a_dress_shoes","a_loafers","a_watch","a_belt","a_backpack","a_tote_bag","a_shoulder_bag","a_crossbody_bag","a_clutch_bag","a_necklace","a_bracelet","a_earrings","a_sneakers"]
+    },
+    "casual": {
+      "OUTER": ["o_long_puffer","o_short_puffer","o_shearling","o_parka","o_wool_coat","o_trench_coat","o_duffle_coat","o_field_jacket","o_blazer","o_denim_jacket","o_fleece_jacket","o_hood_zipup","o_long_cardigan","o_short_jacket","o_windbreaker","o_track_jacket","o_vest","o_suede_jacket"],
+      "TOP": ["t_sweatshirt","t_hoodie","t_turtleneck_knit","t_vneck_knit","t_round_knit","t_zip_knit","t_shirt","t_blouse","t_cardigan","t_long_sleeve_tee","t_stripe_tee","t_polo","t_linen_shirt","t_knit_short_sleeve","t_dryfit_tee","t_basic_tee"],
+      "BOTTOM": ["b_fleece_pants","b_knit_pants","b_corduroy_pants","b_slacks","b_wide_pants","b_denim_pants","b_jogger_pants","b_training_pants","b_overalls","b_baggy_pants","b_cargo_pants","b_linen_pants","b_linen_slacks","b_shorts_3","b_shorts_5","b_shorts_7","b_bermuda"],
+      "ACC": ["a_scarf","a_earmuffs","a_fur_hat","a_gloves","a_boots","a_dress_shoes","a_loafers","a_watch","a_belt","a_running_shoes","a_backpack","a_tote_bag","a_shoulder_bag","a_ballcap","a_necklace","a_bracelet","a_earrings","a_sneakers"]
+    },
+    "street": {
+      "OUTER": ["o_short_puffer","o_shearling","o_parka","o_wool_coat","o_duffle_coat","o_trench_coat","o_field_jacket","o_denim_jacket","o_fleece_jacket","o_hood_zipup","o_short_jacket","o_windbreaker","o_track_jacket","o_vest","o_suede_jacket"],
+      "TOP": ["t_sweatshirt","t_hoodie","t_graphic_tee","t_long_sleeve_tee","t_stripe_tee","t_crop_tee","t_off_shoulder","t_sleeveless","t_dryfit_tee","t_basic_tee"],
+      "BOTTOM": ["b_fleece_pants","b_corduroy_pants","b_leather_pants","b_slacks","b_wide_pants","b_skinny_pants","b_denim_pants","b_jogger_pants","b_training_pants","b_overalls","b_baggy_pants","b_cargo_pants","b_shorts_3","b_shorts_5","b_shorts_7"],
+      "ACC": ["a_scarf","a_earmuffs","a_fur_hat","a_gloves","a_boots","a_dress_shoes","a_loafers","a_watch","a_belt","a_running_shoes","a_backpack","a_tote_bag","a_shoulder_bag","a_crossbody_bag","a_clutch_bag","a_ballcap","a_beanie","a_necklace","a_bracelet","a_earrings","a_sneakers"]
+    },
+    "lovely": {
+      "OUTER": ["o_long_puffer","o_short_puffer","o_shearling","o_parka","o_wool_coat","o_duffle_coat","o_trench_coat","o_field_jacket","o_denim_jacket","o_fleece_jacket","o_hood_zipup","o_long_cardigan","o_short_jacket","o_windbreaker","o_vest"],
+      "TOP": ["t_sweatshirt","t_hoodie","t_turtleneck_knit","t_vneck_knit","t_blouse","t_cardigan","t_long_sleeve_tee","t_crop_tee","t_knit_short_sleeve","t_off_shoulder","t_sleeveless","t_basic_tee"],
+      "BOTTOM": ["b_fleece_pants","b_knit_pants","b_corduroy_pants","b_slacks","b_wide_pants","b_denim_pants","b_jogger_pants","b_overalls","b_baggy_pants","b_cargo_pants","b_linen_pants","b_shorts_3","b_shorts_5","b_shorts_7","b_skirt"],
+      "ACC": ["a_scarf","a_earmuffs","a_fur_hat","a_gloves","a_boots","a_dress_shoes","a_loafers","a_watch","a_belt","a_running_shoes","a_backpack","a_tote_bag","a_shoulder_bag","a_crossbody_bag","a_clutch_bag","a_beanie","a_necklace","a_bracelet","a_earrings","a_sneakers"]
+    },
+    "none": { "OUTER": [], "TOP": [], "BOTTOM": [], "ACC": [] }
+  },
+
+  "mood_color": {
+    "good": [
+      { "cname": "노랑",   "hex": "#FFD54F", "rgb": [255, 213, 79] },
+      { "cname": "스카이", "hex": "#81D4FA", "rgb": [129, 212, 250] },
+      { "cname": "핑크",   "hex": "#F48FB1", "rgb": [244, 143, 177] },
+      { "cname": "화이트", "hex": "#FFFFFF", "rgb": [255, 255, 255] }
+    ],
+    "normal": [
+      { "cname": "블루",   "hex": "#42A5F5", "rgb": [66, 165, 245] },
+      { "cname": "베이지", "hex": "#D7CCC8", "rgb": [215, 204, 200] },
+      { "cname": "카키",   "hex": "#8D8F6A", "rgb": [141, 143, 106] },
+      { "cname": "버건디","hex": "#800020", "rgb": [128, 0, 32] }
+    ],
+    "bad": [
+      { "cname": "블랙",   "hex": "#000000", "rgb": [0, 0, 0] },
+      { "cname": "네이비", "hex": "#1A237E", "rgb": [26, 35, 126] },
+      { "cname": "그레이", "hex": "#9E9E9E", "rgb": [158, 158, 158] },
+      { "cname": "브라운", "hex": "#6D4C41", "rgb": [109, 76, 65] }
+    ]
+  },
+
+  "special_weather_rules": {
+    "air_to_mask": {
+      "good":   null,
+      "normal": null,
+      "bad":    "basic_mask",
+      "hazard": "kf94_mask"
+    },
+    "rain_to_umbrella": {
+      "none":   null,
+      "low":    null,
+      "medium": "hand_umbrella",
+      "high":   "long_umbrella"
+    }
+  }
+}
