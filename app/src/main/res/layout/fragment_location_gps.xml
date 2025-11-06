@@ -45,6 +45,7 @@
     </LinearLayout>
 
     <!-- 위치 허용 카드 영역 -->
+    <!--
     <LinearLayout
         android:id="@+id/layout_permission_card"
         android:layout_width="match_parent"
@@ -64,6 +65,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingBottom="16dp"
+            android:id="@+id/testText"
             android:text="위치 권한을 허용해주세요."
             android:textAlignment="center"
             android:textColor="#FFFFFF"
@@ -104,4 +106,5 @@
                 android:textColor="#FFFFFF" />
         </LinearLayout>
     </LinearLayout>
+    -->
 </androidx.constraintlayout.widget.ConstraintLayout>
