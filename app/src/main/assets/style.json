@@ -1,6 +1,6 @@
 {
   "enum": {
-    "Category": ["OUTER", "TOP", "BOTTOM", "ACC","necessity"],
+    "Category": ["OUTER", "TOP", "BOTTOM", "ACC","NECESSITY"],
     "Temp_range": ["-30~4", "5~9", "10~15", "16~19", "20~25", "26~30", "31~40"],
     "Purpose": ["office", "celebration", "date", "travel", "none"],
     "Like_Style": ["formal", "casual", "street", "lovely", "none"],
@@ -93,10 +93,10 @@
     { "id": "a_earrings",       "kname": "귀걸이",        "cate": "ACC" },
     { "id": "a_sneakers",       "kname": "스니커즈",      "cate": "ACC" },
 
-    { "id": "basic_mask",        "kname": "일반 마스크", "cate": "necessity"},
-    { "id": "kf94_mask",         "kname": "KF94 마스크", "cate" : "necessity"},
-    { "id": "hand_umbrella",     "kname": "휴대용 우산", "cate" :  "necessity"},
-    { "id": "long_umbrella",     "kname": "장우산", "cate" :  "necessity"}
+    { "id": "basic_mask",        "kname": "일반 마스크", "cate": "NECESSITY"},
+    { "id": "kf94_mask",         "kname": "KF94 마스크", "cate" : "NECESSITY"},
+    { "id": "hand_umbrella",     "kname": "휴대용 우산", "cate" :  "NECESSITY"},
+    { "id": "long_umbrella",     "kname": "장우산", "cate" :  "NECESSITY"}
 
   ],
 
