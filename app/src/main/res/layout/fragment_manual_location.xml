@@ -1,35 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<!-- fragment_manual_location.xml -->
-<!-- 사용자가 자동 위치 설정을 거부하고 직접 지역을 선택하는 화면 -->
-<!-- 현재는 더미(기본 형태) 상태로, 실제 구현 시 Spinner나 검색 기능 추가 예정 -->
-<!-- 요약: 자동 위치 대신 사용자가 직접 지역을 선택하는 화면 —
-     현재는 더미 형태이며, “선택 완료” 시 질문 단계로 이동 -->
-
-<LinearLayout
+<androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
-    android:gravity="center"
-    android:padding="24dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/bg_gradient">
 
-    <!-- 수동 설정 안내 텍스트 -->
-    <!-- 사용자가 직접 지역을 선택해야 함을 알리는 메시지 -->
+    <!-- 상단 안내 텍스트 -->
     <TextView
+        android:id="@+id/txtSelectCityTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="위치 수동 설정 (더미)"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        android:paddingBottom="16dp" />
+        android:text="지역을 선택해주세요"
+        android:textColor="#000000"
+        android:textSize="18sp"
+        android:padding="20dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
 
-    <!-- 선택 완료 버튼 -->
-    <!-- 클릭 시 다음 단계(질문 화면 SelectQuestionFragment)로 이동 -->
-    <Button
-        android:id="@+id/btnGoQuestion"
+    <!-- 하단 패널 -->
+    <LinearLayout
+        android:id="@+id/bottomPanel"
+        android:orientation="vertical"
+        android:padding="24dp"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="선택 완료 → 질문 화면" />
-</LinearLayout>
+        android:layout_height="0dp"
+        android:background="@drawable/intro_bottom_panel"
+        app:layout_constraintTop_toBottomOf="@id/txtSelectCityTitle"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <!-- 임시 버튼: 서울 선택하기 -->
+        <Button
+            android:id="@+id/btnSelectSeoul"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="서울"
+            android:background="@drawable/btn_white_round"
+            android:textColor="#000000"
+            android:padding="14dp"
+            android:layout_marginTop="12dp"/>
+
+        <!-- 임시 버튼: 경기 선택하기 -->
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

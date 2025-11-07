@@ -1,44 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<!-- fragment_select_question.xml -->
-<!-- 사용자가 질문(기분/스타일/외출 목적 등)을 진행할지 여부를 선택하는 화면 -->
-<!-- 예: “질문을 진행할까요?” → 예(진행) / 건너뛰기(바로 추천 화면) -->
-<!-- 요약: 질문 단계로 들어갈지 건너뛸지 선택하는 분기 화면 —
-     “예”는 질문으로, “건너뛰기”는 홈으로 이동 -->
-
-<LinearLayout
+<androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
-    android:gravity="center"
-    android:padding="24dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/bg_gradient">
 
-    <!-- 안내 문구 -->
-    <!-- 사용자에게 질문 진행 여부를 묻는 메시지 -->
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="질문을 진행할까요?"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        android:paddingBottom="16dp" />
-
-    <!-- 예 버튼 -->
-    <!-- 질문 시작 → QuestionFragment(질문 단계)로 이동 예정 -->
-    <Button
-        android:id="@+id/btnYes"
+    <!-- 아래 배경 박스 영역 -->
+    <LinearLayout
+        android:id="@+id/bottomContainer"
+        android:orientation="vertical"
+        android:padding="24dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="예 (더미)" />
+        android:background="@drawable/intro_bottom_panel"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
 
-    <!-- 건너뛰기 버튼 -->
-    <!-- 질문을 생략하고 바로 홈/추천 화면(HomeFragment)으로 이동 예정 -->
-    <Button
-        android:id="@+id/btnSkip"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="건너뛰기 (더미)"
-        android:layout_marginTop="8dp" />
-</LinearLayout>
+        <TextView
+            android:id="@+id/txtWelcome"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="환영합니다 !\n맞춤 설계를 위해 질문에 답해주세요."
+            android:textSize="18sp"
+            android:textColor="#000000"
+            android:gravity="center"
+            android:layout_marginBottom="20dp" />
+
+        <Button
+            android:id="@+id/btnYes"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="좋아요"
+            android:background="@drawable/btn_white_round"
+            android:textColor="#000000"
+            android:padding="14dp"
+            android:layout_marginBottom="12dp" />
+
+        <Button
+            android:id="@+id/btnSkip"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="스킵할래요."
+            android:background="@drawable/btn_white_round"
+            android:textColor="#000000"
+            android:padding="14dp"/>
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

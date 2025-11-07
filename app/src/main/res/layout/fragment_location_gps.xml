@@ -1,9 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<!-- 사용자가 앱 실행 후 자동 위치 설정을 진행하는 화면 -->
-<!-- ‘허용’ 버튼 → 다음 단계로 이동 / ‘직접 설정할래요’ → 수동 위치 선택 화면으로 이동 -->
-<!-- 요약: 자동 위치 설정 화면으로, 위치 권한 허용 또는 수동 설정 선택을 유도하는 핵심 인트로 UI -->
-
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -11,7 +7,6 @@
     android:layout_height="match_parent"
     android:background="@drawable/bg_gradient">
 
-    <!-- 상단 안내 문구 영역 -->
     <LinearLayout
         android:id="@+id/layout_top_text"
         android:layout_width="match_parent"
@@ -44,7 +39,6 @@
             android:textSize="14sp" />
     </LinearLayout>
 
-    <!-- 위치 허용 카드 영역 -->
     <!--
     <LinearLayout
         android:id="@+id/layout_permission_card"
@@ -65,7 +59,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingBottom="16dp"
-            android:id="@+id/testText"
             android:text="위치 권한을 허용해주세요."
             android:textAlignment="center"
             android:textColor="#FFFFFF"
@@ -106,5 +99,5 @@
                 android:textColor="#FFFFFF" />
         </LinearLayout>
     </LinearLayout>
-    -->
+ -->
 </androidx.constraintlayout.widget.ConstraintLayout>
