@@ -29,8 +29,7 @@ class ManualLocationFragment : Fragment() {
         // -> 질문 화면(SelectQuestionFragment)으로 이동
         // nav_intro.xml에 정의된 action_manualLocation_to_selectQuestion 사용
         v.findViewById<Button>(R.id.btnGoQuestion).setOnClickListener {
-            findNavController().navigate(R.id.action_manualLocation_to_selectQuestion)
-        }
+            findNavController().navigate(R.id.action_manualLocation_to_allowQuestionIntro)        }
         // 완성된 View 반환 (이게 실제로 사용자에게 보이는 화면)
         return v
     }

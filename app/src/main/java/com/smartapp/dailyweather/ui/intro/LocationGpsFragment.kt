@@ -28,7 +28,7 @@ class LocationGpsFragment : Fragment() {
         // -> 다음 단계(SelectQuestionFragment)로 화면 이동
         v.findViewById<Button>(R.id.btnAllow).setOnClickListener {
             // nav_intro.xml에 정의된 action_locationGps_to_selectQuestion 사용
-            findNavController().navigate(R.id.action_locationGps_to_selectQuestion) // 더미 이동
+            findNavController().navigate(R.id.action_locationGps_to_allowQuestionIntro) // 더미 이동
         }
 
         // "취소" 버튼 클릭 시 동작

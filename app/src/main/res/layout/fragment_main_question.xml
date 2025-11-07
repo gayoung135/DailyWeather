@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/main_questionnaire_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFFFFF">
+
+    <ScrollView
+        android:id="@+id/questionnaire_scroll"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:fillViewport="true"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="24dp">
+
+            <!-- 상단 타이틀 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginBottom="8dp">
+
+                <TextView
+                    android:text="질문지"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:textColor="#000000"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1" />
+
+                <Button
+                    android:id="@+id/skipButton"
+                    android:text="SKIP >"
+                    android:textSize="14sp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="?attr/selectableItemBackground"
+                    android:textColor="#2196F3"
+                    android:padding="4dp" />
+            </LinearLayout>
+
+            <!-- 설명 -->
+            <TextView
+                android:text="오늘의 맞춤 추천을 위해 정보를 선택해주세요"
+                android:textSize="16sp"
+                android:textColor="#555555"
+                android:layout_marginTop="16dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <!-- 질문 1 -->
+            <TextView
+                android:text="오늘은 몇시에 나가시나요?"
+                android:textSize="18sp"
+                android:layout_marginTop="24dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <RadioGroup
+                android:id="@+id/timeGroup"
+                android:orientation="horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+                <RadioButton android:text="08" />
+                <RadioButton android:text="09" />
+                <RadioButton android:text="10" />
+            </RadioGroup>
+
+            <RadioGroup
+                android:id="@+id/confirmGroup"
+                android:orientation="horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp">
+                <RadioButton android:text="NO" />
+                <RadioButton android:text="YES" />
+            </RadioGroup>
+
+            <!-- 질문 2 -->
+            <TextView
+                android:text="외출목적은 무엇인가요?"
+                android:textSize="18sp"
+                android:layout_marginTop="24dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <RadioGroup
+                android:id="@+id/purposeGroup"
+                android:orientation="horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+                <RadioButton android:text="출근" />
+                <RadioButton android:text="경사" />
+                <RadioButton android:text="데이트" />
+                <RadioButton android:text="여행" />
+                <RadioButton android:text="없음" />
+            </RadioGroup>
+
+            <!-- 질문 3 -->
+            <TextView
+                android:text="오늘기분은 어떠신가요?"
+                android:textSize="18sp"
+                android:layout_marginTop="24dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <RadioGroup
+                android:id="@+id/moodGroup"
+                android:orientation="horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+                <RadioButton android:text="좋음" />
+                <RadioButton android:text="보통" />
+                <RadioButton android:text="나쁨" />
+            </RadioGroup>
+
+            <!-- 질문 4 -->
+            <TextView
+                android:text="어떤 스타일을 원하시나요?"
+                android:textSize="18sp"
+                android:layout_marginTop="24dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <RadioGroup
+                android:id="@+id/styleGroup"
+                android:orientation="horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+                <RadioButton android:text="스트리트" />
+                <RadioButton android:text="포멀" />
+                <RadioButton android:text="캐주얼" />
+                <RadioButton android:text="러블리" />
+                <RadioButton android:text="없음" />
+            </RadioGroup>
+
+            <!-- 제출 버튼 -->
+            <Button
+                android:id="@+id/submitButton"
+                android:text="추천 받기"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="32dp"
+                android:backgroundTint="#2196F3"
+                android:textColor="#FFFFFF" />
+        </LinearLayout>
+    </ScrollView>
+</androidx.constraintlayout.widget.ConstraintLayout>

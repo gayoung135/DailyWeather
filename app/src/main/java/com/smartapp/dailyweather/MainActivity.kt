@@ -40,6 +40,7 @@ class MainActivity : AppCompatActivity() {
             insets
         }
 
+
         // 앱 실행 시 자동으로 단기예보 API 호출 테스트
         testShortTermForecast()
 
