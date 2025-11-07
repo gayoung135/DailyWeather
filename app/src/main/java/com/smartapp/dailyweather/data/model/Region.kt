@@ -4,6 +4,7 @@ package com.smartapp.dailyweather.data.model
  * 전국 행정구역 (시/도 → 시/군/구)
  * ManualLocationFragment와 ViewModel에서 공통 사용
  */
+
 enum class Region(val displayName: String, val subRegions: List<SubRegion>) {
     SEOUL("서울특별시", listOf(
         SubRegion("종로구", 37.597012, 126.977207),
