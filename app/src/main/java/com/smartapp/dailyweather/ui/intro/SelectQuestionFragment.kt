@@ -52,7 +52,6 @@ class SelectQuestionFragment : Fragment() {
                 Toast.LENGTH_LONG
             ).show()
 
-            // 이동
             findNavController().navigate(
                 R.id.action_selectQuestion_to_outfitRecommendation,
                 null,
@@ -61,10 +60,10 @@ class SelectQuestionFragment : Fragment() {
                     .build()
             )
         }
+    }
 
-        fun onDestroyView() {
-            super.onDestroyView()
-            _binding = null
-        }
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

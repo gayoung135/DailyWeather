@@ -73,9 +73,15 @@
                 android:orientation="horizontal"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content">
-                <RadioButton android:text="08" />
-                <RadioButton android:text="09" />
-                <RadioButton android:text="10" />
+                <RadioButton android:text="08"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+                <RadioButton android:text="09"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+                <RadioButton android:text="10"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
             </RadioGroup>
 
             <RadioGroup
@@ -84,8 +90,12 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp">
-                <RadioButton android:text="NO" />
-                <RadioButton android:text="YES" />
+                <RadioButton android:text="NO"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+                <RadioButton android:text="YES"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
             </RadioGroup>
 
             <!-- 질문 2 -->
@@ -101,11 +111,21 @@
                 android:orientation="horizontal"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content">
-                <RadioButton android:text="출근" />
-                <RadioButton android:text="경사" />
-                <RadioButton android:text="데이트" />
-                <RadioButton android:text="여행" />
-                <RadioButton android:text="없음" />
+                <RadioButton android:text="출근"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+                <RadioButton android:text="경사"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+                <RadioButton android:text="데이트"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+                <RadioButton android:text="여행"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+                <RadioButton android:text="없음"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
             </RadioGroup>
 
             <!-- 질문 3 -->
@@ -121,9 +141,15 @@
                 android:orientation="horizontal"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content">
-                <RadioButton android:text="좋음" />
-                <RadioButton android:text="보통" />
-                <RadioButton android:text="나쁨" />
+                <RadioButton android:text="좋음"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+                <RadioButton android:text="보통"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+                <RadioButton android:text="나쁨"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
             </RadioGroup>
 
             <!-- 질문 4 -->
@@ -139,11 +165,21 @@
                 android:orientation="horizontal"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content">
-                <RadioButton android:text="스트리트" />
-                <RadioButton android:text="포멀" />
-                <RadioButton android:text="캐주얼" />
-                <RadioButton android:text="러블리" />
-                <RadioButton android:text="없음" />
+                <RadioButton android:text="스트리트"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+                <RadioButton android:text="포멀"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+                <RadioButton android:text="캐주얼"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+                <RadioButton android:text="러블리"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+                <RadioButton android:text="없음"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
             </RadioGroup>
 
             <!-- 제출 버튼 -->

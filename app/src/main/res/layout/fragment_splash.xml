@@ -1,22 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/bg_gradient">
+    android:background="@drawable/bg_gradient"
+    android:foregroundGravity="center">
+
+    <!-- 배경이 없을 경우 대비해 기본 흰색 설정 -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#FFFFFF" />
 
     <LinearLayout
         android:layout_width="220dp"
         android:layout_height="220dp"
         android:layout_gravity="center"
         android:gravity="center"
-        android:background="@drawable/circle_white">
+        android:background="@drawable/circle_white"
+        android:elevation="4dp">
 
         <ImageView
             android:layout_width="140dp"
             android:layout_height="140dp"
             android:src="@drawable/ic_launcher_foreground"
-            android:contentDescription="@string/app_name" />
+            android:scaleType="centerInside"
+            android:contentDescription="앱 로고" />
     </LinearLayout>
 </FrameLayout>
