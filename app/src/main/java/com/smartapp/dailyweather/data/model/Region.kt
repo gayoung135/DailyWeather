@@ -6,6 +6,7 @@ package com.smartapp.dailyweather.data.model
  */
 
 enum class Region(val displayName: String, val subRegions: List<SubRegion>) {
+
     SEOUL("서울특별시", listOf(
         SubRegion("종로구", 37.597012, 126.977207),
         SubRegion("중구", 37.561724, 126.995545),
@@ -139,7 +140,9 @@ enum class Region(val displayName: String, val subRegions: List<SubRegion>) {
     JEJU("제주특별자치도", listOf(
         SubRegion("제주시", 33.499621, 126.531188),
         SubRegion("서귀포시", 33.254120, 126.560076)
-    ));
+    )),
+
+    SELECT("시/도", listOf(SubRegion("시/군/구", 0.0, 0.0))),;
 
     companion object {
         fun fromDisplayName(name: String): Region? =

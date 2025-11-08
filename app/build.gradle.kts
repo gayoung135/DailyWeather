@@ -5,6 +5,9 @@ plugins {
     // navigation
     // Kotlin serialization plugin for type safe routes and navigation arguments
     id ("org.jetbrains.kotlin.plugin.serialization") version ("2.0.21")
+
+    id("androidx.navigation.safeargs.kotlin")
+
 }
 
 android {
@@ -17,7 +20,7 @@ android {
 
     defaultConfig {
         applicationId = "com.smartapp.dailyweather"
-        minSdk = 24
+        minSdk = 31
         targetSdk = 36
         versionCode = 1
         versionName = "1.0"
@@ -104,4 +107,9 @@ dependencies {
     implementation("com.squareup.okhttp3:logging-interceptor:4.11.0")
 
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.9.0")
+
+    implementation("androidx.core:core-splashscreen:1.0.0")
+
+
+
 }

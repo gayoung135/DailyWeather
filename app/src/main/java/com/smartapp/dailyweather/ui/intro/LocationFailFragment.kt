@@ -22,8 +22,8 @@ class LocationFailFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        view.findViewById<MaterialButton>(R.id.btnRetry)?.setOnClickListener {
-            findNavController().navigate(R.id.manualLocationFragment)
+        view.findViewById<MaterialButton>(R.id.toManualBtn)?.setOnClickListener {
+            findNavController().navigate(R.id.action_locationFailFragment_to_manualLocationFragment)
         }
     }
 }

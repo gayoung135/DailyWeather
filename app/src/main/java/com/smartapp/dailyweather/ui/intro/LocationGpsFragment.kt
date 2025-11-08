@@ -115,12 +115,12 @@ class LocationGpsFragment : Fragment() {
                 }.addOnFailureListener { e ->
                     Log.e("GPS", "getCurrentLocation failure: ${e.localizedMessage}")
                     // 4) 최종 폴백: 수동 선택
-                    navigateManualOnce()
+                    navigateFailOnce()
                 }
             }
             .addOnFailureListener { e ->
                 Log.e("GPS", "lastLocation failure: ${e.localizedMessage}")
-                navigateManualOnce()
+                navigateFailOnce()
             }
     }
 
@@ -133,17 +133,25 @@ class LocationGpsFragment : Fragment() {
             if (success) {
                 navigateSelectQuestionOnce()
             } else {
-                navigateManualOnce()
+                navigateFailOnce()
             }
         }
     }
 
     /** 중복 네비게이션 방지 가드 */
+    private fun navigateFailOnce() {
+        val nav = findNavController()
+        if (isAdded && nav.currentDestination?.id == R.id.locationGpsFragment) {
+            Log.d("NAV", "→ manualLocation")
+            nav.navigate(R.id.action_locationGpsFragment_to_locationFailFragment)
+        }
+    }
+
     private fun navigateManualOnce() {
         val nav = findNavController()
         if (isAdded && nav.currentDestination?.id == R.id.locationGpsFragment) {
             Log.d("NAV", "→ manualLocation")
-            nav.navigate(R.id.action_locationGps_to_manualLocation)
+            nav.navigate(R.id.action_locationGpsFragment_to_manualLocationFragment)
         }
     }
 
