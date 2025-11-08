@@ -60,8 +60,8 @@ interface RainLevelDao {
 /* mood / mood_color */
 @Dao
 interface MoodDao {
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insertAll(list: List<MoodEntity>)
+    @Upsert
+    suspend fun upsertAll(list: List<MoodColorEntity>)
     @Query("SELECT * FROM mood WHERE mood_code = :code LIMIT 1")
     suspend fun getByCode(code: String): MoodEntity?
 }
