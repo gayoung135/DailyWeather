@@ -61,7 +61,7 @@ interface RainLevelDao {
 @Dao
 interface MoodDao {
     @Upsert
-    suspend fun upsertAll(list: List<MoodColorEntity>)
+    suspend fun upsertAll(list: List<MoodEntity>)
     @Query("SELECT * FROM mood WHERE mood_code = :code LIMIT 1")
     suspend fun getByCode(code: String): MoodEntity?
 }
