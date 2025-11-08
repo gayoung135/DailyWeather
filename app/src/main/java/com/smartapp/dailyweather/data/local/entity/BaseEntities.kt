@@ -36,7 +36,7 @@ data class ItemEntity(
 @Entity(
     tableName = "temp_range",
     indices = [
-        Index(value = ["min_temp", "max_temp"]) // 범위 검색 최적화
+        Index(value = ["min_temp", "max_temp"], unique = true) // 범위 검색 최적화
     ]
 )
 data class TempRangeEntity(
