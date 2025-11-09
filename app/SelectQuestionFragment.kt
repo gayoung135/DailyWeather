@@ -1,0 +1,34 @@
+package com.smartapp.dailyweather.ui.intro
+
+import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import androidx.fragment.app.Fragment
+import com.smartapp.dailyweather.R
+
+
+// 사용자가 위치 설정(자동/수동)을 완료한 뒤,
+// "질문 선택 화면"으로 진입하는 단계.
+// → 기분 / 외출 목적 / 선호 스타일 등의 질문 UI가 표시됨.
+// Intro Flow의 마지막 단계로, 이후 HomeFragment(메인 탭)으로 이동 예정.
+class SelectQuestionFragment : Fragment() {
+
+    // onCreateView(): 프래그먼트 UI를 실제로 그릴 때 호출됨.
+    // fragment_select_question.xml 레이아웃을 화면에 표시함.
+    override fun onCreateView(
+        inflater: LayoutInflater,       // XML을 View로 변환하는 객체
+        container: ViewGroup?,          // 프래그먼트를 담는 부모 뷰 (MainActivity)
+        savedInstanceState: Bundle?    // 상태 복원용 번들
+    ): View {
+
+        // fragment_select_question.xml 불러와서 View 객체로 변환
+        // 이 화면에는 사용자의 선택 버튼들이 배치될 예정
+        return inflater.inflate(R.layout.fragment_select_question, container, false)
+    }
+}
+
+//요약
+//위치 설정 완료 후 사용자에게
+// “기분 / 목적 / 스타일” 등 질문을 보여주는 화면 —>
+// 이후 맞춤 추천(HomeFragment)으로 이어지는 인트로 마지막 단계.
