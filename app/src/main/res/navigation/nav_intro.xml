@@ -5,7 +5,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_intro"
-    app:startDestination="@id/locationGpsFragment">
+    app:startDestination="@id/networkGateFragment">
 
     <fragment
         android:id="@+id/locationFailFragment"
@@ -15,6 +15,13 @@
         <action
             android:id="@+id/action_locationFailFragment_to_manualLocationFragment"
             app:destination="@id/manualLocationFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/networkGateFragment"
+        android:name="com.smartapp.dailyweather.ui.intro.NetworkGateFragment"
+        android:label="Gate" >
+        <!-- 필요시 action 추가 -->
     </fragment>
 
     <fragment

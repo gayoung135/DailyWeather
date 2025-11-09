@@ -46,7 +46,6 @@ class NetworkObserver(
     //네트워크 감지를 시작하는 함수
     fun start() {
         if (callback != null) return // 이미 시작되었다면 리턴
-
         //인터넷o(onAvailable), 꺼질 때(onLost)마다 호출되는 콜백 등록
         callback = object : ConnectivityManager.NetworkCallback() {
             override fun onAvailable(network: Network) {
