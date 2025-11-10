@@ -2,6 +2,8 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
 
+    id("kotlin-kapt")
+
     // navigation
     // Kotlin serialization plugin for type safe routes and navigation arguments
     id ("org.jetbrains.kotlin.plugin.serialization") version ("2.0.21")
@@ -111,5 +113,12 @@ dependencies {
     implementation("androidx.core:core-splashscreen:1.0.0")
 
 
+    implementation(libs.androidx.room.runtime)
+    implementation(libs.androidx.room.ktx)
+    annotationProcessor(libs.androidx.room.compiler)
 
+    kapt("androidx.room:room-compiler:2.6.1")
+
+    //json 최신 버전
+    implementation("com.google.code.gson:gson:2.10.1")
 }
