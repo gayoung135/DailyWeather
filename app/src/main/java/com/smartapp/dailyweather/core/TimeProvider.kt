@@ -1,6 +1,7 @@
 package com.smartapp.dailyweather.core
 
 import java.time.Instant
+import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
@@ -34,7 +35,7 @@ class SystemTimeProvider(
 
     // 2. 표시용 포맷 통일 -> 날짜를 보기 좋게 출력하기 위한 형식 지정
     private val timeFormatter: DateTimeFormatter =
-        DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm", locale)
+        DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss", locale)
 
     // 1. 현재 시각 제공 (UTC 기준)
     override fun nowInstant(): Instant = Instant.now()
@@ -54,4 +55,40 @@ class SystemTimeProvider(
         // 날짜 부분만 비교 (시간, 분, 초는 제외)
         return last.toLocalDate().isEqual(now.toLocalDate())
     }
+}
+
+/* ---------- 확장 유틸: KST 문자열 메서드 : room 이용 ---------- */
+
+private val DATE_FMT = DateTimeFormatter.ofPattern("yyyy-MM-dd", Locale.KOREA)
+private val TIME_FMT = DateTimeFormatter.ofPattern("HH:mm", Locale.KOREA)
+private val DB_FMT  = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss", Locale.KOREA)
+
+/** KST 오늘 날짜 "yyyy-MM-dd" */
+fun TimeProvider.kstDateString(now: ZonedDateTime = nowKorea()): String =
+    now.toLocalDate().format(DATE_FMT)
+
+/** KST 현재 시간 "HH:mm" */
+fun TimeProvider.kstTimeString(now: ZonedDateTime = nowKorea()): String =
+    now.toLocalTime().format(TIME_FMT)
+
+/** DB 저장/표시용 "yyyy-MM-dd HH:mm:ss" */
+fun TimeProvider.kstDateTimeString(now: ZonedDateTime = nowKorea()): String =
+    DB_FMT.format(now)
+
+/** ISO8601(오프셋 포함) "2025-11-06T18:42:00+09:00" */
+fun TimeProvider.kstIsoString(now: ZonedDateTime = nowKorea()): String =
+    now.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME)
+
+/** 저장된 lastDate("yyyy-MM-dd")가 오늘인지 */
+fun TimeProvider.isTodayDateString(lastDate: String): Boolean =
+    lastDate == kstDateString()
+
+/** 문자열 → ZonedDateTime(KST) 파싱 (디버깅/비교용) */
+fun TimeProvider.parseKstDateTime(str: String, zone: ZoneId = ZoneId.of("Asia/Seoul")): ZonedDateTime =
+    ZonedDateTime.of(LocalDateTime.parse(str, DB_FMT), zone)
+
+/** Instant 두 개가 같은 KST 날짜인지 */
+fun TimeProvider.isSameKstDay(a: Instant, b: Instant): Boolean {
+    val zone = ZoneId.of("Asia/Seoul")
+    return a.atZone(zone).toLocalDate() == b.atZone(zone).toLocalDate()
 }
