@@ -121,4 +121,5 @@ dependencies {
 
     //json 최신 버전
     implementation("com.google.code.gson:gson:2.10.1")
+
 }
