@@ -8,12 +8,6 @@ import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.converter.scalars.ScalarsConverterFactory
 import java.util.concurrent.TimeUnit
 
-/**
- * Retrofit + OkHttp 공용 싱글턴
- * - typ01: 텍스트/CSV 가능 → Scalars + Gson (순서 중요: Scalars 먼저)
- * - typ02: JSON 위주 → Gson
- * - 모든 요청에 authKey 자동 부착 (쿼리 파라미터)
- */
 object RetrofitClient {
     // --- Base URL ---
     private const val BASE_TYP01 = "https://apihub.kma.go.kr/api/typ01/"
@@ -49,6 +43,7 @@ object RetrofitClient {
             .build()
     }
 
+
     // --- Retrofit 인스턴스 2개 ---
     private val retrofitTyp01: Retrofit by lazy {
         Retrofit.Builder()
@@ -70,4 +65,5 @@ object RetrofitClient {
     // --- API 팩토리  ---
     val kmaConvertApi: KmaConvertApi by lazy { retrofitTyp01.create(KmaConvertApi::class.java) }
     val weatherApi: WeatherApi by lazy { retrofitTyp02.create(WeatherApi::class.java) }
+
 }

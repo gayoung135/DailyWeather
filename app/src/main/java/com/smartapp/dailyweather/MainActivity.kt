@@ -4,9 +4,11 @@ import android.os.Bundle
 import android.util.Log
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
+import com.smartapp.dailyweather.core.NetworkObserver
 import com.smartapp.dailyweather.data.remote.RetrofitClient
 import kotlinx.coroutines.launch
 
@@ -19,6 +21,11 @@ class MainActivity : AppCompatActivity() {
     // 여기서 레이아웃을 설정하고, 시스템 UI(상태바 등) 처리를 함.
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+
+        val networkObserver: NetworkObserver = NetworkObserver(this)
+
+        installSplashScreen()
 
         // 상태바와 내비게이션바를 투명하게 만들어 전체화면 느낌을 주는 설정
         enableEdgeToEdge()
@@ -39,6 +46,7 @@ class MainActivity : AppCompatActivity() {
             // 원래의 insets 객체 반환 (필수)
             insets
         }
+
 
 
         // 앱 실행 시 자동으로 단기예보 API 호출 테스트
@@ -69,22 +77,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    /**
-     * 위도/경도 → 격자 변환 API 테스트
-     */
-    private fun testGridConvert() {
-        lifecycleScope.launch {
-            try {
-                val text = RetrofitClient.kmaConvertApi.convertLonLatToGrid(
-                    lon = 127.5,
-                    lat = 36.5
-                )
-                Log.d("KMA_TEST", "격자 변환 결과:\n$text")
-            } catch (e: Exception) {
-                Log.e("KMA_TEST", "에러 발생: ${e.message}", e)
-            }
-        }
-    }
+
 
 
 }

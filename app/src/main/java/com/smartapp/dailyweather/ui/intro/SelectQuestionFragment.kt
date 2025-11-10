@@ -4,66 +4,31 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.RadioButton
-import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.navigation.fragment.findNavController
 import com.smartapp.dailyweather.R
-import com.smartapp.dailyweather.databinding.FragmentMainQuestionBinding
 
+
+// 사용자가 위치 설정(자동/수동)을 완료한 뒤,
+// "질문 선택 화면"으로 진입하는 단계.
+// → 기분 / 외출 목적 / 선호 스타일 등의 질문 UI가 표시됨.
+// Intro Flow의 마지막 단계로, 이후 HomeFragment(메인 탭)으로 이동 예정.
 class SelectQuestionFragment : Fragment() {
 
-    private var _binding: FragmentMainQuestionBinding? = null
-    private val binding get() = _binding!!
-
+    // onCreateView(): 프래그먼트 UI를 실제로 그릴 때 호출됨.
+    // fragment_select_question.xml 레이아웃을 화면에 표시함.
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater,       // XML을 View로 변환하는 객체
+        container: ViewGroup?,          // 프래그먼트를 담는 부모 뷰 (MainActivity)
+        savedInstanceState: Bundle?    // 상태 복원용 번들
     ): View {
-        _binding = FragmentMainQuestionBinding.inflate(inflater, container, false)
-        return binding.root
-    }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        binding.skipButton.setOnClickListener {
-            Toast.makeText(requireContext(), "SKIP 선택됨", Toast.LENGTH_SHORT).show()
-        }
-
-        binding.submitButton.setOnClickListener {
-            val time = binding.timeGroup.checkedRadioButtonId.let {
-                view.findViewById<RadioButton>(it)?.text
-            }
-            val confirm = binding.confirmGroup.checkedRadioButtonId.let {
-                view.findViewById<RadioButton>(it)?.text
-            }
-            val purpose = binding.purposeGroup.checkedRadioButtonId.let {
-                view.findViewById<RadioButton>(it)?.text
-            }
-            val mood = binding.moodGroup.checkedRadioButtonId.let {
-                view.findViewById<RadioButton>(it)?.text
-            }
-            val style = binding.styleGroup.checkedRadioButtonId.let {
-                view.findViewById<RadioButton>(it)?.text
-            }
-
-            Toast.makeText(
-                requireContext(),
-                "선택 완료:\n시간: $time\n확인: $confirm\n목적: $purpose\n기분: $mood\n스타일: $style",
-                Toast.LENGTH_LONG
-            ).show()
-
-            findNavController().navigate(
-                R.id.action_selectQuestion_to_outfitRecommendation,
-                null,
-                androidx.navigation.NavOptions.Builder()
-                    .setPopUpTo(R.id.selectQuestionFragment, true)
-                    .build()
-            )
-        }
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
+        // fragment_select_question.xml 불러와서 View 객체로 변환
+        // 이 화면에는 사용자의 선택 버튼들이 배치될 예정
+        return inflater.inflate(R.layout.fragment_select_question, container, false)
     }
 }
+
+//요약
+//위치 설정 완료 후 사용자에게
+// “기분 / 목적 / 스타일” 등 질문을 보여주는 화면 —>
+// 이후 맞춤 추천(HomeFragment)으로 이어지는 인트로 마지막 단계.

@@ -1,30 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <navigation
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_intro"
-    app:startDestination="@id/splashFragment">
+    app:startDestination="@id/locationGpsFragment">
 
     <fragment
-        android:id="@+id/splashFragment"
-        android:name="com.smartapp.dailyweather.ui.intro.SplashFragment"
-        android:label="SplashFragment">
+        android:id="@+id/locationFailFragment"
+        android:name="com.smartapp.dailyweather.ui.intro.LocationFailFragment"
+        android:label="LocationFailFragment"
+        tools:layout="@layout/fragment_location_fail" >
         <action
-            android:id="@+id/action_splash_to_locationGps"
-            app:destination="@id/locationGpsFragment" />
+            android:id="@+id/action_locationFailFragment_to_manualLocationFragment"
+            app:destination="@id/manualLocationFragment" />
     </fragment>
 
     <fragment
         android:id="@+id/locationGpsFragment"
         android:name="com.smartapp.dailyweather.ui.intro.LocationGpsFragment"
         android:label="LocationGpsFragment">
+
         <action
-            android:id="@+id/action_locationGps_to_manualLocation"
+            android:id="@+id/action_locationGps_to_selectQuestion"
+            app:destination="@id/selectQuestionFragment" />
+        <action
+            android:id="@+id/action_locationGpsFragment_to_locationFailFragment"
+            app:destination="@id/locationFailFragment" />
+        <action
+            android:id="@+id/action_locationGpsFragment_to_manualLocationFragment"
             app:destination="@id/manualLocationFragment" />
-        <action
-            android:id="@+id/action_locationGps_to_allowQuestionIntro"
-            app:destination="@id/allowQuestionIntroFragment" />
     </fragment>
 
     <fragment
@@ -32,33 +38,13 @@
         android:name="com.smartapp.dailyweather.ui.intro.ManualLocationFragment"
         android:label="ManualLocationFragment">
         <action
-            android:id="@+id/action_manualLocation_to_allowQuestionIntro"
-            app:destination="@id/allowQuestionIntroFragment" />
-    </fragment>
-
-    <fragment
-        android:id="@+id/allowQuestionIntroFragment"
-        android:name="com.smartapp.dailyweather.ui.intro.AllowQuestionIntroFragment"
-        android:label="AllowQuestionIntro"
-        tools:layout="@layout/fragment_allow_question_intro">
-        <action
-            android:id="@+id/action_allowQuestionIntro_to_selectQuestion"
+            android:id="@+id/action_manualLocationFragment_to_selectQuestionFragment"
             app:destination="@id/selectQuestionFragment" />
     </fragment>
 
     <fragment
         android:id="@+id/selectQuestionFragment"
         android:name="com.smartapp.dailyweather.ui.intro.SelectQuestionFragment"
-        android:label="MainQuestionnaire"
-        tools:layout="@layout/fragment_main_question">
-        <action
-            android:id="@+id/action_selectQuestion_to_outfitRecommendation"
-            app:destination="@id/outfitRecommendationFragment" />
-    </fragment>
+        android:label="SelectQuestionFragment" />
 
-    <fragment
-        android:id="@+id/outfitRecommendationFragment"
-        android:name="com.smartapp.dailyweather.ui.intro.OutfitRecommendationFragment"
-        android:label="OutfitRecommendation"
-        tools:layout="@layout/fragment_outfit_recommendation" />
 </navigation>
