@@ -19,6 +19,11 @@ class OutfitRecommendationFragment : Fragment(R.layout.fragment_outfit_recommend
         val weatherInfo = view.findViewById<TextView>(R.id.weatherInfo)
         val essentials = view.findViewById<TextView>(R.id.essentials)
 
+        if (outfit1 == null || outfit2 == null || weatherInfo == null || essentials == null) {
+            // 로그 출력하거나 예외 처리
+            return
+        }
+
         // 날씨 정보 표시
         weatherInfo.text = "32°C / 미세먼지: 나쁨 / 초미세먼지: 높음"
 

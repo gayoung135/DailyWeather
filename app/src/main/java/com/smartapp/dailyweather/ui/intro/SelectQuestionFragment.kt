@@ -1,10 +1,14 @@
 package com.smartapp.dailyweather.ui.intro
 
+import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
+import com.google.android.material.button.MaterialButton
 import com.smartapp.dailyweather.R
 
 
@@ -24,11 +28,64 @@ class SelectQuestionFragment : Fragment() {
 
         // fragment_select_question.xml 불러와서 View 객체로 변환
         // 이 화면에는 사용자의 선택 버튼들이 배치될 예정
-        return inflater.inflate(R.layout.fragment_select_question, container, false)
+        return inflater.inflate(R.layout.fragment_main_question, container, false)
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        // 선택 처리 함수
+        fun setSelected(buttons: List<MaterialButton>, selected: MaterialButton) {
+            buttons.forEach {
+                it.setBackgroundColor(Color.WHITE)
+                it.setTextColor(Color.parseColor("#3E3E3E"))
+            }
+            selected.setBackgroundColor(Color.parseColor("#2196F3"))
+            selected.setTextColor(Color.WHITE)
+        }
+
+        // 버튼 연결
+        val skipButton = view.findViewById<Button>(R.id.skipButton)
+
+        val btnTime08 = view.findViewById<MaterialButton>(R.id.btnTime08)
+        val btnTime09 = view.findViewById<MaterialButton>(R.id.btnTime09)
+        val btnTime10 = view.findViewById<MaterialButton>(R.id.btnTime10)
+
+        val btnMoodGood = view.findViewById<MaterialButton>(R.id.btnMoodGood)
+        val btnMoodNormal = view.findViewById<MaterialButton>(R.id.btnMoodNormal)
+        val btnMoodBad = view.findViewById<MaterialButton>(R.id.btnMoodBad)
+
+        val btnPurposeWork = view.findViewById<MaterialButton>(R.id.btnPurposeWork)
+        val btnPurposeEvent = view.findViewById<MaterialButton>(R.id.btnPurposeEvent)
+        val btnPurposeDate = view.findViewById<MaterialButton>(R.id.btnPurposeDate)
+        val btnPurposeTrip = view.findViewById<MaterialButton>(R.id.btnPurposeTrip)
+        val btnPurposeNone = view.findViewById<MaterialButton>(R.id.btnPurposeNone)
+
+        val btnStyleStreet = view.findViewById<MaterialButton>(R.id.btnStyleStreet)
+        val btnStyleFormal = view.findViewById<MaterialButton>(R.id.btnStyleFormal)
+        val btnStyleCasual = view.findViewById<MaterialButton>(R.id.btnStyleCasual)
+        val btnStyleLovely = view.findViewById<MaterialButton>(R.id.btnStyleLovely)
+        val btnStyleNone = view.findViewById<MaterialButton>(R.id.btnStyleNone)
+
+        // 버튼 그룹 정의
+        val timeButtons = listOf(btnTime08, btnTime09, btnTime10)
+        val moodButtons = listOf(btnMoodGood, btnMoodNormal, btnMoodBad)
+        val purposeButtons = listOf(btnPurposeWork, btnPurposeEvent, btnPurposeDate, btnPurposeTrip, btnPurposeNone)
+        val styleButtons = listOf(btnStyleStreet, btnStyleFormal, btnStyleCasual, btnStyleLovely, btnStyleNone)
+
+        // 클릭 이벤트 연결
+        timeButtons.forEach { btn -> btn.setOnClickListener { setSelected(timeButtons, btn) } }
+        moodButtons.forEach { btn -> btn.setOnClickListener { setSelected(moodButtons, btn) } }
+        purposeButtons.forEach { btn -> btn.setOnClickListener { setSelected(purposeButtons, btn) } }
+        styleButtons.forEach { btn -> btn.setOnClickListener { setSelected(styleButtons, btn) } }
+
+        skipButton.setOnClickListener {
+            findNavController().navigate(R.id.action_selectQuestionFragment_to_outfitRecommendationFragment)
+        }
+
+        val submitButton = view.findViewById<Button>(R.id.submitButton)
+        submitButton.setOnClickListener {
+            findNavController().navigate(R.id.action_selectQuestionFragment_to_outfitRecommendationFragment)
+        }
     }
 }
-
-//요약
-//위치 설정 완료 후 사용자에게
-// “기분 / 목적 / 스타일” 등 질문을 보여주는 화면 —>
-// 이후 맞춤 추천(HomeFragment)으로 이어지는 인트로 마지막 단계.
