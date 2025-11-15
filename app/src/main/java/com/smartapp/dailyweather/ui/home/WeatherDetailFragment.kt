@@ -1,4 +1,4 @@
-package com.smartapp.dailyweather.ui.intro
+package com.smartapp.dailyweather.ui.home
 
 import android.os.Bundle
 import android.view.LayoutInflater

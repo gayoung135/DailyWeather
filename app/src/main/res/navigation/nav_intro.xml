@@ -57,11 +57,34 @@
         <action
             android:id="@+id/action_selectQuestionFragment_to_mainQuestionFragment"
             app:destination="@id/mainQuestionFragment" />
+        <action
+            android:id="@+id/action_selectQuestionFragment_to_outfitRecommendationFragment"
+            app:destination="@id/outfitRecommendationFragment" />
     </fragment>
     <fragment
         android:id="@+id/mainQuestionFragment"
         android:name="com.smartapp.dailyweather.ui.question.MainQuestionFragment"
-        android:label="MainQuestionFragment" />
+        android:label="MainQuestionFragment" >
+        <action
+            android:id="@+id/action_mainQuestionFragment_to_outfitRecommendationFragment"
+            app:destination="@id/outfitRecommendationFragment" />
+    </fragment>
 
+    <fragment
+        android:id="@+id/outfitRecommendationFragment"
+        android:name="com.smartapp.dailyweather.ui.home.OutfitRecommendationFragment"
+        android:label="OutfitRecommendationFragment"
+        tools:layout="@layout/fragment_outfit_recommendation">
+
+        <action
+            android:id="@+id/action_outfitRecommendationFragment_to_weatherDetailFragment"
+            app:destination="@id/weatherDetailFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/weatherDetailFragment"
+        android:name="com.smartapp.dailyweather.ui.home.WeatherDetailFragment"
+        android:label="WeatherDetailFragment"
+        tools:layout="@layout/fragment_weather_detail" />
 
 </navigation>

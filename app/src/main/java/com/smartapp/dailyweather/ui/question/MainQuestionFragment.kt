@@ -13,6 +13,7 @@ import android.widget.Button
 import android.widget.NumberPicker
 import android.widget.Toast
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.navGraphViewModels
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.flexbox.FlexDirection
@@ -108,7 +109,7 @@ class MainQuestionFragment : Fragment() {
                 styleCode = styleCode,
                 skipped = false
             )
-            Toast.makeText(requireContext(), "저장 요청 보냈습니다.", Toast.LENGTH_SHORT).show()
+            findNavController().navigate(R.id.action_mainQuestionFragment_to_outfitRecommendationFragment)
 
         }
 

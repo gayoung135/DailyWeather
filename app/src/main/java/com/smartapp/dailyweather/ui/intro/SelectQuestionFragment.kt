@@ -83,7 +83,7 @@ class SelectQuestionFragment : Fragment() {
                     skipped = true
                 )
 
-                // findNavController().navigate(R.id.action_selectQuestionFragment_to_homeFragment)
+                findNavController().navigate(R.id.action_selectQuestionFragment_to_outfitRecommendationFragment)
             }
         }
     }
