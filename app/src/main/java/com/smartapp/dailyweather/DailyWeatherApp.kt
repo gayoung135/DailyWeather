@@ -35,6 +35,9 @@ class DailyWeatherApp : Application() {
 
         appScope.launch {
             try {
+                // [개발용] 매 실행마다 LastUserState만 초기화
+                db.lastUserStateDao().clearAll()
+                
                 // DB가 비었는지  검사 (카테고리만 체크)
                 val isEmpty = db.categoryDao().getAll().isEmpty()
 

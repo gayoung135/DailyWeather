@@ -19,7 +19,9 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewmodel.ViewModelInitializer
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.navGraphViewModels
 import com.google.android.gms.location.LocationServices
+import com.smartapp.dailyweather.MainActivity
 import com.smartapp.dailyweather.R
 import com.smartapp.dailyweather.data.repo.LocationRepository
 import kotlinx.coroutines.launch
@@ -29,10 +31,8 @@ import kotlinx.coroutines.launch
 // Splash → LocationGps → SelectQuestion 순으로 이동
 class LocationGpsFragment : Fragment() {
 
-    private val locationRepository by lazy { LocationRepository() }
-
-    private val locationGpsViewModel: LocationGpsViewModel by viewModels {
-        LocationGpsViewModelFactory(locationRepository)
+    private val locationViewModel: LocationViewModel by navGraphViewModels(R.id.nav_intro) {
+        LocationViewModelFactory((requireActivity() as MainActivity).sharedLocationRepo)
     }
 
     private val requestLocationPermission =
@@ -102,16 +102,16 @@ class LocationGpsFragment : Fragment() {
                     com.google.android.gms.location.Priority.PRIORITY_HIGH_ACCURACY,
                     cts.token
                 ).addOnSuccessListener { cur ->
-                    if (cur != null) {
-                        Log.d("GPS", "getCurrentLocation: ${cur.longitude}, ${cur.latitude}")
-                        handleLonLatOrMock(cur.longitude, cur.latitude)
-                    } else {
-                        Log.w("GPS", "getCurrentLocation == null, using mock (dev only)")
+                    // if (cur != null) {
+                      //  Log.d("GPS", "getCurrentLocation: ${cur.longitude}, ${cur.latitude}")
+                      //  handleLonLatOrMock(cur.longitude, cur.latitude)
+                    // } else {
+                       //  Log.w("GPS", "getCurrentLocation == null, using mock (dev only)")
                         // 3) 개발 중: 모의 좌표 사용 (서울시청)
                         val mockLon = 126.9780
                         val mockLat = 37.5665
                         handleLonLatOrMock(mockLon, mockLat)
-                    }
+                   // }
                 }.addOnFailureListener { e ->
                     Log.e("GPS", "getCurrentLocation failure: ${e.localizedMessage}")
                     // 4) 최종 폴백: 수동 선택
@@ -128,7 +128,7 @@ class LocationGpsFragment : Fragment() {
         // suspend 호출은 코루틴으로
         viewLifecycleOwner.lifecycleScope.launch {
             Log.d("Flow", "processLocationAndConvert start: $lon, $lat")
-            val success = locationGpsViewModel.processLocationAndConvert(lon, lat)
+            val success = locationViewModel.processLocationAndConvert(lon, lat)
             Log.d("Flow", "processLocationAndConvert result: $success")
             if (success) {
                 navigateSelectQuestionOnce()

@@ -8,4 +8,4 @@ import android.view.ViewGroup
 import com.smartapp.dailyweather.R
 
 // NetworkGateFragment.kt (아무것도 안해도 됨)
-class NetworkGateFragment : Fragment(R.layout.fragment_gate_placeholder)
+class NetworkGateFragment : Fragment(R.layout.fragment_network_gate)

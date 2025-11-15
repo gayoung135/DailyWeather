@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="@drawable/bg_gradient"
+    android:padding="24dp">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <!-- 상단 타이틀 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="8dp">
+
+            <TextView
+                android:text="오늘의 맞춤 추천을 위해\n 정보를 선택해주세요"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:textColor="#000000"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:layout_marginBottom="8dp" />
+
+            <Button
+                android:id="@+id/skipButton"
+                android:text="SKIP >"
+                android:textSize="14sp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="?attr/selectableItemBackground"
+                android:textColor="#2196F3"
+                android:padding="4dp" />
+        </LinearLayout>
+
+
+        <!-- 질문 1 -->
+        <TextView
+            android:text="오늘은 몇시에 나가시나요?"
+            android:textSize="18sp"
+            android:textColor="#000000"
+            android:layout_marginTop="24dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <LinearLayout
+            android:id="@+id/timeGroup"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnTime08"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:minWidth="80dp"
+                android:text="08"
+                android:textColor="#3E3E3E"
+                app:backgroundTint="@color/white"
+                app:cornerRadius="16dp"
+                android:layout_marginEnd="8dp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnTime09"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:minWidth="80dp"
+                android:text="09"
+                android:textColor="#3E3E3E"
+                app:backgroundTint="@color/white"
+                app:cornerRadius="16dp"
+                android:layout_marginEnd="8dp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnTime10"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:minWidth="80dp"
+                android:text="10"
+                android:textColor="#3E3E3E"
+                app:backgroundTint="@color/white"
+                app:cornerRadius="16dp" />
+            <!-- btnConfirmYes, btnConfirmNo -->
+        </LinearLayout>
+
+        <!-- 질문 2 -->
+        <TextView
+            android:text="외출목적은 무엇인가요?"
+            android:textSize="18sp"
+            android:textColor="#000000"
+            android:layout_marginTop="24dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/purposeGroup"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layoutManager="com.google.android.flexbox.FlexboxLayoutManager"
+            tools:listitem="@layout/item_option"
+            >
+
+        </androidx.recyclerview.widget.RecyclerView>
+
+        <!-- 질문 3: 오늘 기분 -->
+        <TextView
+            android:text="오늘 기분은 어떠신가요?"
+            android:textSize="18sp"
+            android:textColor="#000000"
+            android:layout_marginTop="24dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/moodGroup"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layoutManager="com.google.android.flexbox.FlexboxLayoutManager"
+            tools:listitem="@layout/item_option"
+            >
+
+        </androidx.recyclerview.widget.RecyclerView>
+
+        <!-- 질문 4: 스타일 선택 -->
+        <TextView
+            android:text="어떤 스타일을 원하시나요?"
+            android:textSize="18sp"
+            android:textColor="#000000"
+            android:layout_marginTop="24dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/styleGroup"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layoutManager="com.google.android.flexbox.FlexboxLayoutManager"
+            tools:listitem="@layout/item_option"
+            >
+        </androidx.recyclerview.widget.RecyclerView>
+        <!-- 제출 버튼 -->
+        <Button
+            android:id="@+id/submitButton"
+            android:text="추천 받기"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:backgroundTint="#2196F3"
+            android:textColor="#FFFFFF" />
+    </LinearLayout>
+</LinearLayout>

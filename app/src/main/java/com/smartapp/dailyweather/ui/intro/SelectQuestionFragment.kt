@@ -4,7 +4,9 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import com.smartapp.dailyweather.R
 
 
@@ -25,6 +27,32 @@ class SelectQuestionFragment : Fragment() {
         // fragment_select_question.xml 불러와서 View 객체로 변환
         // 이 화면에는 사용자의 선택 버튼들이 배치될 예정
         return inflater.inflate(R.layout.fragment_select_question, container, false)
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        // "좋아요" 버튼 클릭 시
+        view.findViewById<Button>(R.id.btnYes).setOnClickListener {
+            findNavController().navigate(
+                R.id.action_selectQuestionFragment_to_mainQuestionFragment,
+                null,
+                androidx.navigation.NavOptions.Builder()
+                    .setPopUpTo(R.id.selectQuestionFragment, true)
+                    .build()
+            )
+        }
+
+        // "스킵할래요" 버튼 클릭 시
+//        view.findViewById<Button>(R.id.btnSkip).setOnClickListener {
+//            findNavController().navigate(
+//                R.id.action_allowQuestionIntro_to_selectQuestion,
+//                null,
+//                androidx.navigation.NavOptions.Builder()
+//                    .setPopUpTo(R.id.allowQuestionIntroFragment, true)
+//                    .build()
+//            )
+//        }
     }
 }
 

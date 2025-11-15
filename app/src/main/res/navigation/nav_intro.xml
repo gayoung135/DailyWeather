@@ -52,6 +52,16 @@
     <fragment
         android:id="@+id/selectQuestionFragment"
         android:name="com.smartapp.dailyweather.ui.intro.SelectQuestionFragment"
-        android:label="SelectQuestionFragment" />
+        android:label="SelectQuestionFragment">
+
+        <action
+            android:id="@+id/action_selectQuestionFragment_to_mainQuestionFragment"
+            app:destination="@id/mainQuestionFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/mainQuestionFragment"
+        android:name="com.smartapp.dailyweather.ui.question.MainQuestionFragment"
+        android:label="MainQuestionFragment" />
+
 
 </navigation>
