@@ -9,6 +9,8 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
+import android.widget.NumberPicker
 import android.widget.Toast
 import androidx.fragment.app.viewModels
 import androidx.navigation.navGraphViewModels
@@ -48,10 +50,42 @@ class MainQuestionFragment : Fragment() {
         return binding.root
     }
 
+    private var selectedHour: Int? = null
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         setFilterOptions()
+
+        // 시간 선택: NumberPicker로 대체
+        val timePicker = view.findViewById<NumberPicker>(R.id.timePicker)
+        timePicker.minValue = 0
+        timePicker.maxValue = 23
+        timePicker.displayedValues = Array(24) { i -> String.format("%02d", i) }
+        timePicker.wrapSelectorWheel = false
+
+
+
+
+        // YES/NO 버튼 연결
+        val btnTimeYes = view.findViewById<Button>(R.id.btnTimeYes)
+        val btnTimeNo = view.findViewById<Button>(R.id.btnTimeNo)
+//
+        btnTimeYes.setOnClickListener {
+            selectedHour = binding.timePicker.value  // 시간 선택됨
+            btnTimeYes.setBackgroundColor(Color.parseColor("#2196F3"))
+            btnTimeYes.setTextColor(Color.WHITE)
+            btnTimeNo.setBackgroundColor(Color.WHITE)
+            btnTimeNo.setTextColor(Color.parseColor("#3E3E3E"))
+        }
+
+        btnTimeNo.setOnClickListener {
+            selectedHour = null   // 시간 선택 안함
+            btnTimeNo.setBackgroundColor(Color.parseColor("#F44336"))
+            btnTimeNo.setTextColor(Color.WHITE)
+            btnTimeYes.setBackgroundColor(Color.WHITE)
+            btnTimeYes.setTextColor(Color.parseColor("#3E3E3E"))
+        }
 
         binding.submitButton.setOnClickListener {
             val grid = locationViewModel.grid.value
@@ -69,12 +103,13 @@ class MainQuestionFragment : Fragment() {
 
             mainQuestionViewModel.saveLastUserStateWithApi(
                 grid = grid,
+                selectedHour = selectedHour,
                 purposeCode = purposeCode,
                 styleCode = styleCode,
                 skipped = false
             )
-
             Toast.makeText(requireContext(), "저장 요청 보냈습니다.", Toast.LENGTH_SHORT).show()
+
         }
 
     }

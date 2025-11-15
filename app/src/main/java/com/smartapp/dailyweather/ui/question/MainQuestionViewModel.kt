@@ -1,6 +1,7 @@
 package com.smartapp.dailyweather.ui.question
 
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
@@ -38,15 +39,32 @@ class MainQuestionViewModel (app: Application) : AndroidViewModel(app) {
 
     fun saveLastUserStateWithApi(
         grid: GridPoint,
+        selectedHour: Int?,
         purposeCode: String?,
         styleCode: String?,
         skipped: Boolean
     ) {
         viewModelScope.launch {
-            val now = SystemTimeProvider().nowKorea()  // 또는 TimeProvider 주입
+            val now = SystemTimeProvider().nowKorea()
+
+            // 사용자가 시간 선택 안 했다면 현재 시간 유지
+            val targetTime = if (selectedHour != null) {
+                now.withHour(selectedHour).withMinute(0).withSecond(0)
+            } else {
+                now
+            }
+
+            Log.d("QuestionFlow", "[ViewModel] saveLastUserStateWithApi() 호출")
+            Log.d("QuestionFlow", " - skipped = $skipped")
+            Log.d("QuestionFlow", " - selectedHour = $selectedHour")
+            Log.d("QuestionFlow", " - targetTime(기온 조회 시각) = $targetTime")
+            Log.d("QuestionFlow", " - grid = (${grid.x}, ${grid.y})")
+            Log.d("QuestionFlow", " - purposeCode = $purposeCode, styleCode = $styleCode")
+
+
             lastUserStateRepository.saveWithCurrentTemp(
                 grid = grid,
-                targetTimeKst = now,
+                targetTimeKst = targetTime,   // ← 수정된 targetTime 반영
                 purposeCode = purposeCode,
                 styleCode = styleCode,
                 skipped = skipped
