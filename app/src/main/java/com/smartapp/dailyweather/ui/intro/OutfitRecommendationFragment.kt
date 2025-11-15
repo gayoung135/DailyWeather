@@ -2,14 +2,22 @@ package com.smartapp.dailyweather.ui.intro
 
 import android.os.Bundle
 import android.view.View
+import android.widget.Button
 import android.widget.TextView
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import com.smartapp.dailyweather.R
 
 class OutfitRecommendationFragment : Fragment(R.layout.fragment_outfit_recommendation) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        // 상세 날씨 버튼 클릭 시 이동
+        val detailButton = view.findViewById<Button>(R.id.detailWeatherButton)
+        detailButton?.setOnClickListener {
+            findNavController().navigate(R.id.action_outfitRecommendationFragment_to_weatherDetailFragment)
+        }
 
         // 예시: 질문지 응답 기반으로 추천 코디 변경
         val userAnswer = "더운 날씨에 활동적" // 실제 앱에서는 ViewModel이나 Bundle로 받아올 수 있음
@@ -25,7 +33,7 @@ class OutfitRecommendationFragment : Fragment(R.layout.fragment_outfit_recommend
         }
 
         // 날씨 정보 표시
-        weatherInfo.text = "32°C / 미세먼지: 나쁨 / 초미세먼지: 높음"
+        weatherInfo.text = "질문지 바탕으로 알려드릴게요!"
 
         // 추천 코디 변경
         if (userAnswer.contains("더운")) {

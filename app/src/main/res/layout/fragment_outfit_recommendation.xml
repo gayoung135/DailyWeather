@@ -6,21 +6,34 @@
     android:layout_height="match_parent"
     android:background="#FAFAFA">
 
+    <!-- 상세 날씨 버튼 -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/detailWeatherButton"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:background="@drawable/bg_panel_round"
+        app:backgroundTint="@null"
+        android:text="상세 날씨"
+        android:textColor="#3E3E3E"
+        android:textSize="16sp"
+        android:minHeight="90dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
     <!-- 카드 스타일 배경 -->
     <LinearLayout
         android:id="@+id/resultCard"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_margin="0dp"
-        android:background="@drawable/bg_gradient_round"
+        app:layout_constraintTop_toBottomOf="@id/detailWeatherButton"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
         android:orientation="vertical"
         android:padding="24dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="1.0">
+        android:background="@drawable/bg_gradient_round" >
 
         <ScrollView
             android:layout_width="match_parent"
@@ -140,7 +153,7 @@
                         android:id="@+id/outfit1"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="상의: 반팔\n하의: 반바지\n아우터: 얇은 가디건\n신발: 샌들"
+                        android:text="상의: 상의1\n하의: 하의1\n아우터: 아우터1\n신발: 신발1"
                         android:textSize="16sp"
                         android:textColor="#000000" />
                 </LinearLayout>
@@ -166,7 +179,7 @@
                         android:id="@+id/outfit2"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="상의: 반팔\n하의: 반바지\n아우터: 얇은 가디건\n신발: 샌들"
+                        android:text="상의: 상의2\n하의: 하의2\n아우터: 아우터2\n신발: 신발2"
                         android:textSize="16sp"
                         android:textColor="#000000" />
                 </LinearLayout>
@@ -254,12 +267,11 @@
                             android:id="@+id/essentials"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="마스크 우산"
+                            android:text="필수품"
                             android:textSize="16sp"
                             android:textColor="#555555"
                             android:gravity="center" />
                     </LinearLayout>
-
                 </LinearLayout>
             </LinearLayout>
         </ScrollView>

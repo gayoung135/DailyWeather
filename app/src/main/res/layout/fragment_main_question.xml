@@ -6,45 +6,43 @@
     android:background="@drawable/bg_gradient"
     android:padding="24dp"
     android:fillViewport="true">
-    <!-- 또는 @color/white -->
 
-
-<LinearLayout
-android:layout_width="match_parent"
-android:layout_height="wrap_content"
-android:orientation="vertical">
-
-<!-- 상단 타이틀 -->
-<LinearLayout
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="horizontal"
-    android:gravity="center_vertical"
-    android:layout_marginBottom="8dp">
-
-    <TextView
-        android:text="오늘의 맞춤 추천을 위해\n 정보를 선택해주세요"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        android:textColor="#000000"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center"
-        android:layout_marginBottom="8dp" />
+        android:orientation="vertical">
 
-    <Button
-        android:id="@+id/skipButton"
-        android:text="SKIP >"
-        android:textSize="14sp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="?attr/selectableItemBackground"
-        android:textColor="#2196F3"
-        android:padding="4dp" />
-</LinearLayout>
+        <!-- 상단 타이틀 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="8dp">
+
+            <TextView
+                android:text="오늘의 맞춤 추천을 위해\n 정보를 선택해주세요"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:textColor="#000000"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:layout_marginBottom="8dp" />
+
+            <Button
+                android:id="@+id/skipButton"
+                android:text="SKIP >"
+                android:textSize="14sp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="?attr/selectableItemBackground"
+                android:textColor="#2196F3"
+                android:padding="4dp" />
+        </LinearLayout>
 
 
-    <!-- 질문 1 -->
+        <!-- 질문 1 -->
     <TextView
         android:text="오늘은 몇시에 나가시나요?"
         android:textSize="18sp"
@@ -53,45 +51,65 @@ android:orientation="vertical">
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
-    <LinearLayout
-        android:id="@+id/timeGroup"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnTime08"
+        <LinearLayout
+            android:id="@+id/timeGroup"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:minWidth="80dp"
-            android:text="08"
-            android:textColor="#3E3E3E"
-            app:backgroundTint="@color/white"
-            app:cornerRadius="16dp"
-            android:layout_marginEnd="8dp" />
+            android:layout_gravity="center_horizontal"
+            android:orientation="vertical"
+            android:gravity="center_horizontal"
+            android:layout_marginBottom="16dp"
+            android:padding="8dp"
+            android:background="@drawable/btn_white_round"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" >
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnTime09"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:minWidth="80dp"
-            android:text="09"
-            android:textColor="#3E3E3E"
-            app:backgroundTint="@color/white"
-            app:cornerRadius="16dp"
-            android:layout_marginEnd="8dp" />
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnTime10"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:minWidth="80dp"
-            android:text="10"
-            android:textColor="#3E3E3E"
-            app:backgroundTint="@color/white"
-            app:cornerRadius="16dp" />
-    <!-- btnConfirmYes, btnConfirmNo -->
-</LinearLayout>
+        <NumberPicker
+                android:id="@+id/timePicker"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="50dp"
+                android:layout_marginEnd="50dp"
+                android:layout_gravity="center" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:layout_marginTop="16dp"
+                android:paddingStart="40dp"
+                android:paddingEnd="40dp">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnTimeNo"
+                    style="@style/LeftRoundedButton"
+                    android:layout_width="0dp"
+                    android:layout_height="48dp"
+                    android:layout_weight="1"
+                    android:text="NO"
+                    android:textColor="#3E3E3E"
+                    app:strokeColor="#B0B0B0"
+                    app:strokeWidth="1dp"
+                    app:backgroundTint="@android:color/white" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnTimeYes"
+                    style="@style/RightRoundedButton"
+                    android:layout_width="0dp"
+                    android:layout_height="48dp"
+                    android:layout_weight="1"
+                    android:text="YES"
+                    android:textColor="#3E3E3E"
+                    app:strokeColor="#B0B0B0"
+                    app:strokeWidth="1dp"
+                    app:backgroundTint="@android:color/white" />
+            </LinearLayout>
+
+        </LinearLayout>
 
     <!-- 질문 2 -->
     <TextView
@@ -299,14 +317,17 @@ android:orientation="vertical">
             app:cornerRadius="16dp"
             android:layout_marginBottom="8dp" />
     </com.google.android.flexbox.FlexboxLayout>
-<!-- 제출 버튼 -->
-<Button
-    android:id="@+id/submitButton"
-    android:text="추천 받기"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_marginTop="32dp"
-    android:backgroundTint="#2196F3"
-    android:textColor="#FFFFFF" />
-</LinearLayout>
-    </ScrollView>
+        <!-- 제출 버튼 -->
+        <Button
+            android:id="@+id/submitButton"
+            android:text="추천 받기"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:layout_marginBottom="32dp"
+            android:backgroundTint="#2196F3"
+            android:textColor="#FFFFFF"
+            android:elevation="4dp" />
+
+    </LinearLayout>
+</ScrollView>
