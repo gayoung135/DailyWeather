@@ -58,9 +58,6 @@ class SelectQuestionFragment : Fragment() {
 
         // "스킵할래요" 버튼 클릭 시 → 바로 LastUserStateEntity 저장 + 이동
         view.findViewById<Button>(R.id.btnSkip).setOnClickListener {
-            Log.d("SelectQuestion", "btnSkip 클릭 → 질문 스킵, 현재 시간 기준으로 기온 조회 요청")
-
-            // 1) GridPoint 가져오기
             val grid = locationViewModel.grid.value
 
             if (grid == null) {
@@ -69,21 +66,26 @@ class SelectQuestionFragment : Fragment() {
                 return@setOnClickListener
             }
 
-            lifecycleScope.launch {
+            viewLifecycleOwner.lifecycleScope.launch {
                 val now = SystemTimeProvider().nowKorea()
-
                 Log.d("SelectQuestion", "스킵 흐름 - now(KST) = $now")
 
-                // selectedHour 를 null 로 넘기면 → 뷰모델에서 '현재 시간' 사용
+                // suspend 함수라 여기서 끝날 때까지 기다렸다가
                 mainQuestionViewModel.saveLastUserStateWithApi(
                     grid = grid,
-                    selectedHour = null,   // ← 질문 스킵 → 현재 시간 사용
+                    selectedHourOffset = null,
                     purposeCode = null,
                     styleCode = null,
+                    moodCode = null,
                     skipped = true
                 )
 
-                findNavController().navigate(R.id.action_selectQuestionFragment_to_outfitRecommendationFragment)
+                Log.d("SelectQuestion", "LastUserState 저장 완료 → 추천 화면으로 이동")
+
+                // 그 다음에 화면 이동
+                findNavController().navigate(
+                    R.id.action_selectQuestionFragment_to_outfitRecommendationFragment
+                )
             }
         }
     }

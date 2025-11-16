@@ -5,13 +5,18 @@ import android.view.View
 import android.widget.Button
 import android.widget.TextView
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.smartapp.dailyweather.R
+import com.smartapp.dailyweather.ui.recommend.RecommendationViewModel
 
 class OutfitRecommendationFragment : Fragment(R.layout.fragment_outfit_recommendation) {
+    private val viewModel: RecommendationViewModel by viewModels()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        viewModel.loadRecommendationAutoSido()
 
         // 상세 날씨 버튼 클릭 시 이동
         val detailButton = view.findViewById<Button>(R.id.detailWeatherButton)

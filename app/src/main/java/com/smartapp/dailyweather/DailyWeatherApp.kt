@@ -25,13 +25,13 @@ class DailyWeatherApp : Application() {
         db = Room.databaseBuilder(
             applicationContext,
             AppDatabase::class.java,
-            "DailyWeather.db"
+            "DailyWeather7.db"
         )
             .fallbackToDestructiveMigration()
             .build()
 
         val prefs = getSharedPreferences("seed_prefs", MODE_PRIVATE)
-        val seeded = prefs.getBoolean("db_seeded_v1", false)
+        val seeded = prefs.getBoolean("db_seeded_v7", false)
 
         appScope.launch {
             try {
@@ -48,7 +48,7 @@ class DailyWeatherApp : Application() {
                         assetFile = "style.json",
                         clearBefore = true // 최초/복구 시는 깔끔히 넣기
                     )
-                    prefs.edit().putBoolean("db_seeded_v1", true).apply()
+                    prefs.edit().putBoolean("db_seeded_v7", true).apply()
                 }
             } catch (e: Exception) {
                 e.printStackTrace()

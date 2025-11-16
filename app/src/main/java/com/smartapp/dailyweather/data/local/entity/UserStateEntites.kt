@@ -7,54 +7,42 @@ import androidx.room.*
  * - 시간은 "yyyy-MM-dd HH:mm:ss" 문자열로 저장
  * - tempId/purposeId/styleId 는 NULL 허용
  */
-@Entity(
-    tableName = "last_user_state",
-    indices = [
-        Index(value = ["last_access_time"]),      // 정렬/검색 최적화
-        Index(value = ["x", "y"])  ,               // 위치 비교 최적화
-        Index(value = ["temp_id"]),
-        Index(value = ["purpose_id"]),
-        Index(value = ["style_id"])
-    ],
-    foreignKeys = [
-        ForeignKey(
-            entity = TempRangeEntity::class,
-            parentColumns = ["temp_id"],
-            childColumns = ["temp_id"],
-            onUpdate = ForeignKey.CASCADE,
-            onDelete = ForeignKey.NO_ACTION   // NOT NULL FK라 삭제전이 없음
-        ),
-        ForeignKey(
-            entity = PurposeEntity::class,
-            parentColumns = ["purpose_id"],
-            childColumns = ["purpose_id"],
-            onUpdate = ForeignKey.CASCADE,
-            onDelete = ForeignKey.SET_NULL
-        ),
-        ForeignKey(
-            entity = StyleEntity::class,
-            parentColumns = ["style_id"],
-            childColumns = ["style_id"],
-            onUpdate = ForeignKey.CASCADE,
-            onDelete = ForeignKey.SET_NULL
-        )
-    ]
-)
+@Entity(tableName = "last_user_state")
 data class LastUserStateEntity(
+
     @PrimaryKey(autoGenerate = true)
-    @ColumnInfo(name = "id") val id: Int = 0,
+    @ColumnInfo(name = "id")
+    val id: Int = 0,
 
-    @ColumnInfo(name = "x") val x: Int,
-    @ColumnInfo(name = "y") val y: Int,
+    @ColumnInfo(name = "x")
+    val x: Int,
 
-    @ColumnInfo(name = "temp_id") val tempId: Int,
-    @ColumnInfo(name = "purpose_id") val purposeId: Int? = null,
-    @ColumnInfo(name = "style_id") val styleId: Int? = null,
+    @ColumnInfo(name = "y")
+    val y: Int,
 
-    @ColumnInfo(name = "skip_question") val skipQuestion: Boolean,
+    /** temp_range 테이블의 PK를 가리키는 값 (버킷 id) */
+    @ColumnInfo(name = "temp_id")
+    val tempId: Int,
 
-    // "yyyy-MM-dd HH:mm:ss" (예: "2025-11-06 18:42:00")
-    @ColumnInfo(name = "last_access_time") val lastAccessTime: String
+    /** 목적 id (nullable) */
+    @ColumnInfo(name = "purpose_id")
+    val purposeId: Int?,
+
+    /** 스타일 id (nullable) */
+    @ColumnInfo(name = "style_id")
+    val styleId: Int?,
+
+    /** "yyyy-MM-dd HH:mm:ss" 형식의 KST 문자열 */
+    @ColumnInfo(name = "last_access_time")
+    val lastAccessTime: String,
+
+    /** 사용자가 선택한 기분 코드 (good / normal / bad), 선택 안 했으면 null */
+    @ColumnInfo(name = "mood_code")
+    val moodCode: String?,
+
+    /** 질문 스킵 여부 */
+    @ColumnInfo(name = "skipped")
+    val skipped: Boolean
 )
 
 /**
@@ -110,10 +98,10 @@ data class CoordinationSetEntity(
  */
 @Entity(
     tableName = "coordination_item",
-    primaryKeys = ["set_id", "category_id"],
     indices = [
-        Index(value = ["item_id"]),
-        Index(value = ["category_id"])
+        Index(value = ["set_id"]),
+        Index(value = ["category_id"]),
+        Index(value = ["item_id"])
     ],
     foreignKeys = [
         ForeignKey(
@@ -140,6 +128,9 @@ data class CoordinationSetEntity(
     ]
 )
 data class CoordinationItemEntity(
+    @PrimaryKey(autoGenerate = true)
+    @ColumnInfo(name = "id") val id: Int = 0,
+
     @ColumnInfo(name = "set_id") val setId: Int,
     @ColumnInfo(name = "category_id") val categoryId: Int,
     @ColumnInfo(name = "item_id") val itemId: String

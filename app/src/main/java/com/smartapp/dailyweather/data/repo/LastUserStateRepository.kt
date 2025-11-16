@@ -14,25 +14,29 @@ class LastUserStateRepository(
     private val weatherRepository: WeatherRepository = WeatherRepository(timeProvider)
 ) {
 
+    private val dao = db.lastUserStateDao()
+
     /**
-     * 1) 단기예보 API로 targetTime 의 기온(TMP) 조회
-     * 2) TempRange 테이블에서 temp_id 버킷 찾기
-     * 3) LastUserStateEntity 1건 저장
+     * 현재(또는 사용자가 선택한 targetTimeKst)의 기온을 조회하여
+     * LastUserStateEntity 1건을 저장한다.
+     *
+     * @param moodCode 사용자가 선택한 기분 코드 (good/normal/bad), 없으면 null
      */
     suspend fun saveWithCurrentTemp(
         grid: GridPoint,
         targetTimeKst: ZonedDateTime,
         purposeCode: String?,
         styleCode: String?,
+        moodCode: String?,
         skipped: Boolean
-    ): Long {
+    ) {
 
-        // 1) 지금/외출 시각의 기온(℃)
-        val tempCelsius: Int = weatherRepository.getTempAt(grid, targetTimeKst)
+        // 1) 해당 시각의 기온(℃)
+        val tempValue: Int = weatherRepository.getTempAt(grid, targetTimeKst)
 
         // 2) 온도 버킷 찾기 (TempRangeEntity)
-        val tempBucket = db.tempRangeDao().findBucketByTemp(tempCelsius)
-            ?: error("해당 온도($tempCelsius℃)에 맞는 temp_range 버킷이 없습니다.")
+        val tempBucket = db.tempRangeDao().findBucketByTemp(tempValue)
+            ?: error("해당 온도($tempValue℃)에 맞는 temp_range 버킷이 없습니다.")
 
         // 3) 목적/스타일 FK 찾기 (nullable)
         val purposeId = purposeCode?.let { code ->
@@ -45,19 +49,23 @@ class LastUserStateRepository(
                 ?: error("스타일 코드($code)를 DB에서 찾을 수 없습니다.")
         }
 
-        // 4) 현재 접속 시간 문자열
-        val nowStr = timeProvider.kstDateTimeString()
+        // 4) 기온 조회에 사용한 targetTimeKst를 그대로 문자열로 저장
+        val lastAccessStr = timeProvider.kstDateTimeString(targetTimeKst)
 
         val entity = LastUserStateEntity(
             x = grid.x,
             y = grid.y,
-            tempId = tempBucket.tempId,
+            tempId = tempBucket.tempId,   // temp_range.id (버킷 id)를 tempId로 저장
             purposeId = purposeId,
             styleId = styleId,
-            skipQuestion = skipped,
-            lastAccessTime = nowStr
+            moodCode = moodCode,
+            lastAccessTime = lastAccessStr,
+            skipped = skipped
         )
 
-        return db.lastUserStateDao().insert(entity)
+        dao.insert(entity)
     }
+
+    suspend fun getLatestState(): LastUserStateEntity? =
+        dao.getLatest()
 }
