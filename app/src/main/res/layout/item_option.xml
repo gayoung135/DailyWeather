@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.button.MaterialButton
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/btn"
+    android:layout_width="100dp"
+    android:layout_height="48dp"
+    android:layout_margin="8dp"
+    android:text="출근"
+    android:textSize="14sp"
+    android:textColor="#3E3E3E"
+    app:backgroundTint="@android:color/white"
+    app:strokeColor="#B0B0B0"
+    app:strokeWidth="1dp"
+    app:cornerRadius="16dp"
+    android:gravity="center"
+    android:insetTop="0dp"
+    android:insetBottom="0dp"
+    android:insetLeft="0dp"
+    android:insetRight="0dp" />

@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<navigation
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_intro"
+    app:startDestination="@id/networkGateFragment">
+
+    <fragment
+        android:id="@+id/locationFailFragment"
+        android:name="com.smartapp.dailyweather.ui.intro.LocationFailFragment"
+        android:label="LocationFailFragment"
+        tools:layout="@layout/fragment_location_fail" >
+        <action
+            android:id="@+id/action_locationFailFragment_to_manualLocationFragment"
+            app:destination="@id/manualLocationFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/networkGateFragment"
+        android:name="com.smartapp.dailyweather.ui.intro.NetworkGateFragment"
+        android:label="Gate" >
+        <!-- 필요시 action 추가 -->
+    </fragment>
+
+    <fragment
+        android:id="@+id/locationGpsFragment"
+        android:name="com.smartapp.dailyweather.ui.intro.LocationGpsFragment"
+        android:label="LocationGpsFragment">
+
+        <action
+            android:id="@+id/action_locationGps_to_selectQuestion"
+            app:destination="@id/selectQuestionFragment" />
+        <action
+            android:id="@+id/action_locationGpsFragment_to_locationFailFragment"
+            app:destination="@id/locationFailFragment" />
+        <action
+            android:id="@+id/action_locationGpsFragment_to_manualLocationFragment"
+            app:destination="@id/manualLocationFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/manualLocationFragment"
+        android:name="com.smartapp.dailyweather.ui.intro.ManualLocationFragment"
+        android:label="ManualLocationFragment">
+        <action
+            android:id="@+id/action_manualLocationFragment_to_selectQuestionFragment"
+            app:destination="@id/selectQuestionFragment" />
+    </fragment>
+
+    <!-- 좋아요, 스킵 버튼 이동 -->
+    <fragment
+        android:id="@+id/allowQuestionIntroFragment"
+        android:name="com.smartapp.dailyweather.ui.intro.AllowQuestionIntroFragment"
+        android:label="AllowQuestionIntroFragment"
+        tools:layout="@layout/fragment_allow_question_intro">
+        <action
+            android:id="@+id/action_allowQuestionIntro_to_selectQuestion"
+            app:destination="@id/selectQuestionFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/selectQuestionFragment"
+        android:name="com.smartapp.dailyweather.ui.intro.SelectQuestionFragment"
+        android:label="SelectQuestionFragment">
+
+        <action
+            android:id="@+id/action_selectQuestionFragment_to_mainQuestionFragment"
+            app:destination="@id/mainQuestionFragment" />
+        <action
+            android:id="@+id/action_selectQuestionFragment_to_outfitRecommendationFragment"
+            app:destination="@id/outfitRecommendationFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/mainQuestionFragment"
+        android:name="com.smartapp.dailyweather.ui.question.MainQuestionFragment"
+        android:label="MainQuestionFragment" >
+        <action
+            android:id="@+id/action_mainQuestionFragment_to_outfitRecommendationFragment"
+            app:destination="@id/outfitRecommendationFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/outfitRecommendationFragment"
+        android:name="com.smartapp.dailyweather.ui.home.OutfitRecommendationFragment"
+        android:label="OutfitRecommendationFragment"
+        tools:layout="@layout/fragment_outfit_recommendation">
+
+        <action
+            android:id="@+id/action_outfitRecommendationFragment_to_weatherDetailFragment"
+            app:destination="@id/weatherDetailFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/weatherDetailFragment"
+        android:name="com.smartapp.dailyweather.ui.home.WeatherDetailFragment"
+        android:label="WeatherDetailFragment"
+        tools:layout="@layout/fragment_weather_detail" />
+
+</navigation>
