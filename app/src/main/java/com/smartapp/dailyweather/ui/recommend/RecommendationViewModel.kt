@@ -1,7 +1,6 @@
 package com.smartapp.dailyweather.ui.recommend
 
 import android.app.Application
-import android.content.Context
 import android.location.Geocoder
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
@@ -19,6 +18,7 @@ import com.smartapp.dailyweather.data.repo.AirQualityRepository
 import com.smartapp.dailyweather.data.repo.LastUserStateRepository
 import com.smartapp.dailyweather.data.repo.RecommendationRepository
 import com.smartapp.dailyweather.data.repo.RecommendationWithMood
+import com.smartapp.dailyweather.data.repo.WeatherRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -31,6 +31,8 @@ class RecommendationViewModel(app: Application) : AndroidViewModel(app) {
 
     private val lastUserStateRepo = LastUserStateRepository(db, timeProvider)
     private val airRepo = AirQualityRepository()
+    private val weatherRepo = WeatherRepository(timeProvider)
+
     private val recommendRepo = RecommendationRepository(
         db,
         lastUserStateRepo,
@@ -101,7 +103,38 @@ class RecommendationViewModel(app: Application) : AndroidViewModel(app) {
 
                 val moodCode = state.moodCode
 
+                // ─────────────────────────────
+                // [화면용 날씨 정보 계산]
+                // ─────────────────────────────
+
+                // 1) 온도: LastUserState에 이미 ℃ 값이 들어있다고 가정
+                val tempC = state.tempId
+                val tempText = "${tempC}°C"
+
+                // 2) 미세먼지 등급 문자열
+                val airCode = airRepo.getAirQualityCodeForRegion(sidoName)
+                val airText = when (airCode) {
+                    "good" -> "좋음"
+                    "normal" -> "보통"
+                    "bad" -> "나쁨"
+                    "very_bad" -> "매우 나쁨"
+                    else -> "정보 없음"
+                }
+                Log.d("RecommendVM", "airCode=$airCode, airText=$airText")
+
+                // 3) 강수확률 POP (%)
+                val popPercent: Int? = try {
+                    weatherRepo.getPopAt(grid, targetTimeKst)
+                } catch (e: Exception) {
+                    Log.e("RecommendVM", "POP 조회 실패(뷰모델): ${e.message}", e)
+                    null
+                }
+                val rainText = popPercent?.let { "${it}%" } ?: "정보 없음"
+                Log.d("RecommendVM", "POP(%)=$popPercent, rainText=$rainText")
+
+                // ─────────────────────────────
                 // 4-1) 추천 생성 + DB 저장
+                // ─────────────────────────────
                 Log.d("RecommendVM", "추천 생성 시작...")
                 recommendRepo.createRecommendationForLatestState(
                     sidoName = sidoName,
@@ -109,14 +142,19 @@ class RecommendationViewModel(app: Application) : AndroidViewModel(app) {
                 )
 
                 // 4-2) DB에서 다시 읽어오기 (moodId 포함)
-                val domain = recommendRepo.loadRecommendationFromDbForLatestState()
+                val domain: RecommendationWithMood =
+                    recommendRepo.loadRecommendationFromDbForLatestState()
 
                 // 5) moodId 기반 색상 로드
                 val moodColors = loadMoodColorsForMood(domain.moodId)
 
+                // 6) UI 모델로 변환 (온도/미세먼지/강수확률 텍스트 포함)
                 val uiModel = RecommendationUiModel.fromDomain(
                     domain = domain,
-                    moodColors = moodColors
+                    moodColors = moodColors,
+                    temperatureText = tempText,
+                    airQualityText = airText,
+                    rainText = rainText
                 )
                 _uiState.value = uiModel
 
@@ -141,8 +179,8 @@ class RecommendationViewModel(app: Application) : AndroidViewModel(app) {
         }
     }
 
-    // 필요 시 JSON에서 직접 로드하는 버전 (지금은 안 씀)
-    private fun loadMoodColorsFromJson(context: Context): List<MoodColorUi> {
+    // (지금은 사용 안하지만 참고용)
+    private fun loadMoodColorsFromJson(context: Application): List<MoodColorUi> {
         val dto = JsonToDto.parseFromAssets(context)
         return dto.moodColor.flatMap { (_, colorList) ->
             colorList.map { colorDto ->
@@ -176,12 +214,18 @@ data class MoodColorUi(
 data class RecommendationUiModel(
     val firstSet: CoordinationUiSet,
     val secondSet: CoordinationUiSet,
-    val moodColors: List<MoodColorUi>
+    val moodColors: List<MoodColorUi>,
+    val temperatureText: String,   // 예: "14°C"
+    val airQualityText: String,    // 예: "좋음"
+    val rainText: String           // 예: "20%" 또는 "정보 없음"
 ) {
     companion object {
         fun fromDomain(
             domain: RecommendationWithMood,
-            moodColors: List<MoodColorUi>
+            moodColors: List<MoodColorUi>,
+            temperatureText: String,
+            airQualityText: String,
+            rainText: String
         ): RecommendationUiModel {
 
             val first = CoordinationUiSet(
@@ -207,7 +251,10 @@ data class RecommendationUiModel(
             return RecommendationUiModel(
                 firstSet = first,
                 secondSet = second,
-                moodColors = moodColors
+                moodColors = moodColors,
+                temperatureText = temperatureText,
+                airQualityText = airQualityText,
+                rainText = rainText
             )
         }
     }

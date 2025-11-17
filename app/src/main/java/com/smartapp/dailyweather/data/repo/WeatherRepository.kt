@@ -21,15 +21,20 @@ class WeatherRepository(
         grid: GridPoint,
         targetTimeKst: ZonedDateTime
     ): Int {
+        // 현재 시간 (KST)
+        val nowKst = timeProvider.nowKorea()
+
+        // base_time 계산에 사용할 기준 시각:
+        //    - targetTime이 미래면 아직 발표 안 된 base_time을 고를 수 있으니까
+        //      현재(now) 기준으로 base_time을 잡도록 보정
+        val baseTarget = if (targetTimeKst.isAfter(nowKst)) nowKst else targetTimeKst
+
+        // 1) base_date, base_time 계산 (KMA 규칙에 맞게)
+        val (baseDate, baseTime) = computeBaseDateTime(baseTarget)
 
         Log.d("WeatherRepo", "==== 기온 조회 시작 ====")
         Log.d("WeatherRepo", "사용자가 요청한 시간(KST): $targetTimeKst")
-
-        val nowKst = timeProvider.nowKorea()
-        val baseTarget = if (targetTimeKst.isAfter(nowKst)) nowKst else targetTimeKst
-
-        // 1) base_date, base_time 계산
-        val (baseDate, baseTime) = computeBaseDateTime(baseTarget)
+        Log.d("WeatherRepo", "baseTarget(KST): $baseTarget")
         Log.d("WeatherRepo", "API 요청 base_date=$baseDate, base_time=$baseTime")
 
         // 2) API 호출
@@ -45,63 +50,87 @@ class WeatherRepository(
         Log.d("WeatherRepo", "응답 item 개수 = ${items.size}")
 
         if (items.isEmpty()) {
-            Log.e("WeatherRepo", "단기예보 items가 0개입니다. base_date=$baseDate, base_time=$baseTime")
-            throw IllegalStateException("이 날짜(${baseDate})에 TMP 예보가 없습니다. (items=0)")
+            Log.e("WeatherRepo", "NO_DATA 또는 응답 item=0 → TMP 예보 없음 (baseDate=$baseDate, baseTime=$baseTime)")
+            throw IllegalStateException("해당 날짜의 TMP 예보를 찾을 수 없습니다.")
         }
 
-        // 3) 타겟 예보시각 (rounded)
+        // 3) 타겟 날짜/시간 문자열 (fcstDate, fcstTime)
         val dateStr = targetTimeKst.toLocalDate()
-            .format(DateTimeFormatter.BASIC_ISO_DATE)
-
-        val fcstTimeStr = computeTargetFcstTime(targetTimeKst)
+            .format(DateTimeFormatter.BASIC_ISO_DATE)        // yyyyMMdd
+        val fcstTimeStr = computeTargetFcstTime(targetTimeKst) // "HHmm" (예: "1700")
 
         Log.d("WeatherRepo", "찾으려는 예보 시간 fcstDate=$dateStr, fcstTime=$fcstTimeStr")
 
-        // 4) TMP 항목 필터
-        val tmpItem = items.firstOrNull {
-            it.category == "TMP" &&
-                    it.fcstDate == dateStr &&
-                    it.fcstTime == fcstTimeStr
-        } ?: run {
-            val timesInDay = items.filter { it.category == "TMP" && it.fcstDate == dateStr }
-                .map { it.fcstTime }
-                .distinct()
-                .sorted()
+        // 4) 해당 날짜의 TMP 리스트만 모으기
+        val tmpList = items.filter { it.category == "TMP" && it.fcstDate == dateStr }
 
-            Log.d("WeatherRepo", "이 날짜 TMP 제공 시간 목록 = $timesInDay")
-            Log.e("WeatherRepo", "해당 시간 TMP를 찾지 못함! date=$dateStr, time=$fcstTimeStr")
-            throw IllegalStateException("해당 시간의 TMP 예보를 찾을 수 없습니다.")
+        if (tmpList.isEmpty()) {
+            Log.e("WeatherRepo", "해당 날짜에 TMP 예보가 없습니다. date=$dateStr (baseDate=$baseDate, baseTime=$baseTime)")
+            throw IllegalStateException("해당 날짜의 TMP 예보를 찾을 수 없습니다.")
         }
 
-        Log.d("WeatherRepo", "예보 TMP 찾음 → fcstTime=${tmpItem.fcstTime}, fcstValue=${tmpItem.fcstValue}")
+        // 5) 정확히 같은 시간 먼저 찾기
+        val exact = tmpList.firstOrNull { it.fcstTime == fcstTimeStr }
 
-        val t = tmpItem.fcstValue.toDoubleOrNull()
-            ?: error("TMP fcstValue 변환 실패: ${tmpItem.fcstValue}")
+        val targetItem = if (exact != null) {
+            Log.d(
+                "WeatherRepo",
+                "예보 TMP 찾음 → fcstTime=${exact.fcstTime}, fcstValue=${exact.fcstValue}"
+            )
+            exact
+        } else {
+            // 없으면, 같은 날짜 안에서 "가장 가까운 시간"을 골라서 사용
+            val target = fcstTimeStr.toInt()
+            val sortedTimes = tmpList
+                .mapNotNull { it.fcstTime?.toIntOrNull() }
+                .sorted()
 
-        val rounded = t.roundToInt()
+            Log.w(
+                "WeatherRepo",
+                "[TMP] 이 날짜 TMP 제공 시간 목록 = $sortedTimes (요청=$fcstTimeStr)"
+            )
 
+            val nearestTime = sortedTimes.minByOrNull { kotlin.math.abs(it - target) }
+                ?: run {
+                    Log.e("WeatherRepo", "TMP 시간 목록 계산 실패 date=$dateStr")
+                    throw IllegalStateException("해당 날짜의 TMP 예보를 찾을 수 없습니다.")
+                }
+
+            val nearestItem = tmpList.first { it.fcstTime?.toIntOrNull() == nearestTime }
+            Log.w(
+                "WeatherRepo",
+                "[TMP] 정확한 시간($fcstTimeStr) 없음 → 가장 가까운 시간(${nearestItem.fcstTime}) 사용"
+            )
+            nearestItem
+        }
+
+        val value = targetItem.fcstValue?.toIntOrNull()
+            ?: error("TMP fcstValue 파싱 실패: ${targetItem.fcstValue}")
+
+        val rounded = value // 필요하면 반올림/보정 로직 추가
         Log.d("WeatherRepo", "반올림된 최종 기온 = ${rounded}℃")
         Log.d("WeatherRepo", "==== 기온 조회 완료 ====")
 
         return rounded
     }
 
-    // POP(강수확률) 조회
+    /**
+     * POP(강수확률)도 base_time 계산을 동일하게 보정해주자
+     */
     suspend fun getPopAt(
         grid: GridPoint,
         targetTimeKst: ZonedDateTime
     ): Int? {
-        Log.d("WeatherRepo", "==== POP(강수확률) 조회 시작 ====")
-        Log.d("WeatherRepo", "사용자가 요청한 시간(KST): $targetTimeKst")
-
-        // targetTime이 현재보다 미래라면, 발표 시각은 '지금' 기준으로 계산
         val nowKst = timeProvider.nowKorea()
         val baseTarget = if (targetTimeKst.isAfter(nowKst)) nowKst else targetTimeKst
 
         val (baseDate, baseTime) = computeBaseDateTime(baseTarget)
-        Log.d("WeatherRepo", "[POP] API 요청 base_date=$baseDate, base_time=$baseTime")
 
-        // 1) API 호출
+        Log.d("WeatherRepo", "==== POP(강수확률) 조회 시작 ====")
+        Log.d("WeatherRepo", "사용자가 요청한 시간(KST): $targetTimeKst")
+        Log.d("WeatherRepo", "baseTarget(KST): $baseTarget")
+        Log.d("WeatherRepo", " [POP] API 요청 base_date=$baseDate, base_time=$baseTime")
+
         val res = api.getShortTermForecast(
             baseDate = baseDate,
             baseTime = baseTime,
@@ -111,52 +140,53 @@ class WeatherRepository(
         )
 
         val items = res.response?.body?.items?.item.orEmpty()
-        Log.d("WeatherRepo", "[POP] 응답 item 개수 = ${items.size}")
+        Log.d("WeatherRepo", " [POP] 응답 item 개수 = ${items.size}")
 
-        // items가 0개면 그대로 우산 추천 스킵
         if (items.isEmpty()) {
-            Log.w(
-                "WeatherRepo",
-                "[POP] 단기예보 items가 0개입니다. base_date=$baseDate, base_time=$baseTime → 우산 추천 생략"
-            )
-            Log.d("WeatherRepo", "==== POP(강수확률) 조회 종료(데이터 없음) ====")
+            Log.w("WeatherRepo", " [POP] NO_DATA 또는 item=0 → POP 예보 없음 (baseDate=$baseDate, baseTime=$baseTime)")
             return null
         }
 
-        // 2) 타겟 예보시각 (날짜/시간)
         val dateStr = targetTimeKst.toLocalDate()
             .format(DateTimeFormatter.BASIC_ISO_DATE)
-
         val fcstTimeStr = computeTargetFcstTime(targetTimeKst)
-        Log.d("WeatherRepo", "[POP] 찾으려는 예보 시간 fcstDate=$dateStr, fcstTime=$fcstTimeStr")
 
-        // 3) 해당 날짜 POP만 모아서 시간 목록 출력
-        val popCandidates = items.filter {
-            it.category == "POP" && it.fcstDate == dateStr
-        }
-        Log.d(
-            "WeatherRepo",
-            "[POP] 이 날짜 POP 제공 시간 목록 = ${popCandidates.map { it.fcstTime }}"
-        )
+        Log.d("WeatherRepo", " [POP] 찾으려는 예보 시간 fcstDate=$dateStr, fcstTime=$fcstTimeStr")
 
-        // 4) 우리가 원하는 시각의 POP 한 건 찾기
-        val popItem = popCandidates.firstOrNull { it.fcstTime == fcstTimeStr }
+        val popList = items.filter { it.category == "POP" && it.fcstDate == dateStr }
 
-        if (popItem == null) {
-            Log.w("WeatherRepo", "[POP] 해당 시각 POP 데이터 없음 → 우산 추천 생략")
-            Log.d("WeatherRepo", "==== POP(강수확률) 조회 종료(데이터 없음) ====")
+        if (popList.isEmpty()) {
+            Log.w("WeatherRepo", " [POP] 해당 날짜 POP 예보 없음 → null 반환 (date=$dateStr)")
             return null
         }
 
-        val popInt = popItem.fcstValue.toIntOrNull()
-        Log.d(
-            "WeatherRepo",
-            "[POP] 선택된 POP → fcstTime=${popItem.fcstTime}, POP=${popItem.fcstValue} (%), parsed=$popInt"
-        )
+        val exact = popList.firstOrNull { it.fcstTime == fcstTimeStr }
 
+        val targetItem = if (exact != null) {
+            exact
+        } else {
+            val target = fcstTimeStr.toInt()
+            val times = popList.mapNotNull { it.fcstTime?.toIntOrNull() }.sorted()
+
+            Log.d("WeatherRepo", " [POP] 이 날짜 POP 제공 시간 목록 = $times (요청=$fcstTimeStr)")
+
+            val nearest = times.minByOrNull { kotlin.math.abs(it - target) }
+                ?: return null
+
+            val nearestItem = popList.first { it.fcstTime?.toIntOrNull() == nearest }
+            Log.w(
+                "WeatherRepo",
+                " [POP] 정확한 시간($fcstTimeStr) 없음 → 가장 가까운 시간(${nearestItem.fcstTime}) 사용"
+            )
+            nearestItem
+        }
+
+        val pop = targetItem.fcstValue?.toIntOrNull()
+        Log.d("WeatherRepo", " [POP] 선택된 POP → fcstTime=${targetItem.fcstTime}, POP=$pop")
         Log.d("WeatherRepo", "==== POP(강수확률) 조회 완료 ====")
 
-        return popInt
+        return pop
+
     }
 
     // "HHmm" 문자열끼리 시(hour) 차이 절댓값
