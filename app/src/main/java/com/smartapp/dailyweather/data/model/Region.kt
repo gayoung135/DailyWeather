@@ -84,7 +84,7 @@ enum class Region(val displayName: String, val subRegions: List<SubRegion>) {
         SubRegion("동구", 35.117552, 126.949527),
         SubRegion("남구", 35.098182, 126.854775),
         SubRegion("북구", 35.196390, 126.929579),
-        SubRegion("광산구",35.222203, 126.783085)
+        SubRegion("광산구",35.165217, 126.753084)
     )),
 
     DAEJEON("대전광역시", listOf(
