@@ -52,7 +52,7 @@ class WeatherDetailViewModel : ViewModel() {
     private val _uiState = MutableLiveData<WeatherDetailUiModel?>()
     val uiState: LiveData<WeatherDetailUiModel?> = _uiState
 
-    // ✅ 이미 로딩한 적 있는지
+    // 이미 로딩한 적 있는지
     private var hasLoaded = false
 
     fun loadDetailWeather(force: Boolean = false) {
@@ -81,7 +81,7 @@ class WeatherDetailViewModel : ViewModel() {
                 // 강수확률
                 val pop = weatherRepo.getPopAt(grid, now) ?: 0
 
-                // 위치 이름 (⚠️ 여기 부분 수정)
+                // 위치 이름
                 val geocoder = Geocoder(appContext, Locale.KOREA)
                 val latLng = KmaGridConverter.toLatLng(grid.x, grid.y)
 
@@ -104,7 +104,7 @@ class WeatherDetailViewModel : ViewModel() {
                     address?.locality?.takeIf { it.isNotBlank() }
                         ?: address?.subLocality?.takeIf { it.isNotBlank() }
 
-                // 👉 "시/도 + 시/군/구" 형태로 표시
+                //  "시/도 + 시/군/구" 형태로 표시
                 val locationName = when {
                     !admin.isNullOrBlank() && !cityOrGu.isNullOrBlank() ->
                         "$admin $cityOrGu"          // 예: "경기도 과천시", "충청남도 서구"
