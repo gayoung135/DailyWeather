@@ -10,9 +10,12 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Spinner
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.navGraphViewModels
+import com.smartapp.dailyweather.MainActivity
 import com.smartapp.dailyweather.R
 import com.smartapp.dailyweather.data.model.Region
 import com.smartapp.dailyweather.data.repo.LocationRepository
@@ -23,10 +26,8 @@ import kotlinx.coroutines.launch
 // LocationGpsFragment → ManualLocationFragment → SelectQuestionFragment 순서로 이어짐.
 class ManualLocationFragment : Fragment() {
 
-    private val repo by lazy { LocationRepository() }
-
-    private val vm: ManualLocationViewModel by viewModels {
-        ManualLocationViewModelFactory(repo)
+    private val locationViewModel: LocationViewModel by navGraphViewModels(R.id.nav_intro) {
+        LocationViewModelFactory((requireActivity() as MainActivity).sharedLocationRepo)
     }
 
     // onCreateView(): 프래그먼트가 실제 화면(View)을 생성할 때 호출됨.
@@ -79,12 +80,14 @@ class ManualLocationFragment : Fragment() {
         spinner.post { ignoreTopFirstCallback = false }
 
         // 사용자가 실제로 스피너를 터치했는지 기록
-        spinner.setOnTouchListener { _, ev ->
-            if (ev.action == MotionEvent.ACTION_DOWN) {
-                userTouchTop = true
+        spinner.setOnTouchListener(object : View.OnTouchListener {
+            override fun onTouch(v: View?, ev: MotionEvent?): Boolean {
+                if (ev?.action == MotionEvent.ACTION_DOWN) {
+                    userTouchTop = true
+                }
+                return false
             }
-            false
-        }
+        })
 
         // 하위(시/군/구) – 최초 placeholder 어댑터
         fun setSubPlaceholder() {
@@ -172,8 +175,8 @@ class ManualLocationFragment : Fragment() {
                 if (pos !in subs.indices) return
 
                 val sub = subs[pos]
-                vm.onRegionSelected(region)
-                vm.onSubRegionSelected(sub)
+                locationViewModel.onRegionSelected(region)
+                locationViewModel.onSubRegionSelected(sub)
 
                 // 사용자 선택에 의해서만 이동
                 val nav = findNavController()
@@ -187,13 +190,13 @@ class ManualLocationFragment : Fragment() {
         // === 테스트용: 실제 변환을 로그로 확인 ===
         val testRegion = Region.SEOUL
         val testSub = testRegion.subRegions.first { it.name == "종로구" }
-        vm.onRegionSelected(testRegion)
-        vm.onSubRegionSelected(testSub)
+        locationViewModel.onRegionSelected(testRegion)
+        locationViewModel.onSubRegionSelected(testSub)
         Log.d("TestManualLocation", "TEST start → ${testRegion.displayName} / ${testSub.name}")
 
         viewLifecycleOwner.lifecycleScope.launch {
             try {
-                val grid = vm.requestGrid()
+                val grid = locationViewModel.requestGrid()
                 Log.d("TestManualLocation", "SUCCESS → grid: x=${grid?.x}, y=${grid?.y}")
             } catch (e: Exception) {
                 Log.e("TestManualLocation", "FAIL → ${e.message}", e)

@@ -18,7 +18,9 @@ android {
 
     buildFeatures {
         viewBinding = true
+        buildConfig = true
     }
+
 
     defaultConfig {
         applicationId = "com.smartapp.dailyweather"
@@ -122,4 +124,6 @@ dependencies {
     //json 최신 버전
     implementation("com.google.code.gson:gson:2.10.1")
 
+    //Flexbox
+    implementation("com.google.android.flexbox:flexbox:3.0.0")
 }

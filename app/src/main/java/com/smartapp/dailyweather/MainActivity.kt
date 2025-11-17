@@ -3,11 +3,13 @@ package com.smartapp.dailyweather
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -15,6 +17,9 @@ import androidx.navigation.fragment.NavHostFragment
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.smartapp.dailyweather.core.NetworkObserver
 import com.smartapp.dailyweather.data.remote.RetrofitClient
+import com.smartapp.dailyweather.data.repo.LocationRepository
+import com.smartapp.dailyweather.ui.intro.LocationViewModel
+import com.smartapp.dailyweather.ui.intro.LocationViewModelFactory
 import kotlinx.coroutines.launch
 
 // 앱 실행 시 가장 먼저 호출되는 액티비티(Activity).
@@ -25,6 +30,12 @@ class MainActivity : AppCompatActivity() {
     private lateinit var networkObserver: NetworkObserver
     private var hasNavigated = false
     private var networkDialog: AlertDialog? = null
+
+    val sharedLocationRepo by lazy { LocationRepository() }
+    val locationViewModel: LocationViewModel by viewModels {
+        LocationViewModelFactory((this@MainActivity).sharedLocationRepo)
+    }
+
 
     // onCreate(): 액티비티가 처음 실행될 때 호출되는 함수
     // 여기서 레이아웃을 설정하고, 시스템 UI(상태바 등) 처리를 함.

@@ -25,16 +25,19 @@ class DailyWeatherApp : Application() {
         db = Room.databaseBuilder(
             applicationContext,
             AppDatabase::class.java,
-            "DailyWeather.db"
+            "DailyWeather7.db"
         )
             .fallbackToDestructiveMigration()
             .build()
 
         val prefs = getSharedPreferences("seed_prefs", MODE_PRIVATE)
-        val seeded = prefs.getBoolean("db_seeded_v1", false)
+        val seeded = prefs.getBoolean("db_seeded_v7", false)
 
         appScope.launch {
             try {
+                // [개발용] 매 실행마다 LastUserState만 초기화
+                db.lastUserStateDao().clearAll()
+
                 // DB가 비었는지  검사 (카테고리만 체크)
                 val isEmpty = db.categoryDao().getAll().isEmpty()
 
@@ -45,7 +48,7 @@ class DailyWeatherApp : Application() {
                         assetFile = "style.json",
                         clearBefore = true // 최초/복구 시는 깔끔히 넣기
                     )
-                    prefs.edit().putBoolean("db_seeded_v1", true).apply()
+                    prefs.edit().putBoolean("db_seeded_v7", true).apply()
                 }
             } catch (e: Exception) {
                 e.printStackTrace()

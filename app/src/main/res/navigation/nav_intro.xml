@@ -6,7 +6,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_intro"
     app:startDestination="@id/networkGateFragment">
-
     <fragment
         android:id="@+id/locationFailFragment"
         android:name="com.smartapp.dailyweather.ui.intro.LocationFailFragment"
@@ -52,6 +51,39 @@
     <fragment
         android:id="@+id/selectQuestionFragment"
         android:name="com.smartapp.dailyweather.ui.intro.SelectQuestionFragment"
-        android:label="SelectQuestionFragment" />
+        android:label="SelectQuestionFragment">
+
+        <action
+            android:id="@+id/action_selectQuestionFragment_to_mainQuestionFragment"
+            app:destination="@id/mainQuestionFragment" />
+        <action
+            android:id="@+id/action_selectQuestionFragment_to_outfitRecommendationFragment"
+            app:destination="@id/outfitRecommendationFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/mainQuestionFragment"
+        android:name="com.smartapp.dailyweather.ui.question.MainQuestionFragment"
+        android:label="MainQuestionFragment" >
+        <action
+            android:id="@+id/action_mainQuestionFragment_to_outfitRecommendationFragment"
+            app:destination="@id/outfitRecommendationFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/outfitRecommendationFragment"
+        android:name="com.smartapp.dailyweather.ui.home.OutfitRecommendationFragment"
+        android:label="OutfitRecommendationFragment"
+        tools:layout="@layout/fragment_outfit_recommendation">
+
+        <action
+            android:id="@+id/action_outfitRecommendationFragment_to_weatherDetailFragment"
+            app:destination="@id/weatherDetailFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/weatherDetailFragment"
+        android:name="com.smartapp.dailyweather.ui.home.WeatherDetailFragment"
+        android:label="WeatherDetailFragment"
+        tools:layout="@layout/fragment_weather_detail" />
 
 </navigation>
