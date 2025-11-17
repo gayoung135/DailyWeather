@@ -3,13 +3,14 @@ package com.smartapp.dailyweather.ui.intro
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
-import android.view.MotionEvent
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Spinner
 import android.widget.Toast
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -28,6 +29,18 @@ class ManualLocationFragment : Fragment() {
         LocationViewModelFactory((requireActivity() as MainActivity).sharedLocationRepo)
     }
 
+    /** 로딩 오버레이 뷰 (위치를 잡는 중이에요...) */
+    private var loadingOverlay: View? = null
+
+    /** 하위 스피너를 새로 채운 직후 발생하는 최초 콜백 무시용 플래그 */
+    private var ignoreSubFirstCallback = false
+
+    /** 상위 스피너도 프로그램으로 힌트 선택 직후 콜백 무시 플래그 */
+    private var ignoreTopFirstCallback = false
+
+    /** 상위 스피너가 '사용자 터치'로 열렸는지 표시하는 플래그 */
+    private var userTouchTop = false
+
     // onCreateView(): 프래그먼트가 실제 화면(View)을 생성할 때 호출됨.
     // fragment_manual_location.xml 레이아웃을 화면에 표시함.
     override fun onCreateView(
@@ -39,17 +52,10 @@ class ManualLocationFragment : Fragment() {
         return inflater.inflate(R.layout.fragment_manual_location, container, false)
     }
 
-    /** 하위 스피너를 새로 채운 직후 발생하는 최초 콜백 무시용 플래그 */
-    private var ignoreSubFirstCallback = false
-
-    /** 상위 스피너도 프로그램으로 힌트 선택 직후 콜백 무시 플래그 */
-    private var ignoreTopFirstCallback = false
-
-    /** 상위 스피너가 '사용자 터치'로 열렸는지 표시하는 플래그 */
-    private var userTouchTop = false
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        loadingOverlay = view.findViewById(R.id.loadingOverlay)
 
         val spinner: Spinner = view.findViewById(R.id.spinner)
         val spinnerSub: Spinner = view.findViewById(R.id.spinner2)
@@ -103,7 +109,12 @@ class ManualLocationFragment : Fragment() {
 
         // 시/도 선택 리스너
         spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>?, v: View?, position: Int, id: Long) {
+            override fun onItemSelected(
+                parent: AdapterView<*>?,
+                v: View?,
+                position: Int,
+                id: Long
+            ) {
                 // 사용자 터치로 열리지 않은 경우(자동 콜백)는 무시
                 if (!userTouchTop) return
                 userTouchTop = false
@@ -153,7 +164,12 @@ class ManualLocationFragment : Fragment() {
 
         // 시/군/구 선택 리스너
         spinnerSub.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>?, v: View?, pos: Int, id: Long) {
+            override fun onItemSelected(
+                parent: AdapterView<*>?,
+                v: View?,
+                pos: Int,
+                id: Long
+            ) {
                 // 첫 콜백(프로그램 설정)은 무시
                 if (ignoreSubFirstCallback) {
                     ignoreSubFirstCallback = false
@@ -177,34 +193,53 @@ class ManualLocationFragment : Fragment() {
 
                 Log.d("ManualLocation", "사용자 선택 → ${region.displayName} / ${sub.name}")
 
-                // 👉 여기서 바로 navigate 하지 말고, 먼저 격자 변환을 수행
+                // 👉 여기서 격자 변환 + 로딩 오버레이
                 viewLifecycleOwner.lifecycleScope.launch {
-                    val grid = locationViewModel.requestGrid()
-                    if (grid == null) {
-                        Log.e("ManualLocation", "수동 위치 격자 변환 실패 (grid=null)")
-                        Toast.makeText(
-                            requireContext(),
-                            "위치 변환에 실패했어요. 잠시 후 다시 시도해 주세요.",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                        return@launch
-                    }
+                    showLoading(true)
+                    try {
+                        val grid = locationViewModel.requestGrid()
+                        if (grid == null) {
+                            Log.e(
+                                "ManualLocation",
+                                "수동 위치 격자 변환 실패 (grid=null)"
+                            )
+                            Toast.makeText(
+                                requireContext(),
+                                "위치 변환에 실패했어요. 잠시 후 다시 시도해 주세요.",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                            return@launch
+                        }
 
-                    Log.d("ManualLocation", "수동 위치 격자 변환 성공: x=${grid.x}, y=${grid.y}")
-
-                    val nav = findNavController()
-                    if (isAdded && nav.currentDestination?.id == R.id.manualLocationFragment) {
-                        nav.navigate(R.id.action_manualLocationFragment_to_selectQuestionFragment)
-                    } else {
-                        Log.w(
+                        Log.d(
                             "ManualLocation",
-                            "현재 destination이 manualLocationFragment가 아님 → navigate 생략: ${nav.currentDestination?.id}"
+                            "수동 위치 격자 변환 성공: x=${grid.x}, y=${grid.y}"
                         )
+
+                        val nav = findNavController()
+                        if (isAdded &&
+                            nav.currentDestination?.id == R.id.manualLocationFragment
+                        ) {
+                            nav.navigate(
+                                R.id.action_manualLocationFragment_to_selectQuestionFragment
+                            )
+                        } else {
+                            Log.w(
+                                "ManualLocation",
+                                "현재 destination이 manualLocationFragment가 아님 → navigate 생략: ${nav.currentDestination?.id}"
+                            )
+                        }
+                    } finally {
+                        showLoading(false)
                     }
                 }
             }
 
             override fun onNothingSelected(parent: AdapterView<*>?) {}
         }
+    }
+
+    private fun showLoading(show: Boolean) {
+        loadingOverlay?.isVisible = show
     }
 }

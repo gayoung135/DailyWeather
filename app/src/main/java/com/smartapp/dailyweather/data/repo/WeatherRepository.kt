@@ -6,10 +6,10 @@ import com.smartapp.dailyweather.core.TimeProvider
 import com.smartapp.dailyweather.data.model.GridPoint
 import com.smartapp.dailyweather.data.remote.RetrofitClient
 import com.smartapp.dailyweather.data.remote.dto.VilageFcstItem
+import java.time.Duration
 import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
-import kotlin.math.roundToInt
 
 class WeatherRepository(
     private val timeProvider: TimeProvider = SystemTimeProvider()
@@ -50,62 +50,57 @@ class WeatherRepository(
         Log.d("WeatherRepo", "응답 item 개수 = ${items.size}")
 
         if (items.isEmpty()) {
-            Log.e("WeatherRepo", "NO_DATA 또는 응답 item=0 → TMP 예보 없음 (baseDate=$baseDate, baseTime=$baseTime)")
-            throw IllegalStateException("해당 날짜의 TMP 예보를 찾을 수 없습니다.")
+            Log.e(
+                "WeatherRepo",
+                "NO_DATA 또는 응답 item=0 → TMP 예보 없음 (baseDate=$baseDate, baseTime=$baseTime)"
+            )
+            // 예외 던지지 말고 기본값 반환 (앱 죽지 않게)
+            return 0
         }
 
-        // 3) 타겟 날짜/시간 문자열 (fcstDate, fcstTime)
-        val dateStr = targetTimeKst.toLocalDate()
-            .format(DateTimeFormatter.BASIC_ISO_DATE)        // yyyyMMdd
-        val fcstTimeStr = computeTargetFcstTime(targetTimeKst) // "HHmm" (예: "1700")
+        // ★ 날짜로 제한하지 말고, 전체 TMP 중에서 targetTimeKst와 가장 가까운 걸 찾기
+        val allTmpList = items.filter { it.category == "TMP" }
 
-        Log.d("WeatherRepo", "찾으려는 예보 시간 fcstDate=$dateStr, fcstTime=$fcstTimeStr")
-
-        // 4) 해당 날짜의 TMP 리스트만 모으기
-        val tmpList = items.filter { it.category == "TMP" && it.fcstDate == dateStr }
-
-        if (tmpList.isEmpty()) {
-            Log.e("WeatherRepo", "해당 날짜에 TMP 예보가 없습니다. date=$dateStr (baseDate=$baseDate, baseTime=$baseTime)")
-            throw IllegalStateException("해당 날짜의 TMP 예보를 찾을 수 없습니다.")
+        if (allTmpList.isEmpty()) {
+            Log.e("WeatherRepo", "전체 TMP 예보가 하나도 없습니다. (baseDate=$baseDate, baseTime=$baseTime)")
+            return 0
         }
 
-        // 5) 정확히 같은 시간 먼저 찾기
-        val exact = tmpList.firstOrNull { it.fcstTime == fcstTimeStr }
+        val targetKst = targetTimeKst.withZoneSameInstant(ZoneId.of("Asia/Seoul"))
 
-        val targetItem = if (exact != null) {
-            Log.d(
-                "WeatherRepo",
-                "예보 TMP 찾음 → fcstTime=${exact.fcstTime}, fcstValue=${exact.fcstValue}"
-            )
-            exact
-        } else {
-            // 없으면, 같은 날짜 안에서 "가장 가까운 시간"을 골라서 사용
-            val target = fcstTimeStr.toInt()
-            val sortedTimes = tmpList
-                .mapNotNull { it.fcstTime?.toIntOrNull() }
-                .sorted()
-
-            Log.w(
-                "WeatherRepo",
-                "[TMP] 이 날짜 TMP 제공 시간 목록 = $sortedTimes (요청=$fcstTimeStr)"
-            )
-
-            val nearestTime = sortedTimes.minByOrNull { kotlin.math.abs(it - target) }
-                ?: run {
-                    Log.e("WeatherRepo", "TMP 시간 목록 계산 실패 date=$dateStr")
-                    throw IllegalStateException("해당 날짜의 TMP 예보를 찾을 수 없습니다.")
-                }
-
-            val nearestItem = tmpList.first { it.fcstTime?.toIntOrNull() == nearestTime }
-            Log.w(
-                "WeatherRepo",
-                "[TMP] 정확한 시간($fcstTimeStr) 없음 → 가장 가까운 시간(${nearestItem.fcstTime}) 사용"
-            )
-            nearestItem
+        // 각 TMP item을 fcstDate+fcstTime → ZonedDateTime 으로 변환 후,
+        // targetKst와 시간 차(분)를 계산해서 가장 가까운 것 선택
+        val candidates = allTmpList.mapNotNull { item ->
+            val fcstZdt = parseFcstDateTimeKst(item)
+            if (fcstZdt == null) {
+                null
+            } else {
+                val diffMin = kotlin.math.abs(
+                    Duration.between(targetKst, fcstZdt).toMinutes()
+                )
+                item to diffMin
+            }
         }
 
-        val value = targetItem.fcstValue?.toIntOrNull()
-            ?: error("TMP fcstValue 파싱 실패: ${targetItem.fcstValue}")
+        if (candidates.isEmpty()) {
+            Log.e("WeatherRepo", "TMP fcstDate/fcstTime 파싱 실패 → 사용할 수 있는 TMP 없음")
+            return 0
+        }
+
+        val (nearestItem, diffMin) = candidates.minByOrNull { it.second }!!
+
+        Log.d(
+            "WeatherRepo",
+            "가장 가까운 TMP 선택 → fcstDate=${nearestItem.fcstDate}, " +
+                    "fcstTime=${nearestItem.fcstTime}, diff=${diffMin}분, " +
+                    "fcstValue=${nearestItem.fcstValue}"
+        )
+
+        val value = nearestItem.fcstValue?.toIntOrNull()
+        if (value == null) {
+            Log.e("WeatherRepo", "TMP fcstValue 파싱 실패: ${nearestItem.fcstValue}")
+            return 0
+        }
 
         val rounded = value // 필요하면 반올림/보정 로직 추가
         Log.d("WeatherRepo", "반올림된 최종 기온 = ${rounded}℃")
@@ -305,5 +300,29 @@ class WeatherRepository(
         val timeStr = String.format("%02d00", kst.hour) // HH00
 
         return dateStr to timeStr
+    }
+
+    /**
+     * fcstDate(yyyyMMdd) + fcstTime(HHmm)을 KST ZonedDateTime으로 변환
+     * - 잘못된 형식이면 null
+     */
+    private fun parseFcstDateTimeKst(item: VilageFcstItem): ZonedDateTime? {
+        val dateStr = item.fcstDate ?: return null
+        val timeStr = item.fcstTime ?: return null
+
+        if (dateStr.length != 8 || timeStr.length != 4) return null
+
+        val y = dateStr.substring(0, 4).toIntOrNull() ?: return null
+        val m = dateStr.substring(4, 6).toIntOrNull() ?: return null
+        val d = dateStr.substring(6, 8).toIntOrNull() ?: return null
+
+        val hh = timeStr.substring(0, 2).toIntOrNull() ?: return null
+        val mm = timeStr.substring(2, 4).toIntOrNull() ?: return null
+
+        return try {
+            ZonedDateTime.of(y, m, d, hh, mm, 0, 0, ZoneId.of("Asia/Seoul"))
+        } catch (e: Exception) {
+            null
+        }
     }
 }

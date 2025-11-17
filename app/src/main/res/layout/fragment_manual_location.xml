@@ -5,7 +5,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white">
+    android:background="@color/white"
+    tools:context=".ui.intro.ManualLocationFragment">
 
     <!-- 다 감싸고있는 큰 카드 -->
     <LinearLayout
@@ -27,7 +28,6 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <!-- 상단 안내 텍스트 -->
-    <!-- 하단 패널 -->
     <TextView
         android:id="@+id/txtSelectCityTitle"
         android:layout_width="wrap_content"
@@ -43,6 +43,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <!-- 하단 패널 -->
     <LinearLayout
         android:id="@+id/bottomPanel"
         android:layout_width="0dp"
@@ -52,7 +53,6 @@
         android:layout_marginTop="24dp"
         android:layout_marginBottom="40dp"
         android:background="@drawable/bg_panel_round"
-
         android:gravity="center"
         android:orientation="vertical"
         android:padding="24dp"
@@ -62,7 +62,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/txtSelectCityTitle"
         app:layout_constraintVertical_bias="0.234">
-
 
         <Spinner
             android:id="@+id/spinner"
@@ -80,7 +79,46 @@
             android:enabled="false"
             android:paddingStart="16dp" />
 
-
     </LinearLayout>
+
+    <!-- 🔵 위치 격자 변환 로딩 오버레이 -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/loadingOverlay"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="#80000000"
+        android:visibility="gone"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:padding="24dp"
+            android:background="@drawable/bg_panel_round"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <ProgressBar
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                style="?android:attr/progressBarStyleLarge" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="위치를 잡는 중이에요..."
+                android:textColor="#000000"
+                android:textSize="16sp" />
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -81,7 +81,7 @@ class WeatherDetailViewModel : ViewModel() {
                 // 강수확률
                 val pop = weatherRepo.getPopAt(grid, now) ?: 0
 
-                // 위치 이름
+                // 위치 이름 (⚠️ 여기 부분 수정)
                 val geocoder = Geocoder(appContext, Locale.KOREA)
                 val latLng = KmaGridConverter.toLatLng(grid.x, grid.y)
 
@@ -97,10 +97,27 @@ class WeatherDetailViewModel : ViewModel() {
                     }
                 }
 
-                val admin = address?.adminArea ?: "서울특별시"
-                val sub = address?.subLocality
-                val locationName = sub ?: admin
-                val sido = normalizeSidoName(admin)
+                // adminArea : 시/도 (경기도, 충청남도, 서울특별시 ...)
+                // locality / subLocality : 시/군/구 (과천시, 강남구, 서구 ...)
+                val admin = address?.adminArea
+                val cityOrGu =
+                    address?.locality?.takeIf { it.isNotBlank() }
+                        ?: address?.subLocality?.takeIf { it.isNotBlank() }
+
+                // 👉 "시/도 + 시/군/구" 형태로 표시
+                val locationName = when {
+                    !admin.isNullOrBlank() && !cityOrGu.isNullOrBlank() ->
+                        "$admin $cityOrGu"          // 예: "경기도 과천시", "충청남도 서구"
+                    !admin.isNullOrBlank() ->
+                        admin                       // 예: "서울특별시" (구 없음)
+                    !cityOrGu.isNullOrBlank() ->
+                        cityOrGu
+                    else ->
+                        "알 수 없음"
+                }
+
+                // 시/도 이름 → 미세먼지용 normalize
+                val sido = normalizeSidoName(admin ?: locationName)
 
                 // 미세먼지
                 val air = airRepo.getAirForSido(sido)

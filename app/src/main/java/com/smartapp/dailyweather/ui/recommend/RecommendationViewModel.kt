@@ -11,7 +11,6 @@ import com.smartapp.dailyweather.DailyWeatherApp
 import com.smartapp.dailyweather.core.KmaGridConverter
 import com.smartapp.dailyweather.core.SystemTimeProvider
 import com.smartapp.dailyweather.core.normalizeSidoName
-import com.smartapp.dailyweather.core.parseKstDateTime
 import com.smartapp.dailyweather.data.mapper.JsonToDto
 import com.smartapp.dailyweather.data.model.GridPoint
 import com.smartapp.dailyweather.data.repo.AirQualityRepository
@@ -57,12 +56,6 @@ class RecommendationViewModel(app: Application) : AndroidViewModel(app) {
                 Log.d(
                     "RecommendVM",
                     "최근 상태: tempId=${state.tempId}, purpose=${state.purposeId}, style=${state.styleId}, grid=(${state.x}, ${state.y}), moodCode=${state.moodCode}"
-                )
-
-                val targetTimeKst = timeProvider.parseKstDateTime(state.lastAccessTime)
-                Log.d(
-                    "RecommendVM",
-                    "추천 대상 시간(KST, lastUserState 기준) = $targetTimeKst"
                 )
 
                 val grid = GridPoint(state.x, state.y)
@@ -123,13 +116,18 @@ class RecommendationViewModel(app: Application) : AndroidViewModel(app) {
                 Log.d("RecommendVM", "airCode=$airCode, airText=$airText")
 
                 // 3) 강수확률 POP (%)
-                val popPercent: Int? = try {
-                    weatherRepo.getPopAt(grid, targetTimeKst)
+                //    🔹 상세날씨와 동일하게 "현재 시각(nowKst)" 기준으로 조회
+                val nowKst = timeProvider.nowKorea()
+                    .withSecond(0)
+                    .withNano(0)
+
+                val popPercent: Int = try {
+                    weatherRepo.getPopAt(grid, nowKst) ?: 0
                 } catch (e: Exception) {
                     Log.e("RecommendVM", "POP 조회 실패(뷰모델): ${e.message}", e)
-                    null
+                    0
                 }
-                val rainText = popPercent?.let { "${it}%" } ?: "정보 없음"
+                val rainText = "${popPercent}%"
                 Log.d("RecommendVM", "POP(%)=$popPercent, rainText=$rainText")
 
                 // ─────────────────────────────
