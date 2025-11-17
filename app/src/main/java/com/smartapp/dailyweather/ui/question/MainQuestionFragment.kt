@@ -32,6 +32,10 @@ class MainQuestionFragment : Fragment() {
     private val mainQuestionViewModel: MainQuestionViewModel by viewModels()
     lateinit var binding: FragmentMainQuestionBinding
 
+
+    // OutfitLoading 으로 이미 이동했는지 여부
+    private var hasNavigatedToOutfitLoading = false
+
     private val locationViewModel: LocationViewModel by navGraphViewModels(R.id.nav_intro) {
         LocationViewModelFactory((requireActivity() as MainActivity).sharedLocationRepo)
     }
@@ -140,11 +144,25 @@ class MainQuestionFragment : Fragment() {
                 )
 
                 Log.d("MainQuestion", "질문 응답 저장 완료 → 추천 화면 이동")
-                findNavController().navigate(
-                    R.id.action_mainQuestionFragment_to_outfitLoadingFragment
-                )
+
+                // 현재 목적지가 mainQuestionFragment 이고, 아직 안 갔을 때만 이동
+                val navController = findNavController()
+                if (!hasNavigatedToOutfitLoading &&
+                    navController.currentDestination?.id == R.id.mainQuestionFragment
+                ) {
+                    hasNavigatedToOutfitLoading = true
+                    navController.navigate(
+                        R.id.action_mainQuestionFragment_to_outfitLoadingFragment
+                    )
+                } else {
+                    Log.d(
+                        "MainQuestion",
+                        "이미 이동했거나 현재 목적지가 아님 → navigate 스킵. currentDest=${navController.currentDestination}"
+                    )
+                }
             }
         }
+
     }
 
     private fun setFilterOptions() {

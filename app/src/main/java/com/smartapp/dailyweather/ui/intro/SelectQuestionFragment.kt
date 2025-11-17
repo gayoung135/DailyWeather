@@ -18,46 +18,57 @@ import com.smartapp.dailyweather.core.SystemTimeProvider
 import com.smartapp.dailyweather.ui.question.MainQuestionViewModel
 import kotlinx.coroutines.launch
 
-
 // 사용자가 위치 설정(자동/수동)을 완료한 뒤,
 // "질문 선택 화면"으로 진입하는 단계.
 // → 기분 / 외출 목적 / 선호 스타일 등의 질문 UI가 표시됨.
 // Intro Flow의 마지막 단계로, 이후 HomeFragment(메인 탭)으로 이동 예정.
 class SelectQuestionFragment : Fragment() {
+
     private val mainQuestionViewModel: MainQuestionViewModel by activityViewModels()
     private val locationViewModel: LocationViewModel by navGraphViewModels(R.id.nav_intro) {
         LocationViewModelFactory((requireActivity() as MainActivity).sharedLocationRepo)
     }
 
-    // onCreateView(): 프래그먼트 UI를 실제로 그릴 때 호출됨.
-    // fragment_select_question.xml 레이아웃을 화면에 표시함.
-    override fun onCreateView(
-        inflater: LayoutInflater,       // XML을 View로 변환하는 객체
-        container: ViewGroup?,          // 프래그먼트를 담는 부모 뷰 (MainActivity)
-        savedInstanceState: Bundle?    // 상태 복원용 번들
-    ): View {
+    // OutfitLoading 으로 이미 이동했는지 여부 (스킵 버튼용)
+    private var hasNavigatedToOutfitLoading = false
 
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
         // fragment_select_question.xml 불러와서 View 객체로 변환
-        // 이 화면에는 사용자의 선택 버튼들이 배치될 예정
         return inflater.inflate(R.layout.fragment_select_question, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        val btnYes = view.findViewById<Button>(R.id.btnYes)
+        val btnSkip = view.findViewById<Button>(R.id.btnSkip)
+
         // "좋아요" 버튼 클릭 시
-        view.findViewById<Button>(R.id.btnYes).setOnClickListener {
-            findNavController().navigate(
-                R.id.action_selectQuestionFragment_to_mainQuestionFragment,
-                null,
-                androidx.navigation.NavOptions.Builder()
-                    .setPopUpTo(R.id.selectQuestionFragment, true)
-                    .build()
-            )
+        btnYes.setOnClickListener {
+            // 여러 번 눌러도 한 번만 동작하도록 현재 목적지 체크
+            val navController = findNavController()
+            if (navController.currentDestination?.id == R.id.selectQuestionFragment) {
+                navController.navigate(
+                    R.id.action_selectQuestionFragment_to_mainQuestionFragment,
+                    null,
+                    androidx.navigation.NavOptions.Builder()
+                        .setPopUpTo(R.id.selectQuestionFragment, true)
+                        .build()
+                )
+            } else {
+                Log.d(
+                    "SelectQuestion",
+                    "btnYes 클릭 시 현재 목적지가 selectQuestionFragment 가 아님 → navigate 스킵. current=${navController.currentDestination}"
+                )
+            }
         }
 
         // "스킵할래요" 버튼 클릭 시 → 바로 LastUserStateEntity 저장 + 이동
-        view.findViewById<Button>(R.id.btnSkip).setOnClickListener {
+        btnSkip.setOnClickListener {
             val grid = locationViewModel.grid.value
 
             if (grid == null) {
@@ -82,10 +93,22 @@ class SelectQuestionFragment : Fragment() {
 
                 Log.d("SelectQuestion", "LastUserState 저장 완료 → 추천 화면으로 이동")
 
-                // 그 다음에 화면 이동
-                findNavController().navigate(
-                    R.id.action_selectQuestionFragment_to_outfitLoadingFragment
-                )
+                // 현재 목적지가 selectQuestionFragment 이고,
+                //  아직 OutfitLoading 으로 이동한 적이 없을 때만 네비게이션
+                val navController = findNavController()
+                if (!hasNavigatedToOutfitLoading &&
+                    navController.currentDestination?.id == R.id.selectQuestionFragment
+                ) {
+                    hasNavigatedToOutfitLoading = true
+                    navController.navigate(
+                        R.id.action_selectQuestionFragment_to_outfitLoadingFragment
+                    )
+                } else {
+                    Log.d(
+                        "SelectQuestion",
+                        "이미 이동했거나 현재 목적지가 아님 → navigate 스킵. current=${navController.currentDestination}"
+                    )
+                }
             }
         }
     }
