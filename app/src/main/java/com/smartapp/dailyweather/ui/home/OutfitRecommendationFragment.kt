@@ -5,11 +5,11 @@ import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import android.widget.Button
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.navGraphViewModels
+import com.google.android.material.button.MaterialButton
 import com.smartapp.dailyweather.R
 import com.smartapp.dailyweather.data.repo.CategoryIds
 import com.smartapp.dailyweather.ui.recommend.CoordinationItemUi
@@ -23,7 +23,10 @@ class OutfitRecommendationFragment : Fragment(R.layout.fragment_outfit_recommend
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val detailButton = view.findViewById<Button>(R.id.detailWeatherButton)
+        // 탭 버튼
+        val tabOutfit = view.findViewById<MaterialButton>(R.id.tabOutfit)
+        val tabDetail = view.findViewById<MaterialButton>(R.id.tabDetail)
+
         val outfit1 = view.findViewById<TextView>(R.id.outfit1)
         val outfit2 = view.findViewById<TextView>(R.id.outfit2)
         val essentials = view.findViewById<TextView>(R.id.essentials)
@@ -43,8 +46,8 @@ class OutfitRecommendationFragment : Fragment(R.layout.fragment_outfit_recommend
             view.findViewById<View>(R.id.moodColor5)
         )
 
-        // 상세 날씨 화면으로 이동
-        detailButton.setOnClickListener {
+        // 현재 화면 탭(맞춤 옷차림)은 동작 없음, 오른쪽 탭을 누르면 상세날씨로 이동
+        tabDetail.setOnClickListener {
             findNavController().navigate(
                 R.id.action_outfitRecommendationFragment_to_weatherDetailFragment
             )
@@ -79,7 +82,6 @@ class OutfitRecommendationFragment : Fragment(R.layout.fragment_outfit_recommend
             // ──────────────
             // 기분 색상 섹션 처리
             // ──────────────
-
             if (ui.moodColors.isEmpty()) {
                 // 스킵한 경우: 색상 섹션 전체 숨김
                 moodSection.visibility = View.GONE

@@ -111,7 +111,7 @@
     <!-- ✅ 상세 날씨 로딩 화면 -->
     <fragment
         android:id="@+id/detailWeatherLoadingFragment"
-        android:name="com.smartapp.dailyweather.ui.home.DetailWeatherLoadingFragment"
+        android:name="com.smartapp.dailyweather.ui.home.DetailLoadingFragment"
         android:label="DetailWeatherLoadingFragment"
         tools:layout="@layout/fragment_detailweather_loading">
 

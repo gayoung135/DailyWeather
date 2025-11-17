@@ -1,4 +1,3 @@
-// ui/home/WeatherDetailFragment.kt
 package com.smartapp.dailyweather.ui.home
 
 import android.os.Bundle
@@ -18,7 +17,9 @@ class WeatherDetailFragment : Fragment(R.layout.fragment_weather_detail) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val backButton = view.findViewById<MaterialButton>(R.id.backButton)
+        val tabOutfit = view.findViewById<MaterialButton>(R.id.tabOutfit)
+        val tabDetail = view.findViewById<MaterialButton>(R.id.tabDetail)
+
         val locationText = view.findViewById<TextView>(R.id.locationText)
         val dateText = view.findViewById<TextView>(R.id.dateText)
         val temperatureText = view.findViewById<TextView>(R.id.temperatureText)
@@ -57,11 +58,14 @@ class WeatherDetailFragment : Fragment(R.layout.fragment_weather_detail) {
             view.findViewById<TextView>(R.id.rain7)
         )
 
-        backButton.setOnClickListener {
+        // 왼쪽 탭(맞춤 옷차림)을 누르면 이전 화면으로 이동
+        tabOutfit.setOnClickListener {
             findNavController().navigateUp()
         }
+        // 오른쪽 탭(상세 날씨)은 현재 화면이라 따로 동작 없음
+        tabDetail.isClickable = false
 
-        //  이미 uiState 가 있으면 재요청 안 함
+        // 이미 uiState 가 있으면 재요청 안 함
         if (viewModel.uiState.value == null) {
             viewModel.loadDetailWeather()
         }
