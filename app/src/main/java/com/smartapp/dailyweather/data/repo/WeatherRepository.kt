@@ -186,7 +186,62 @@ class WeatherRepository(
         Log.d("WeatherRepo", "==== POP(강수확률) 조회 완료 ====")
 
         return pop
+    }
 
+    /**
+     * 단기예보에서 특정 날짜의 TMP 전체를 모아서
+     * "하루 최저/최고 기온"을 구하는 헬퍼
+     *
+     * - 내일/모레 같은 가까운 날짜에만 사용하는 것을 권장
+     */
+    suspend fun getDailyMinMaxTemp(
+        grid: GridPoint,
+        targetDateKst: ZonedDateTime
+    ): Pair<Int?, Int?> {
+        val nowKst = timeProvider.nowKorea()
+        val baseTarget = if (targetDateKst.isAfter(nowKst)) nowKst else targetDateKst
+
+        val (baseDate, baseTime) = computeBaseDateTime(baseTarget)
+
+        Log.d("WeatherRepo", "==== 일최저/최고 TMP 조회 시작 ====")
+        Log.d("WeatherRepo", "targetDateKst(하루 기준) = $targetDateKst")
+        Log.d("WeatherRepo", "baseTarget(KST): $baseTarget")
+        Log.d("WeatherRepo", " [DailyTMP] API 요청 base_date=$baseDate, base_time=$baseTime")
+
+        val res = api.getShortTermForecast(
+            baseDate = baseDate,
+            baseTime = baseTime,
+            nx = grid.x,
+            ny = grid.y,
+            numOfRows = 1000
+        )
+
+        val items = res.response?.body?.items?.item.orEmpty()
+        if (items.isEmpty()) {
+            Log.w("WeatherRepo", " [DailyTMP] 응답 item=0 → null 반환")
+            return null to null
+        }
+
+        val dateStr = targetDateKst.toLocalDate()
+            .format(DateTimeFormatter.BASIC_ISO_DATE)
+
+        val tmpList = items.filter { it.category == "TMP" && it.fcstDate == dateStr }
+        if (tmpList.isEmpty()) {
+            Log.w("WeatherRepo", " [DailyTMP] date=$dateStr 에 대한 TMP 없음")
+            return null to null
+        }
+
+        val temps = tmpList.mapNotNull { it.fcstValue?.toIntOrNull() }
+        if (temps.isEmpty()) {
+            Log.w("WeatherRepo", " [DailyTMP] TMP fcstValue 파싱 실패 date=$dateStr")
+            return null to null
+        }
+
+        val min = temps.minOrNull()
+        val max = temps.maxOrNull()
+
+        Log.d("WeatherRepo", " [DailyTMP] 일최저=$min, 일최고=$max (date=$dateStr)")
+        return min to max
     }
 
     // "HHmm" 문자열끼리 시(hour) 차이 절댓값
@@ -208,7 +263,6 @@ class WeatherRepository(
 
         return String.format("%02d00", hour)
     }
-
 
     /**
      * KMA 단기예보 base_time 규칙에 맞게

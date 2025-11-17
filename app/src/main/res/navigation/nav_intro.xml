@@ -81,7 +81,7 @@
             app:destination="@id/outfitLoadingFragment" />
     </fragment>
 
-    <!-- 공통 로딩 화면 -->
+    <!-- 공통 로딩 화면 (코디 추천 + 오늘 날씨 준비) -->
     <fragment
         android:id="@+id/outfitLoadingFragment"
         android:name="com.smartapp.dailyweather.ui.home.OutfitLoadingFragment"
@@ -102,10 +102,25 @@
         android:label="OutfitRecommendationFragment"
         tools:layout="@layout/fragment_outfit_recommendation">
 
-        <!-- 상세 날씨로 이동 -->
+        <!-- ✅ 상세 날씨 로딩 화면으로 이동 (기존 액션 id 그대로 사용) -->
         <action
             android:id="@+id/action_outfitRecommendationFragment_to_weatherDetailFragment"
-            app:destination="@id/weatherDetailFragment" />
+            app:destination="@id/detailWeatherLoadingFragment" />
+    </fragment>
+
+    <!-- ✅ 상세 날씨 로딩 화면 -->
+    <fragment
+        android:id="@+id/detailWeatherLoadingFragment"
+        android:name="com.smartapp.dailyweather.ui.home.DetailWeatherLoadingFragment"
+        android:label="DetailWeatherLoadingFragment"
+        tools:layout="@layout/fragment_detailweather_loading">
+
+        <!-- 로딩 끝나면 진짜 상세 화면으로 이동, 로딩은 스택에서 제거 -->
+        <action
+            android:id="@+id/action_detailWeatherLoadingFragment_to_weatherDetailFragment"
+            app:destination="@id/weatherDetailFragment"
+            app:popUpTo="@id/detailWeatherLoadingFragment"
+            app:popUpToInclusive="true" />
     </fragment>
 
     <!-- 상세 날씨 화면 -->

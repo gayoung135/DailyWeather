@@ -31,7 +31,7 @@ class OutfitLoadingFragment : Fragment(R.layout.fragment_outfit_loading) {
                 return@observe
             }
 
-            // 코디 + 날씨가 전부 준비 완료 → 코디 추천 화면으로 이동
+            // 코디 전부 준비 완료 → 코디 추천 화면으로 이동
             findNavController().navigate(
                 R.id.action_outfitLoadingFragment_to_outfitRecommendationFragment
             )
@@ -58,20 +58,7 @@ class OutfitLoadingFragment : Fragment(R.layout.fragment_outfit_loading) {
                     second.has(CategoryIds.OUTER) &&
                     second.has(CategoryIds.ACC)
 
-        // 날씨 텍스트가 플레이스홀더가 아니어야 함
-        fun notPlaceholder(text: String?): Boolean {
-            if (text.isNullOrBlank()) return false
-            if (text == "-" || text == "-°C") return false
-            if (text == "NULL" || text == "NULL°C" || text == "NULL%") return false
-            return true
-        }
-
-        val weatherReady =
-            notPlaceholder(ui.temperatureText) &&
-                    notPlaceholder(ui.airQualityText) &&
-                    notPlaceholder(ui.rainText)
-
-        // 👉 코디 + 날씨가 모두 준비되었을 때만 true
-        return outfitReady && weatherReady
+        //  코디 + 날씨가 모두 준비되었을 때만 true
+        return outfitReady
     }
 }
