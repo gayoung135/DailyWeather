@@ -133,24 +133,40 @@ class RecommendationViewModel(app: Application) : AndroidViewModel(app) {
                 Log.d("RecommendVM", "POP(%)=$popPercent, rainText=$rainText")
 
                 // ─────────────────────────────
-                // 4-1) 추천 생성 + DB 저장
+                // 4) 코디 추천: DB에 있으면 재사용, 없으면 새로 생성
                 // ─────────────────────────────
-                Log.d("RecommendVM", "추천 생성 시작...")
-                recommendRepo.createRecommendationForLatestState(
-                    sidoName = sidoName,
-                    moodCode = moodCode
-                )
 
-                // 4-2) DB에서 다시 읽어오기 (moodId 포함)
-                val domain: RecommendationWithMood =
+                // 4-1) 우선 DB에 저장된 코디 세트가 있는지 시도
+                val cachedDomain: RecommendationWithMood? = try {
+                    val domain = recommendRepo.loadRecommendationFromDbForLatestState()
+                    Log.d("RecommendVM", "기존 저장된 코디 세트 발견 → 재사용")
+                    domain
+                } catch (e: Exception) {
+                    Log.w(
+                        "RecommendVM",
+                        "저장된 코디 세트 없음 또는 로드 실패 → 새로 생성 예정: ${e.message}"
+                    )
+                    null
+                }
+
+                // 4-2) 없으면 새로 생성 + DB 저장 후 다시 로드
+                val finalDomain: RecommendationWithMood = if (cachedDomain != null) {
+                    cachedDomain
+                } else {
+                    Log.d("RecommendVM", "저장된 코디 없음 → 새 추천 생성 시작...")
+                    recommendRepo.createRecommendationForLatestState(
+                        sidoName = sidoName,
+                        moodCode = moodCode
+                    )
                     recommendRepo.loadRecommendationFromDbForLatestState()
+                }
 
                 // 5) moodId 기반 색상 로드
-                val moodColors = loadMoodColorsForMood(domain.moodId)
+                val moodColors = loadMoodColorsForMood(finalDomain.moodId)
 
                 // 6) UI 모델로 변환 (온도/미세먼지/강수확률 텍스트 포함)
                 val uiModel = RecommendationUiModel.fromDomain(
-                    domain = domain,
+                    domain = finalDomain,
                     moodColors = moodColors,
                     temperatureText = tempText,
                     airQualityText = airText,

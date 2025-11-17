@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <navigation
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -7,23 +6,25 @@
     android:id="@+id/nav_intro"
     app:startDestination="@id/networkGateFragment">
 
+    <!-- 네트워크 게이트 -->
+    <fragment
+        android:id="@+id/networkGateFragment"
+        android:name="com.smartapp.dailyweather.ui.intro.NetworkGateFragment"
+        android:label="Gate" />
+
+    <!-- 위치 실패 -->
     <fragment
         android:id="@+id/locationFailFragment"
         android:name="com.smartapp.dailyweather.ui.intro.LocationFailFragment"
         android:label="LocationFailFragment"
-        tools:layout="@layout/fragment_location_fail" >
+        tools:layout="@layout/fragment_location_fail">
+
         <action
             android:id="@+id/action_locationFailFragment_to_manualLocationFragment"
             app:destination="@id/manualLocationFragment" />
     </fragment>
 
-    <fragment
-        android:id="@+id/networkGateFragment"
-        android:name="com.smartapp.dailyweather.ui.intro.NetworkGateFragment"
-        android:label="Gate" >
-        <!-- 필요시 action 추가 -->
-    </fragment>
-
+    <!-- GPS 자동 위치 -->
     <fragment
         android:id="@+id/locationGpsFragment"
         android:name="com.smartapp.dailyweather.ui.intro.LocationGpsFragment"
@@ -32,23 +33,28 @@
         <action
             android:id="@+id/action_locationGps_to_selectQuestion"
             app:destination="@id/selectQuestionFragment" />
+
         <action
             android:id="@+id/action_locationGpsFragment_to_locationFailFragment"
             app:destination="@id/locationFailFragment" />
+
         <action
             android:id="@+id/action_locationGpsFragment_to_manualLocationFragment"
             app:destination="@id/manualLocationFragment" />
     </fragment>
 
+    <!-- 수동 위치 -->
     <fragment
         android:id="@+id/manualLocationFragment"
         android:name="com.smartapp.dailyweather.ui.intro.ManualLocationFragment"
         android:label="ManualLocationFragment">
+
         <action
             android:id="@+id/action_manualLocationFragment_to_selectQuestionFragment"
             app:destination="@id/selectQuestionFragment" />
     </fragment>
 
+    <!-- 질문 선택 -->
     <fragment
         android:id="@+id/selectQuestionFragment"
         android:name="com.smartapp.dailyweather.ui.intro.SelectQuestionFragment"
@@ -57,30 +63,52 @@
         <action
             android:id="@+id/action_selectQuestionFragment_to_mainQuestionFragment"
             app:destination="@id/mainQuestionFragment" />
+
+        <!-- 로딩 화면 (코디 + 오늘날씨 + 중기예보 전부 준비) -->
         <action
-            android:id="@+id/action_selectQuestionFragment_to_outfitRecommendationFragment"
-            app:destination="@id/outfitRecommendationFragment" />
+            android:id="@+id/action_selectQuestionFragment_to_outfitLoadingFragment"
+            app:destination="@id/outfitLoadingFragment" />
     </fragment>
+
+    <!-- 질문 상세 -->
     <fragment
         android:id="@+id/mainQuestionFragment"
         android:name="com.smartapp.dailyweather.ui.question.MainQuestionFragment"
-        android:label="MainQuestionFragment" >
+        android:label="MainQuestionFragment">
+
         <action
-            android:id="@+id/action_mainQuestionFragment_to_outfitRecommendationFragment"
-            app:destination="@id/outfitRecommendationFragment" />
+            android:id="@+id/action_mainQuestionFragment_to_outfitLoadingFragment"
+            app:destination="@id/outfitLoadingFragment" />
     </fragment>
 
+    <!-- 공통 로딩 화면 -->
+    <fragment
+        android:id="@+id/outfitLoadingFragment"
+        android:name="com.smartapp.dailyweather.ui.home.OutfitLoadingFragment"
+        android:label="OutfitLoadingFragment"
+        tools:layout="@layout/fragment_outfit_loading">
+
+        <action
+            android:id="@+id/action_outfitLoadingFragment_to_outfitRecommendationFragment"
+            app:destination="@id/outfitRecommendationFragment"
+            app:popUpTo="@id/outfitLoadingFragment"
+            app:popUpToInclusive="true" />
+    </fragment>
+
+    <!-- 코디 추천 화면 -->
     <fragment
         android:id="@+id/outfitRecommendationFragment"
         android:name="com.smartapp.dailyweather.ui.home.OutfitRecommendationFragment"
         android:label="OutfitRecommendationFragment"
         tools:layout="@layout/fragment_outfit_recommendation">
 
+        <!-- 상세 날씨로 이동 -->
         <action
             android:id="@+id/action_outfitRecommendationFragment_to_weatherDetailFragment"
             app:destination="@id/weatherDetailFragment" />
     </fragment>
 
+    <!-- 상세 날씨 화면 -->
     <fragment
         android:id="@+id/weatherDetailFragment"
         android:name="com.smartapp.dailyweather.ui.home.WeatherDetailFragment"

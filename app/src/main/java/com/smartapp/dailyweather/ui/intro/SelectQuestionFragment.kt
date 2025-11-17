@@ -84,7 +84,7 @@ class SelectQuestionFragment : Fragment() {
 
                 // 그 다음에 화면 이동
                 findNavController().navigate(
-                    R.id.action_selectQuestionFragment_to_outfitRecommendationFragment
+                    R.id.action_selectQuestionFragment_to_outfitLoadingFragment
                 )
             }
         }

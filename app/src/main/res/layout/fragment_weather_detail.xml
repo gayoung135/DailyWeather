@@ -37,10 +37,9 @@
             android:orientation="vertical"
             android:padding="24dp"
             android:translationZ="4dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintTop_toBottomOf="@id/backButton"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/backButton">
+            app:layout_constraintEnd_toEndOf="parent">
 
             <!-- 위치 및 날짜 -->
             <TextView
@@ -62,7 +61,7 @@
                 android:textColor="#555555"
                 android:textSize="16sp" />
 
-            <!-- 온도 및 날씨 설명 -->
+            <!-- 온도 -->
             <TextView
                 android:id="@+id/temperatureText"
                 android:layout_width="wrap_content"
@@ -74,74 +73,82 @@
                 android:textSize="48sp"
                 android:textStyle="bold" />
 
+            <!-- 설명 -->
             <TextView
                 android:id="@+id/weatherDescription"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="24dp"
-                android:gravity="center"
-                android:text="날씨 요약 정보"
+                android:text="현재 기온과 대기질, 강수확률을 종합한 상세 정보입니다."
                 android:textColor="#555555"
-                android:textSize="18sp" />
+                android:textSize="18sp"
+                android:gravity="center" />
 
-            <!-- 날씨 요약 카드 -->
+            <!-- 오늘 요약 카드 -->
             <LinearLayout
+                android:id="@+id/todaySummaryCard"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="24dp"
                 android:background="@drawable/rounded_box"
                 android:orientation="vertical"
-                android:padding="16dp">
+                android:padding="16dp"
+                android:layout_marginBottom="24dp">
 
                 <TextView
+                    android:id="@+id/summaryAmPmText"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="8dp"
-                    android:text="오전: undefined / 오후: undefined"
+                    android:text="오전:  -  / 오후:  -"
                     android:textColor="#333333"
-                    android:textSize="16sp" />
+                    android:textSize="16sp"
+                    android:layout_marginBottom="8dp" />
 
                 <TextView
+                    android:id="@+id/currentTempSummaryText"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="8dp"
-                    android:text="현재 온도: NULL°C"
+                    android:text="현재 온도: -°C"
                     android:textColor="#333333"
-                    android:textSize="16sp" />
+                    android:textSize="16sp"
+                    android:layout_marginBottom="8dp" />
 
                 <TextView
+                    android:id="@+id/pm10Text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="8dp"
-                    android:text="미세먼지: NULL"
+                    android:text="미세먼지: -"
                     android:textColor="#333333"
-                    android:textSize="16sp" />
+                    android:textSize="16sp"
+                    android:layout_marginBottom="8dp" />
 
                 <TextView
+                    android:id="@+id/popText"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="강수확률: NULL%"
+                    android:text="강수확률: -%"
                     android:textColor="#333333"
                     android:textSize="16sp" />
             </LinearLayout>
 
-            <!-- 최저/최고 카드 -->
+            <!-- 7일 예보 카드 -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="24dp"
                 android:background="@drawable/rounded_box"
                 android:orientation="vertical"
                 android:padding="16dp">
 
-                <!-- 반복 항목: 날짜 + 최저/최고 + 강수량 -->
+                <!-- ========================= -->
+                <!-- ====== 1일차 라인 ======== -->
+                <!-- ========================= -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="8dp"
-                    android:orientation="horizontal">
+                    android:orientation="horizontal"
+                    android:layout_marginBottom="8dp">
 
                     <TextView
+                        android:id="@+id/date1"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
@@ -150,6 +157,7 @@
                         android:textSize="16sp" />
 
                     <TextView
+                        android:id="@+id/temp1"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
@@ -159,213 +167,77 @@
                         android:textSize="16sp" />
 
                     <TextView
+                        android:id="@+id/rain1"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:gravity="end"
-                        android:text="0.0mm"
+                        android:text="0%"
                         android:textColor="#333333"
                         android:textSize="16sp" />
                 </LinearLayout>
 
-                <!-- 여기에 6개 더 복사해서 날짜/기온/강수량만 바꿔주면 돼 -->
+                <!-- ========================= -->
+                <!-- ====== 2일차 ============ -->
+                <!-- ========================= -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="8dp"
-                    android:orientation="horizontal">
+                    android:orientation="horizontal"
+                    android:layout_marginBottom="8dp">
 
-                    <TextView
+                    <TextView android:id="@+id/date2"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="--월 --일 (-)"
-                        android:textColor="#333333"
-                        android:textSize="16sp" />
+                        android:text="--월 --일 (-)" />
 
-                    <TextView
+                    <TextView android:id="@+id/temp2"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:gravity="center"
-                        android:text="최저° / 최고°"
-                        android:textColor="#333333"
-                        android:textSize="16sp" />
+                        android:text="최저° / 최고°" />
 
-                    <TextView
+                    <TextView android:id="@+id/rain2"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:gravity="end"
-                        android:text="0.0mm"
-                        android:textColor="#333333"
-                        android:textSize="16sp" />
+                        android:text="0%" />
                 </LinearLayout>
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="8dp"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="--월 --일 (-)"
-                        android:textColor="#333333"
-                        android:textSize="16sp" />
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:gravity="center"
-                        android:text="최저° / 최고°"
-                        android:textColor="#333333"
-                        android:textSize="16sp" />
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:gravity="end"
-                        android:text="0.0mm"
-                        android:textColor="#333333"
-                        android:textSize="16sp" />
+                <!-- 3~7일차 동일 패턴 -->
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginBottom="8dp">
+                    <TextView android:id="@+id/date3" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="--월 --일 (-)" />
+                    <TextView android:id="@+id/temp3" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:gravity="center" android:text="최저° / 최고°" />
+                    <TextView android:id="@+id/rain3" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:gravity="end" android:text="0%" />
                 </LinearLayout>
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="8dp"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="--월 --일 (-)"
-                        android:textColor="#333333"
-                        android:textSize="16sp" />
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:gravity="center"
-                        android:text="최저° / 최고°"
-                        android:textColor="#333333"
-                        android:textSize="16sp" />
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:gravity="end"
-                        android:text="0.0mm"
-                        android:textColor="#333333"
-                        android:textSize="16sp" />
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginBottom="8dp">
+                    <TextView android:id="@+id/date4" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="--월 --일 (-)" />
+                    <TextView android:id="@+id/temp4" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:gravity="center" android:text="최저° / 최고°" />
+                    <TextView android:id="@+id/rain4" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:gravity="end" android:text="0%" />
                 </LinearLayout>
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="8dp"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="--월 --일 (-)"
-                        android:textColor="#333333"
-                        android:textSize="16sp" />
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:gravity="center"
-                        android:text="최저° / 최고°"
-                        android:textColor="#333333"
-                        android:textSize="16sp" />
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:gravity="end"
-                        android:text="0.0mm"
-                        android:textColor="#333333"
-                        android:textSize="16sp" />
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginBottom="8dp">
+                    <TextView android:id="@+id/date5" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="--월 --일 (-)" />
+                    <TextView android:id="@+id/temp5" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:gravity="center" android:text="최저° / 최고°" />
+                    <TextView android:id="@+id/rain5" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:gravity="end" android:text="0%" />
                 </LinearLayout>
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="8dp"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="--월 --일 (-)"
-                        android:textColor="#333333"
-                        android:textSize="16sp" />
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:gravity="center"
-                        android:text="최저° / 최고°"
-                        android:textColor="#333333"
-                        android:textSize="16sp" />
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:gravity="end"
-                        android:text="0.0mm"
-                        android:textColor="#333333"
-                        android:textSize="16sp" />
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginBottom="8dp">
+                    <TextView android:id="@+id/date6" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="--월 --일 (-)" />
+                    <TextView android:id="@+id/temp6" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:gravity="center" android:text="최저° / 최고°" />
+                    <TextView android:id="@+id/rain6" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:gravity="end" android:text="0%" />
                 </LinearLayout>
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="8dp"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="--월 --일 (-)"
-                        android:textColor="#333333"
-                        android:textSize="16sp" />
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:gravity="center"
-                        android:text="최저° / 최고°"
-                        android:textColor="#333333"
-                        android:textSize="16sp" />
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:gravity="end"
-                        android:text="0.0mm"
-                        android:textColor="#333333"
-                        android:textSize="16sp" />
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal">
+                    <TextView android:id="@+id/date7" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="--월 --일 (-)" />
+                    <TextView android:id="@+id/temp7" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:gravity="center" android:text="최저° / 최고°" />
+                    <TextView android:id="@+id/rain7" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:gravity="end" android:text="0%" />
                 </LinearLayout>
+
             </LinearLayout>
         </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>

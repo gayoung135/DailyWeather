@@ -141,7 +141,7 @@ class MainQuestionFragment : Fragment() {
 
                 Log.d("MainQuestion", "질문 응답 저장 완료 → 추천 화면 이동")
                 findNavController().navigate(
-                    R.id.action_mainQuestionFragment_to_outfitRecommendationFragment
+                    R.id.action_mainQuestionFragment_to_outfitLoadingFragment
                 )
             }
         }

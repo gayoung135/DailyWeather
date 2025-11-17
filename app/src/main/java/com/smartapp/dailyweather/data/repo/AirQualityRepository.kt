@@ -5,6 +5,15 @@ import com.smartapp.dailyweather.BuildConfig
 import com.smartapp.dailyweather.data.remote.AirKoreaApi
 import com.smartapp.dailyweather.data.remote.RetrofitClient
 
+/**
+ * UI에서 쉽게 쓰도록 가공한 모델
+ */
+data class AirQualityUi(
+    val code: String,           // good / normal / bad / hazard
+    val airQualityLabel: String // "좋음", "보통", "나쁨", "매우나쁨"
+)
+
+
 class AirQualityRepository(
     private val api: AirKoreaApi = RetrofitClient.airKoreaApi,
     private val serviceKey: String =
@@ -30,33 +39,48 @@ class AirQualityRepository(
 
         val items = res.response?.body?.items.orEmpty()
         if (items.isEmpty()) {
-            Log.w("AirRepo", "no air items for sido=$sidoName, fallback=normal")
+            Log.w("AirRepo", "no air items for sido=$sidoName → fallback=normal")
             return "normal"
         }
 
-        // 가장 최근 시각 한 건 선택
+        // 🔥 가장 최신 시간 데이터 선택
         val latest = items.maxByOrNull { it.dataTime ?: "" }!!
 
-        val gradeStr = latest.pm25Grade1h?.trim()
+        // 🔥 등급 우선순위: pm25Grade1h > pm25Grade > khaiGrade
+        val gradeRaw = latest.pm25Grade1h?.trim()
             ?.takeIf { it.isNotEmpty() && it != "-" }
             ?: latest.pm25Grade?.trim()
             ?: latest.khaiGrade?.trim()
 
-        Log.d(
-            "AirRepo",
-            "sido=$sidoName, dataTime=${latest.dataTime}, gradeRaw=$gradeStr"
-        )
+        Log.d("AirRepo", "sido=$sidoName, dataTime=${latest.dataTime}, raw=$gradeRaw")
 
-        // AirKorea grade → 우리 코드
-        return when (gradeStr) {
-            "1" -> "good"    // 좋음
-            "2" -> "normal"  // 보통
-            "3" -> "bad"     // 나쁨 → 기본 마스크
-            "4" -> "hazard"  // 매우나쁨 → KF94
+        return when (gradeRaw) {
+            "1" -> "good"
+            "2" -> "normal"
+            "3" -> "bad"
+            "4" -> "hazard"
             else -> {
-                Log.w("AirRepo", "unknown grade=$gradeStr, fallback=normal")
+                Log.w("AirRepo", "unknown grade=$gradeRaw → fallback=normal")
                 "normal"
             }
         }
+    }
+
+    /**
+     *  UI에서 바로 쓰려면 이 함수 사용
+     * AirQualityUi(code, label) 형태로 즉시 사용 가능
+     */
+    suspend fun getAirForSido(sidoName: String): AirQualityUi {
+        val code = getAirQualityCodeForRegion(sidoName)
+
+        val label = when (code) {
+            "good" -> "좋음"
+            "normal" -> "보통"
+            "bad" -> "나쁨"
+            "hazard" -> "매우 나쁨"
+            else -> "정보 없음"
+        }
+
+        return AirQualityUi(code, label)
     }
 }
