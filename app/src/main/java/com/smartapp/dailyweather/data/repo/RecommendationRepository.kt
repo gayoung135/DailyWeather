@@ -207,7 +207,7 @@ class RecommendationRepository(
             excludeItems = excludeItems
         )
 
-        // BOTTOM
+        // BOTTOM (상의와 겹치지 않게 제외 목록 추가)
         val bottomExclude = excludeItems + setOfNotNull(topId)
         val bottomId = pickOneItemForCategory(
             categoryId = CategoryIds.BOTTOM,
@@ -228,9 +228,21 @@ class RecommendationRepository(
             allowEmpty = true
         )
 
-        val clothIds = listOfNotNull(topId, bottomId, outerId)
+        // ACC(악세사리, 없어도 됨)
+        val accExclude = outerExclude + setOfNotNull(outerId)
+        val accId = pickOneItemForCategory(
+            categoryId = CategoryIds.ACC,
+            tempId = tempId,
+            purposeId = purposeId,
+            styleId = styleId,
+            excludeItems = accExclude,
+            allowEmpty = true
+        )
 
-        // 여기서 necessity(마스크+우산) item 추가
+        // 의류 + 악세사리 (NECESSITY 제외)
+        val clothIds = listOfNotNull(topId, bottomId, outerId, accId)
+
+        // 여기서 necessity(마스크+우산 등) item 추가
         val allItemIds = clothIds + necessityItemIds
 
         val domainItems = allItemIds.map { itemId ->
@@ -242,6 +254,9 @@ class RecommendationRepository(
                 categoryId = entity?.categoryId ?: CategoryIds.NECESSITY
             )
         }
+
+        // 디버깅용 로그
+        Log.d("RecommendRepo", "pickCoordinationSet 결과 → cloth=$clothIds, necessity=$necessityItemIds")
 
         return CoordinationSetDomain(items = domainItems)
     }
