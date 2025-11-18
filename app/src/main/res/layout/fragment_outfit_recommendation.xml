@@ -131,7 +131,7 @@
                             android:id="@+id/tempText"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="온도\n-°C"
+                            android:text="코디 온도\n-°C"
                             android:textSize="16sp"
                             android:textColor="#555555"
                             android:gravity="center" />
