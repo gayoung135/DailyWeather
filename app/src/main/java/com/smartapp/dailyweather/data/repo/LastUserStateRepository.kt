@@ -20,10 +20,14 @@ class LastUserStateRepository(
      * 현재(또는 사용자가 선택한 targetTimeKst)의 기온을 조회하여
      * LastUserStateEntity 1건을 저장한다.
      *
+     * @param regionName    사용자가 선택한 시/도 이름 (예: "부산광역시"), 없으면 null
+     * @param subRegionName 사용자가 선택한 시/군/구 이름 (예: "연제구"), 없으면 null
      * @param moodCode 사용자가 선택한 기분 코드 (good/normal/bad), 없으면 null
      */
     suspend fun saveWithCurrentTemp(
         grid: GridPoint,
+        regionName: String?,
+        subRegionName: String?,
         targetTimeKst: ZonedDateTime,
         purposeCode: String?,
         styleCode: String?,
@@ -55,6 +59,8 @@ class LastUserStateRepository(
         val entity = LastUserStateEntity(
             x = grid.x,
             y = grid.y,
+            regionName = regionName,
+            subRegionName = subRegionName,
             tempId = tempBucket.tempId,   // temp_range.id (버킷 id)를 tempId로 저장
             purposeId = purposeId,
             styleId = styleId,

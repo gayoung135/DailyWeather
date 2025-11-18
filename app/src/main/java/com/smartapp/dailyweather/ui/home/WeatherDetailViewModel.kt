@@ -83,41 +83,53 @@ class WeatherDetailViewModel : ViewModel() {
                 // 강수확률
                 val pop = weatherRepo.getPopAt(grid, now) ?: 0
 
-                // 위치 이름: Geocoder + Region 좌표 매칭(연제구 같은 케이스 보완)
+                // ---------------- 위치 이름 계산 ----------------
+
+                // 1순위: 사용자가 선택했을 때 DB에 저장된 행정구역 이름
+                var admin: String? = state.regionName      // 시/도
+                var cityOrGu: String? = state.subRegionName // 시/군/구
+
                 val geocoder = Geocoder(appContext, Locale.KOREA)
                 val latLng = KmaGridConverter.toLatLng(grid.x, grid.y)
 
-                val address = withContext(Dispatchers.IO) {
-                    try {
-                        geocoder.getFromLocation(
-                            latLng.latitude,
-                            latLng.longitude,
-                            1
-                        )?.firstOrNull()
-                    } catch (_: Exception) {
-                        null
+                // 2순위: DB에 값이 비어 있을 때만 Geocoder 로 보완
+                val address = if (admin.isNullOrBlank() || cityOrGu.isNullOrBlank()) {
+                    withContext(Dispatchers.IO) {
+                        try {
+                            geocoder.getFromLocation(
+                                latLng.latitude,
+                                latLng.longitude,
+                                1
+                            )?.firstOrNull()
+                        } catch (_: Exception) {
+                            null
+                        }
                     }
+                } else {
+                    null
                 }
 
-                // Geocoder가 주는 시/도, 시/군/구 (있으면 사용)
-                var admin = address?.adminArea?.takeIf { it.isNotBlank() }
-                var cityOrGu =
-                    address?.locality?.takeIf { it.isNotBlank() }
-                        ?: address?.subLocality?.takeIf { it.isNotBlank() }
-                        ?: address?.subAdminArea?.takeIf { it.isNotBlank() }
+                if (address != null) {
+                    val gcAdmin = address.adminArea?.takeIf { it.isNotBlank() }
+                    val gcCityOrGu =
+                        address.locality?.takeIf { it.isNotBlank() }
+                            ?: address.subLocality?.takeIf { it.isNotBlank() }
+                            ?: address.subAdminArea?.takeIf { it.isNotBlank() }
 
-                Log.d(
-                    "WeatherDetailVM",
-                    "addr admin=${address?.adminArea}, locality=${address?.locality}, " +
-                            "subLocality=${address?.subLocality}, subAdmin=${address?.subAdminArea}"
-                )
+                    Log.d(
+                        "WeatherDetailVM",
+                        "addr admin=${address.adminArea}, locality=${address.locality}, " +
+                                "subLocality=${address.subLocality}, subAdmin=${address.subAdminArea}"
+                    )
 
-                // 연제구처럼 Geocoder가 구 이름을 안 주는 경우 보완:
-                // Region enum에 정의된 좌표와 가장 가까운 시/군/구를 찾아서 보정
+                    if (admin.isNullOrBlank() && !gcAdmin.isNullOrBlank()) admin = gcAdmin
+                    if (cityOrGu.isNullOrBlank() && !gcCityOrGu.isNullOrBlank()) cityOrGu = gcCityOrGu
+                }
+
+                // 3순위: 그래도 비면 위경도 기반 Region 추정
                 if (admin.isNullOrBlank() || cityOrGu.isNullOrBlank()) {
                     val guessed = guessRegionFromLatLng(latLng.latitude, latLng.longitude)
                     if (guessed != null) {
-                        // 시/도 또는 구 이름이 비어있을 때만 보정
                         if (admin.isNullOrBlank()) admin = guessed.first
                         if (cityOrGu.isNullOrBlank()) cityOrGu = guessed.second
                         Log.d(
@@ -127,12 +139,12 @@ class WeatherDetailViewModel : ViewModel() {
                     }
                 }
 
-                //  "시/도 + 시/군/구" 형태로 표시
+                // 최종 표시용
                 val locationName = when {
                     !admin.isNullOrBlank() && !cityOrGu.isNullOrBlank() ->
-                        "$admin $cityOrGu"          // 예: "경기도 과천시", "부산광역시 연제구"
+                        "$admin $cityOrGu"          // 예: "부산광역시 연제구"
                     !admin.isNullOrBlank() ->
-                        admin                       // 예: "서울특별시" (구 없음)
+                        admin
                     !cityOrGu.isNullOrBlank() ->
                         cityOrGu
                     else ->
@@ -141,6 +153,8 @@ class WeatherDetailViewModel : ViewModel() {
 
                 // 시/도 이름 → 미세먼지용 normalize
                 val sido = normalizeSidoName(admin ?: locationName)
+
+                // ---------------- 위치 이름 계산 끝 ----------------
 
                 // 미세먼지
                 val air = airRepo.getAirForSido(sido)
@@ -207,14 +221,7 @@ class WeatherDetailViewModel : ViewModel() {
         }
     }
 
-    /**
-     * Region enum에 정의된 모든 시/군/구 좌표와
-     * 현재 격자에서 변환한 위경도를 비교해서
-     * 가장 가까운 행정구역을 추측한다.
-     *
-     * - 수동 선택(Region 기반)일 경우: 거의 정확히 일치 → 바로 매칭
-     * - GPS 기반 등에서 Geocoder가 비어 있을 때도 fallback 용도로 사용
-     */
+    // 기존 guessRegionFromLatLng 는 그대로 사용
     private fun guessRegionFromLatLng(lat: Double, lon: Double): Pair<String, String>? {
         var bestRegionName: String? = null
         var bestSubName: String? = null
@@ -224,7 +231,6 @@ class WeatherDetailViewModel : ViewModel() {
             if (region == Region.SELECT) continue
 
             for (sub in region.subRegions) {
-                // SubRegion(name: String, lat: Double, lon: Double) 기준
                 val dLat = lat - sub.latitude
                 val dLon = lon - sub.longitude
                 val dist = dLat.pow(2) + dLon.pow(2)
@@ -237,7 +243,6 @@ class WeatherDetailViewModel : ViewModel() {
             }
         }
 
-        // 너무 먼 값이면 사용하지 않음 (대략 0.5도 정도 거리 이상이면 버림)
         return if (bestRegionName != null && bestSubName != null && bestDist < 0.25) {
             bestRegionName!! to bestSubName!!
         } else {

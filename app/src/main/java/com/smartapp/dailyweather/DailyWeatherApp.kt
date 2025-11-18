@@ -25,7 +25,7 @@ class DailyWeatherApp : Application() {
         db = Room.databaseBuilder(
             applicationContext,
             AppDatabase::class.java,
-            "DailyWeather8.db"
+            "DailyWeather10.db"
         )
             .fallbackToDestructiveMigration()
             .build()

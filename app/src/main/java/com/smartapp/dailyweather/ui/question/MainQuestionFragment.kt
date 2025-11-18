@@ -133,9 +133,24 @@ class MainQuestionFragment : Fragment() {
                 "grid=(${grid.x},${grid.y}), purpose=$purposeCode, style=$styleCode, mood=$moodCode"
             )
 
+            // LocationViewModel 에서 선택된 시/도 / 시·군·구 이름 가져오기
+            val regionName = locationViewModel.selectedRegion.value?.displayName
+            val subRegionName = locationViewModel.selectedSubRegion.value?.name
+
+            Log.d(
+                "MainQuestion",
+                "grid=(${grid.x},${grid.y}), purpose=$purposeCode, style=$styleCode, mood=$moodCode"
+            )
+            Log.d(
+                "MainQuestion",
+                "regionName=$regionName, subRegionName=$subRegionName"
+            )
+
             viewLifecycleOwner.lifecycleScope.launch {
                 mainQuestionViewModel.saveLastUserStateWithApi(
-                    grid = grid,
+                    grid = grid ,
+                    regionName = regionName,
+                    subRegionName = subRegionName,
                     selectedHourOffset = selectedHourOffset,
                     purposeCode = purposeCode,
                     styleCode = styleCode,

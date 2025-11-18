@@ -20,6 +20,15 @@ data class LastUserStateEntity(
     @ColumnInfo(name = "y")
     val y: Int,
 
+    /** 사용자가 선택한 시/도 이름 (예: "부산광역시"), 없으면 null */
+    @ColumnInfo(name = "region_name")
+    val regionName: String?,
+
+    /** 사용자가 선택한 시/군/구 이름 (예: "연제구"), 없으면 null */
+    @ColumnInfo(name = "sub_region_name")
+    val subRegionName: String?,
+
+
     /** temp_range 테이블의 PK를 가리키는 값 (버킷 id) */
     @ColumnInfo(name = "temp_id")
     val tempId: Int,

@@ -50,6 +50,8 @@ class MainQuestionViewModel(app: Application) : AndroidViewModel(app) {
 
     suspend fun saveLastUserStateWithApi(
         grid: GridPoint,
+        regionName: String?,
+        subRegionName: String?,
         selectedHourOffset: Int?,
         purposeCode: String?,
         styleCode: String?,
@@ -76,6 +78,8 @@ class MainQuestionViewModel(app: Application) : AndroidViewModel(app) {
 
         lastUserStateRepository.saveWithCurrentTemp(
             grid = grid,
+            regionName = regionName,
+            subRegionName = subRegionName,
             targetTimeKst = targetTime,
             purposeCode = purposeCode,
             styleCode = styleCode,

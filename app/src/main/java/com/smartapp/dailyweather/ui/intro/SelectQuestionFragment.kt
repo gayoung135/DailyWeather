@@ -77,6 +77,10 @@ class SelectQuestionFragment : Fragment() {
                 return@setOnClickListener
             }
 
+            // 선택된 시/도 / 시·군·구 가져오기 (수동 선택이면 값 있고, GPS면 null)
+            val regionName = locationViewModel.selectedRegion.value?.displayName
+            val subRegionName = locationViewModel.selectedSubRegion.value?.name
+
             viewLifecycleOwner.lifecycleScope.launch {
                 val now = SystemTimeProvider().nowKorea()
                 Log.d("SelectQuestion", "스킵 흐름 - now(KST) = $now")
@@ -84,6 +88,8 @@ class SelectQuestionFragment : Fragment() {
                 // suspend 함수라 여기서 끝날 때까지 기다렸다가
                 mainQuestionViewModel.saveLastUserStateWithApi(
                     grid = grid,
+                    regionName = regionName,
+                    subRegionName = subRegionName,
                     selectedHourOffset = null,
                     purposeCode = null,
                     styleCode = null,
