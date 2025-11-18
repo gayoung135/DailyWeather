@@ -80,13 +80,13 @@ class WeatherDetailViewModel : ViewModel() {
                 val amTemp = weatherRepo.getTempAt(grid, amTime)
                 val pmTemp = weatherRepo.getTempAt(grid, pmTime)
 
-                // 강수확률
+                // 강수확률 (오늘, 현재시각 기준)
                 val pop = weatherRepo.getPopAt(grid, now) ?: 0
 
                 // ---------------- 위치 이름 계산 ----------------
 
                 // 1순위: 사용자가 선택했을 때 DB에 저장된 행정구역 이름
-                var admin: String? = state.regionName      // 시/도
+                var admin: String? = state.regionName       // 시/도
                 var cityOrGu: String? = state.subRegionName // 시/군/구
 
                 val geocoder = Geocoder(appContext, Locale.KOREA)
@@ -160,7 +160,7 @@ class WeatherDetailViewModel : ViewModel() {
                 val air = airRepo.getAirForSido(sido)
                 val airText = air?.airQualityLabel ?: "알 수 없음"
 
-                // 중기예보
+                // 중기예보 (3~10일)
                 val midList = midRepo.getMidTermForecast(sido, now)
 
                 // 내일부터 7일
@@ -172,16 +172,26 @@ class WeatherDetailViewModel : ViewModel() {
 
                     var min = mid?.minTemp
                     var max = mid?.maxTemp
-                    val rain = mid?.rainProb
+                    var rain = mid?.rainProb   // ← var 로! (나중에 단기 POP로 덮어쓰기)
 
                     val dayStart = date.atStartOfDay(ZoneId.of("Asia/Seoul"))
 
-                    // 1~2일 뒤거나, 중기 값이 없으면 단기예보로 보완
+                    // 1~2일 뒤이거나, 중기 값이 없으면 단기예보 TMP 로 보완
                     if (offset <= 2 || min == null || max == null) {
                         val (shortMin, shortMax) =
                             weatherRepo.getDailyMinMaxTemp(grid, dayStart)
                         if (shortMin != null) min = shortMin
                         if (shortMax != null) max = shortMax
+                    }
+
+                    // ⭐ 1~2일차(내일/모레)는 단기 POP을 섞어서 사용
+                    if (offset <= 2) {
+                        // 그 날의 대표 시간 → 정오(12시) 기준 POP 사용
+                        val noonTime = dayStart.withHour(12).withMinute(0)
+                        val popForDay = weatherRepo.getPopAt(grid, noonTime)
+                        if (popForDay != null) {
+                            rain = popForDay
+                        }
                     }
 
                     val dateText = dayStart.format(
@@ -193,6 +203,7 @@ class WeatherDetailViewModel : ViewModel() {
                             dateText = dateText,
                             minTemp = min?.let { "${it}°" } ?: "-°",
                             maxTemp = max?.let { "${it}°" } ?: "-°",
+                            // rain 이 null이면 0%로 표시
                             rainProb = rain?.let { "${it}%" } ?: "0%"
                         )
                     )
