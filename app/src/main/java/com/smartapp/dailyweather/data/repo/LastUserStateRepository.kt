@@ -62,6 +62,7 @@ class LastUserStateRepository(
             regionName = regionName,
             subRegionName = subRegionName,
             tempId = tempBucket.tempId,   // temp_range.id (버킷 id)를 tempId로 저장
+            tempCelsius = tempValue,
             purposeId = purposeId,
             styleId = styleId,
             moodCode = moodCode,

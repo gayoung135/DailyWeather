@@ -47,6 +47,7 @@ class RecommendationViewModel(app: Application) : AndroidViewModel(app) {
             try {
                 Log.d("RecommendVM", "=== 추천 로직 시작 ===")
 
+                // 1) 마지막 사용자 상태 로드
                 val state = lastUserStateRepo.getLatestState()
                     ?: run {
                         Log.e("RecommendVM", "최근 LastUserState 없음")
@@ -55,19 +56,22 @@ class RecommendationViewModel(app: Application) : AndroidViewModel(app) {
 
                 Log.d(
                     "RecommendVM",
-                    "최근 상태: tempId=${state.tempId}, purpose=${state.purposeId}, style=${state.styleId}, grid=(${state.x}, ${state.y}), moodCode=${state.moodCode}"
+                    "최근 상태: tempId=${state.tempId}, tempCelsius=${state.tempCelsius}, " +
+                            "purpose=${state.purposeId}, style=${state.styleId}, " +
+                            "grid=(${state.x}, ${state.y}), moodCode=${state.moodCode}"
                 )
 
                 val grid = GridPoint(state.x, state.y)
 
-                // 2) 격자 → 위경도
+                // ─────────────────────────────
+                // 2) 위치 정보 (격자 → 위경도 → 행정구역)
+                // ─────────────────────────────
                 val latLng = KmaGridConverter.toLatLng(grid.x, grid.y)
                 Log.d(
                     "RecommendVM",
                     "격자→위경도 결과 lat=${latLng.latitude}, lon=${latLng.longitude}"
                 )
 
-                // 3) Geocoder → sidoName
                 val context = getApplication<Application>()
                 val geocoder = Geocoder(context, Locale.KOREA)
 
@@ -94,29 +98,38 @@ class RecommendationViewModel(app: Application) : AndroidViewModel(app) {
                 val sidoName = normalizeSidoName(adminArea)
                 Log.d("RecommendVM", "정규화된 sidoName(에어코리아용) = $sidoName")
 
-                val moodCode = state.moodCode
-
                 // ─────────────────────────────
-                // [화면용 날씨 정보 계산]
+                // 3) 화면용 날씨 정보 계산
                 // ─────────────────────────────
 
-                // 1) 온도: LastUserState에 이미 ℃ 값이 들어있다고 가정
-                val tempC = state.tempId
-                val tempText = "${tempC}°C"
+                // (1) 온도: DB에 저장해 둔 실제 기온(tempCelsius)을 그대로 사용
+                val tempC = state.tempCelsius
+                val tempText = if (tempC != null) {
+                    "${tempC}°C"
+                } else {
+                    "정보 없음"
+                }
+                Log.d("RecommendVM", "화면용 온도 tempCelsius=$tempC, text=$tempText")
 
-                // 2) 미세먼지 등급 문자열
-                val airCode = airRepo.getAirQualityCodeForRegion(sidoName)
+                // (2) 미세먼지 등급 문자열
+                val airCode = try {
+                    airRepo.getAirQualityCodeForRegion(sidoName)
+                } catch (e: Exception) {
+                    Log.e("RecommendVM", "대기질 조회 실패: ${e.message}", e)
+                    null
+                }
+
                 val airText = when (airCode) {
                     "good" -> "좋음"
                     "normal" -> "보통"
                     "bad" -> "나쁨"
                     "very_bad" -> "매우 나쁨"
-                    else -> "정보 없음"
+                    null -> "정보 없음"
+                    else -> airCode
                 }
                 Log.d("RecommendVM", "airCode=$airCode, airText=$airText")
 
-                // 3) 강수확률 POP (%)
-                //  상세날씨와 동일하게 "현재 시각(nowKst)" 기준으로 조회
+                // (3) 강수확률 POP (%): 현재 시각 기준으로 조회
                 val nowKst = timeProvider.nowKorea()
                     .withSecond(0)
                     .withNano(0)
@@ -133,8 +146,6 @@ class RecommendationViewModel(app: Application) : AndroidViewModel(app) {
                 // ─────────────────────────────
                 // 4) 코디 추천: DB에 있으면 재사용, 없으면 새로 생성
                 // ─────────────────────────────
-
-                // 4-1) 우선 DB에 저장된 코디 세트가 있는지 시도
                 val cachedDomain: RecommendationWithMood? = try {
                     val domain = recommendRepo.loadRecommendationFromDbForLatestState()
                     Log.d("RecommendVM", "기존 저장된 코디 세트 발견 → 재사용")
@@ -147,14 +158,13 @@ class RecommendationViewModel(app: Application) : AndroidViewModel(app) {
                     null
                 }
 
-                // 4-2) 없으면 새로 생성 + DB 저장 후 다시 로드
                 val finalDomain: RecommendationWithMood = if (cachedDomain != null) {
                     cachedDomain
                 } else {
                     Log.d("RecommendVM", "저장된 코디 없음 → 새 추천 생성 시작...")
                     recommendRepo.createRecommendationForLatestState(
                         sidoName = sidoName,
-                        moodCode = moodCode
+                        moodCode = state.moodCode
                     )
                     recommendRepo.loadRecommendationFromDbForLatestState()
                 }
@@ -162,7 +172,7 @@ class RecommendationViewModel(app: Application) : AndroidViewModel(app) {
                 // 5) moodId 기반 색상 로드
                 val moodColors = loadMoodColorsForMood(finalDomain.moodId)
 
-                // 6) UI 모델로 변환 (온도/미세먼지/강수확률 텍스트 포함)
+                // 6) UI 모델로 변환
                 val uiModel = RecommendationUiModel.fromDomain(
                     domain = finalDomain,
                     moodColors = moodColors,
@@ -175,7 +185,7 @@ class RecommendationViewModel(app: Application) : AndroidViewModel(app) {
                 Log.d("RecommendVM", "=== 추천 로직 완료 ===")
 
             } catch (e: Exception) {
-                Log.e("RecommendVM", " 로직 실패: ${e.message}", e)
+                Log.e("RecommendVM", "추천 로직 실패: ${e.message}", e)
             }
         }
     }

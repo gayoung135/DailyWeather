@@ -33,6 +33,11 @@ data class LastUserStateEntity(
     @ColumnInfo(name = "temp_id")
     val tempId: Int,
 
+    /** 실제 기온(℃), 처음에는 null일 수 있음 */
+    @ColumnInfo(name = "temp_celsius")
+    val tempCelsius: Int?,
+
+
     /** 목적 id (nullable) */
     @ColumnInfo(name = "purpose_id")
     val purposeId: Int?,
