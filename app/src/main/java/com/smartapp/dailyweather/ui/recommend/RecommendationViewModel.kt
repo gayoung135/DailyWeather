@@ -116,7 +116,7 @@ class RecommendationViewModel(app: Application) : AndroidViewModel(app) {
                 Log.d("RecommendVM", "airCode=$airCode, airText=$airText")
 
                 // 3) 강수확률 POP (%)
-                //    🔹 상세날씨와 동일하게 "현재 시각(nowKst)" 기준으로 조회
+                //  상세날씨와 동일하게 "현재 시각(nowKst)" 기준으로 조회
                 val nowKst = timeProvider.nowKorea()
                     .withSecond(0)
                     .withNano(0)

@@ -193,7 +193,7 @@ class ManualLocationFragment : Fragment() {
 
                 Log.d("ManualLocation", "사용자 선택 → ${region.displayName} / ${sub.name}")
 
-                // 👉 여기서 격자 변환 + 로딩 오버레이
+                // 여기서 격자 변환 + 로딩 오버레이
                 viewLifecycleOwner.lifecycleScope.launch {
                     showLoading(true)
                     try {
