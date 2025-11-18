@@ -9,7 +9,7 @@
         android:id="@+id/btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:minWidth="80dp"
+        android:minWidth="100dp"
         android:text="출근"
         android:textColor="#3E3E3E"
         app:backgroundTint="@color/white"

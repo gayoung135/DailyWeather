@@ -29,6 +29,7 @@ import com.smartapp.dailyweather.ui.intro.LocationViewModelFactory
 import kotlinx.coroutines.launch
 
 class MainQuestionFragment : Fragment() {
+    private var isTimeSelected = false //시간 토스트창관련 코드추가
     private val mainQuestionViewModel: MainQuestionViewModel by viewModels()
     lateinit var binding: FragmentMainQuestionBinding
 
@@ -95,6 +96,7 @@ class MainQuestionFragment : Fragment() {
         val btnTimeNo = view.findViewById<Button>(R.id.btnTimeNo)
 
         btnTimeYes.setOnClickListener {
+            isTimeSelected = true
             val index = timePicker.value       // 0 ~ 23
             val offset = index + 1            // +1시간 ~ +24시간
 
@@ -108,6 +110,7 @@ class MainQuestionFragment : Fragment() {
         }
 
         btnTimeNo.setOnClickListener {
+            isTimeSelected = true //시간토스트창관련코드추가
             selectedHourOffset = null
             mainQuestionViewModel.setSelectedHour(null)
 
@@ -118,6 +121,11 @@ class MainQuestionFragment : Fragment() {
         }
 
         binding.submitButton.setOnClickListener {
+            if (!isTimeSelected) {
+                Toast.makeText(requireContext(), "YES 또는 NO를 선택해주세요.", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
             val grid = locationViewModel.grid.value ?: run {
                 Toast.makeText(requireContext(), "위치 정보가 아직 없습니다.", Toast.LENGTH_SHORT).show()
                 Log.d("MainQuestion", "grid LiveData is null")
