@@ -164,15 +164,37 @@
                         android:orientation="vertical"
                         android:gravity="center">
 
+                        <!-- 제목 (굵게) -->
                         <TextView
-                            android:id="@+id/tempText"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:text="코디 온도"
+                            android:textSize="15sp"
                             android:textStyle="bold"
-                            android:text="코디 온도\n-°C"
-                            android:textSize="16sp"
-                            android:textColor="#555555"
-                            android:gravity="center" />
+                            android:textColor="#555555" />
+
+                        <!-- 아이콘 + 값 (일반체) -->
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:gravity="center_vertical"
+                            android:layout_marginTop="6dp">
+
+                            <ImageView
+                                android:layout_width="18dp"
+                                android:layout_height="18dp"
+                                android:layout_marginEnd="4dp"
+                                android:src="@drawable/ic_summary_morning" />
+
+                            <TextView
+                                android:id="@+id/tempText"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="-°C"
+                                android:textSize="16sp"
+                                android:textColor="#555555" />
+                        </LinearLayout>
                     </LinearLayout>
 
                     <!-- 미세먼지 박스 -->
@@ -186,15 +208,37 @@
                         android:orientation="vertical"
                         android:gravity="center">
 
+                        <!-- 제목 -->
                         <TextView
-                            android:id="@+id/pmText"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:text="미세먼지"
+                            android:textSize="15sp"
                             android:textStyle="bold"
-                            android:text="미세먼지\n-"
-                            android:textSize="16sp"
-                            android:textColor="#555555"
-                            android:gravity="center" />
+                            android:textColor="#555555" />
+
+                        <!-- 아이콘 + 값 -->
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:gravity="center_vertical"
+                            android:layout_marginTop="6dp">
+
+                            <ImageView
+                                android:layout_width="18dp"
+                                android:layout_height="18dp"
+                                android:layout_marginEnd="4dp"
+                                android:src="@drawable/ic_summary_pm10" />
+
+                            <TextView
+                                android:id="@+id/pmText"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="-"
+                                android:textSize="16sp"
+                                android:textColor="#555555" />
+                        </LinearLayout>
                     </LinearLayout>
 
                     <!-- 강수확률 박스 -->
@@ -207,433 +251,444 @@
                         android:orientation="vertical"
                         android:gravity="center">
 
+                        <!-- 제목 -->
                         <TextView
-                            android:id="@+id/rainText"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:text="강수량"
+                            android:textSize="15sp"
                             android:textStyle="bold"
-                            android:text="강수확률\n-"
-                            android:textSize="16sp"
-                            android:textColor="#555555"
-                            android:gravity="center" />
+                            android:textColor="#555555" />
+
+                        <!-- 아이콘 + 값 -->
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:gravity="center_vertical"
+                            android:layout_marginTop="6dp">
+
+                            <ImageView
+                                android:layout_width="18dp"
+                                android:layout_height="18dp"
+                                android:layout_marginEnd="4dp"
+                                android:src="@drawable/ic_summary_pop" />
+
+                            <TextView
+                                android:id="@+id/rainText"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="-"
+                                android:textSize="16sp"
+                                android:textColor="#555555" />
+                        </LinearLayout>
                     </LinearLayout>
                 </LinearLayout>
 
-                <!--🔹 추천 코디 전체 그룹 -->
+                <!-- 첫 번째 추천 코디 -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:text="첫 번째 추천 코디"
+                    android:textSize="18sp"
+                    android:textStyle="bold"/>
+
                 <LinearLayout
-                    android:id="@+id/outfitGroup"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:background="@drawable/bg_weather_group"
-                    android:padding="20dp"
-                    android:layout_marginBottom="24dp">
+                    android:background="@drawable/rounded_box"
+                    android:padding="16dp"
+                    android:layout_marginBottom="24dp"
+                    android:orientation="vertical">
 
-                    <!-- 첫 번째 추천 코디 -->
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="8dp"
-                        android:text="첫 번째 추천 코디"
-                        android:textSize="18sp"
-                        android:textStyle="bold"/>
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:background="@drawable/rounded_box"
-                        android:padding="16dp"
-                        android:layout_marginBottom="24dp"
-                        android:orientation="vertical">
-
-                        <!-- 상의 -->
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="horizontal"
-                            android:gravity="center_vertical"
-                            android:layout_marginBottom="12dp">
-
-                            <ImageView
-                                android:layout_width="24dp"
-                                android:layout_height="24dp"
-                                android:layout_marginEnd="12dp"
-                                android:src="@drawable/shirt"/>
-
-                            <TextView
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:text="상의"
-                                android:textSize="16sp"/>
-
-                            <TextView
-                                android:id="@+id/outfit_top_1"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="-"
-                                android:textSize="16sp"/>
-                        </LinearLayout>
-
-                        <View
-                            android:layout_width="match_parent"
-                            android:layout_height="1dp"
-                            android:background="#DDDDDD"/>
-
-                        <!-- 하의 -->
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="horizontal"
-                            android:gravity="center_vertical"
-                            android:layout_marginVertical="12dp">
-
-                            <ImageView
-                                android:layout_width="24dp"
-                                android:layout_height="24dp"
-                                android:layout_marginEnd="12dp"
-                                android:src="@drawable/pants"/>
-
-                            <TextView
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:text="하의"
-                                android:textSize="16sp"/>
-
-                            <TextView
-                                android:id="@+id/outfit_bottom_1"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="-"
-                                android:textSize="16sp"/>
-                        </LinearLayout>
-
-                        <View
-                            android:layout_width="match_parent"
-                            android:layout_height="1dp"
-                            android:background="#DDDDDD"/>
-
-                        <!-- 악세사리 -->
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="horizontal"
-                            android:gravity="center_vertical"
-                            android:layout_marginVertical="12dp">
-
-                            <ImageView
-                                android:layout_width="24dp"
-                                android:layout_height="24dp"
-                                android:layout_marginEnd="12dp"
-                                android:src="@drawable/gloves"/>
-
-                            <TextView
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:text="악세사리"
-                                android:textSize="16sp"/>
-
-                            <TextView
-                                android:id="@+id/outfit_acc_1"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="-"
-                                android:textSize="16sp"/>
-                        </LinearLayout>
-
-                        <View
-                            android:layout_width="match_parent"
-                            android:layout_height="1dp"
-                            android:background="#DDDDDD"/>
-
-                        <!-- 외투 -->
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="horizontal"
-                            android:gravity="center_vertical"
-                            android:layout_marginTop="12dp">
-
-                            <ImageView
-                                android:layout_width="24dp"
-                                android:layout_height="24dp"
-                                android:layout_marginEnd="12dp"
-                                android:src="@drawable/jacket"/>
-
-                            <TextView
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:text="외투"
-                                android:textSize="16sp"/>
-
-                            <TextView
-                                android:id="@+id/outfit_outer_1"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="-"
-                                android:textSize="16sp"/>
-                        </LinearLayout>
-
-                        <!-- 기존 코드 호환용: outfit1 TextView -->
-                        <TextView
-                            android:id="@+id/outfit1"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="-"
-                            android:textSize="1sp"
-                            android:visibility="gone" />
-                    </LinearLayout>
-
-                    <!-- 두 번째 추천 코디 -->
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="8dp"
-                        android:text="두 번째 추천 코디"
-                        android:textSize="18sp"
-                        android:textStyle="bold"/>
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:background="@drawable/rounded_box"
-                        android:padding="16dp"
-                        android:orientation="vertical">
-
-                        <!-- 상의 -->
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="horizontal"
-                            android:gravity="center_vertical"
-                            android:layout_marginBottom="12dp">
-
-                            <ImageView
-                                android:layout_width="24dp"
-                                android:layout_height="24dp"
-                                android:layout_marginEnd="12dp"
-                                android:src="@drawable/shirt"/>
-
-                            <TextView
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:text="상의"
-                                android:textSize="16sp"/>
-
-                            <TextView
-                                android:id="@+id/outfit_top_2"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="-"
-                                android:textSize="16sp"/>
-                        </LinearLayout>
-
-                        <View
-                            android:layout_width="match_parent"
-                            android:layout_height="1dp"
-                            android:background="#DDDDDD"/>
-
-                        <!-- 하의 -->
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="horizontal"
-                            android:gravity="center_vertical"
-                            android:layout_marginVertical="12dp">
-
-                            <ImageView
-                                android:layout_width="24dp"
-                                android:layout_height="24dp"
-                                android:layout_marginEnd="12dp"
-                                android:src="@drawable/pants"/>
-
-                            <TextView
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:text="하의"
-                                android:textSize="16sp"/>
-
-                            <TextView
-                                android:id="@+id/outfit_bottom_2"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="-"
-                                android:textSize="16sp"/>
-                        </LinearLayout>
-
-                        <View
-                            android:layout_width="match_parent"
-                            android:layout_height="1dp"
-                            android:background="#DDDDDD"/>
-
-                        <!-- 악세사리 -->
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="horizontal"
-                            android:gravity="center_vertical"
-                            android:layout_marginVertical="12dp">
-
-                            <ImageView
-                                android:layout_width="24dp"
-                                android:layout_height="24dp"
-                                android:layout_marginEnd="12dp"
-                                android:src="@drawable/gloves"/>
-
-                            <TextView
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:text="악세사리"
-                                android:textSize="16sp"/>
-
-                            <TextView
-                                android:id="@+id/outfit_acc_2"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="-"
-                                android:textSize="16sp"/>
-                        </LinearLayout>
-
-                        <View
-                            android:layout_width="match_parent"
-                            android:layout_height="1dp"
-                            android:background="#DDDDDD"/>
-
-                        <!-- 외투 -->
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="horizontal"
-                            android:gravity="center_vertical"
-                            android:layout_marginTop="12dp">
-
-                            <ImageView
-                                android:layout_width="24dp"
-                                android:layout_height="24dp"
-                                android:layout_marginEnd="12dp"
-                                android:src="@drawable/jacket"/>
-
-                            <TextView
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:text="외투"
-                                android:textSize="16sp"/>
-
-                            <TextView
-                                android:id="@+id/outfit_outer_2"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="-"
-                                android:textSize="16sp"/>
-                        </LinearLayout>
-
-                        <!-- 기존 코드 호환용: outfit2 TextView -->
-                        <TextView
-                            android:id="@+id/outfit2"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="-"
-                            android:textSize="1sp"
-                            android:visibility="gone" />
-                    </LinearLayout>
-                </LinearLayout>
-
-                <!-- 🔹 필수템 섹션 -->
-                <LinearLayout
-                    android:id="@+id/essentialsGroup"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:background="@drawable/bg_weather_group"
-                    android:padding="20dp"
-                    android:layout_marginBottom="24dp">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="오늘의 필수품"
-                        android:textSize="18sp"
-                        android:textStyle="bold"
-                        android:layout_marginBottom="8dp"/>
-
-                    <TextView
-                        android:id="@+id/essentials"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="-"
-                        android:textSize="16sp"
-                        android:textColor="#555555"/>
-                </LinearLayout>
-
-                <!-- 🔹 기분 색상 섹션 -->
-                <LinearLayout
-                    android:id="@+id/moodSection"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:background="@drawable/bg_weather_group"
-                    android:padding="20dp"
-                    android:layout_marginBottom="24dp">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="오늘의 추천 색상"
-                        android:textSize="18sp"
-                        android:textStyle="bold"
-                        android:layout_marginBottom="12dp"/>
-
+                    <!-- 상의 -->
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
-                        android:gravity="center_vertical">
+                        android:gravity="center_vertical"
+                        android:layout_marginBottom="12dp">
 
-                        <View
-                            android:id="@+id/moodColor1"
+                        <ImageView
                             android:layout_width="24dp"
                             android:layout_height="24dp"
-                            android:layout_marginEnd="8dp"
-                            android:background="@drawable/rounded_box"/>
+                            android:layout_marginEnd="12dp"
+                            android:src="@drawable/shirt"/>
 
-                        <View
-                            android:id="@+id/moodColor2"
-                            android:layout_width="24dp"
-                            android:layout_height="24dp"
-                            android:layout_marginEnd="8dp"
-                            android:background="@drawable/rounded_box"/>
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="상의"
+                            android:textSize="16sp"/>
 
-                        <View
-                            android:id="@+id/moodColor3"
-                            android:layout_width="24dp"
-                            android:layout_height="24dp"
-                            android:layout_marginEnd="8dp"
-                            android:background="@drawable/rounded_box"/>
-
-                        <View
-                            android:id="@+id/moodColor4"
-                            android:layout_width="24dp"
-                            android:layout_height="24dp"
-                            android:layout_marginEnd="8dp"
-                            android:background="@drawable/rounded_box"/>
-
-                        <View
-                            android:id="@+id/moodColor5"
-                            android:layout_width="24dp"
-                            android:layout_height="24dp"
-                            android:background="@drawable/rounded_box"/>
+                        <TextView
+                            android:id="@+id/outfit_top_1"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="-"
+                            android:textSize="16sp"/>
                     </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="#DDDDDD"/>
+
+                    <!-- 하의 -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:layout_marginVertical="12dp">
+
+                        <ImageView
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:layout_marginEnd="12dp"
+                            android:src="@drawable/pants"/>
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="하의"
+                            android:textSize="16sp"/>
+
+                        <TextView
+                            android:id="@+id/outfit_bottom_1"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="-"
+                            android:textSize="16sp"/>
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="#DDDDDD"/>
+
+                    <!-- 악세사리 -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:layout_marginVertical="12dp">
+
+                        <ImageView
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:layout_marginEnd="12dp"
+                            android:src="@drawable/gloves"/>
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="악세사리"
+                            android:textSize="16sp"/>
+
+                        <TextView
+                            android:id="@+id/outfit_acc_1"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="-"
+                            android:textSize="16sp"/>
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="#DDDDDD"/>
+
+                    <!-- 외투 -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:layout_marginTop="12dp">
+
+                        <ImageView
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:layout_marginEnd="12dp"
+                            android:src="@drawable/jacket"/>
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="외투"
+                            android:textSize="16sp"/>
+
+                        <TextView
+                            android:id="@+id/outfit_outer_1"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="-"
+                            android:textSize="16sp"/>
+                    </LinearLayout>
+
+                    <!-- 기존 코드 호환용: outfit1 TextView -->
+                    <TextView
+                        android:id="@+id/outfit1"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="-"
+                        android:textSize="1sp"
+                        android:visibility="gone" />
                 </LinearLayout>
 
-            </LinearLayout>
-        </LinearLayout>
+                <!-- 두 번째 추천 코디 -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:text="두 번째 추천 코디"
+                    android:textSize="18sp"
+                    android:textStyle="bold"/>
 
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/rounded_box"
+                    android:padding="16dp"
+                    android:orientation="vertical">
+
+                    <!-- 상의 -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:layout_marginBottom="12dp">
+
+                        <ImageView
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:layout_marginEnd="12dp"
+                            android:src="@drawable/shirt"/>
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="상의"
+                            android:textSize="16sp"/>
+
+                        <TextView
+                            android:id="@+id/outfit_top_2"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="-"
+                            android:textSize="16sp"/>
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="#DDDDDD"/>
+
+                    <!-- 하의 -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:layout_marginVertical="12dp">
+
+                        <ImageView
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:layout_marginEnd="12dp"
+                            android:src="@drawable/pants"/>
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="하의"
+                            android:textSize="16sp"/>
+
+                        <TextView
+                            android:id="@+id/outfit_bottom_2"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="-"
+                            android:textSize="16sp"/>
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="#DDDDDD"/>
+
+                    <!-- 악세사리 -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:layout_marginVertical="12dp">
+
+                        <ImageView
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:layout_marginEnd="12dp"
+                            android:src="@drawable/gloves"/>
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="악세사리"
+                            android:textSize="16sp"/>
+
+                        <TextView
+                            android:id="@+id/outfit_acc_2"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="-"
+                            android:textSize="16sp"/>
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="#DDDDDD"/>
+
+                    <!-- 외투 -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:layout_marginTop="12dp">
+
+                        <ImageView
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:layout_marginEnd="12dp"
+                            android:src="@drawable/jacket"/>
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="외투"
+                            android:textSize="16sp"/>
+
+                        <TextView
+                            android:id="@+id/outfit_outer_2"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="-"
+                            android:textSize="16sp"/>
+                    </LinearLayout>
+
+                    <!-- 기존 코드 호환용: outfit2 TextView -->
+                    <TextView
+                        android:id="@+id/outfit2"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="-"
+                        android:textSize="1sp"
+                        android:visibility="gone" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- 🔹 필수템 섹션 -->
+            <LinearLayout
+                android:id="@+id/essentialsGroup"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:background="@drawable/bg_weather_group"
+                android:padding="20dp"
+                android:layout_marginTop="25dp"
+                android:layout_marginBottom="25dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="오늘의 필수품"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="8dp"/>
+
+                <TextView
+                    android:id="@+id/essentials"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="-"
+                    android:textSize="16sp"
+                    android:textColor="#555555"/>
+            </LinearLayout>
+
+            <!-- 🔹 기분 색상 섹션 -->
+            <LinearLayout
+                android:id="@+id/moodSection"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:background="@drawable/bg_weather_group"
+                android:padding="20dp"
+                android:layout_marginBottom="50dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="오늘의 추천 색상"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="12dp"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
+
+                    <View
+                        android:id="@+id/moodColor1"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_marginEnd="8dp"
+                        android:background="@drawable/rounded_box"/>
+
+                    <View
+                        android:id="@+id/moodColor2"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_marginEnd="8dp"
+                        android:background="@drawable/rounded_box"/>
+
+                    <View
+                        android:id="@+id/moodColor3"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_marginEnd="8dp"
+                        android:background="@drawable/rounded_box"/>
+
+                    <View
+                        android:id="@+id/moodColor4"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_marginEnd="8dp"
+                        android:background="@drawable/rounded_box"/>
+
+                    <View
+                        android:id="@+id/moodColor5"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:background="@drawable/rounded_box"/>
+                </LinearLayout>
+            </LinearLayout>
+
+        </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.core.widget.NestedScrollView>

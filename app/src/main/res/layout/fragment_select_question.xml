@@ -51,8 +51,7 @@
             android:textSize="17sp"
             android:textStyle="bold"
             android:textAllCaps="false"
-            android:textColor="#FFFFFF"
-            app:backgroundTint="#2A77F1"
+            app:backgroundTint="#FFFFFF"
             app:rippleColor="#99FFFFFF"
             app:cornerRadius="28dp" />
 

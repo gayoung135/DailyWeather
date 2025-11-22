@@ -47,8 +47,7 @@
             android:background="@android:color/transparent"
             android:contentDescription="새로고침" />
     </LinearLayout>
-
-    <!-- 상단 탭 바 -->
+    <!-- 🔹 상단 탭 바 (버튼 아래로 이동) -->
     <LinearLayout
         android:id="@+id/tabBar"
         android:layout_width="0dp"
@@ -63,31 +62,33 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/topButtons">
 
-        <!-- 맞춤 옷차림 (현재 선택) -->
         <com.google.android.material.button.MaterialButton
             android:id="@+id/tabOutfit"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
             android:layout_width="0dp"
             android:layout_height="48dp"
             android:layout_weight="1"
-            android:background="@drawable/bg_tab_left"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp"
             android:text="맞춤 옷차림"
             android:textColor="#333333"
             android:textSize="15sp"
             android:textStyle="bold"
+            android:background="@drawable/bg_tab_left"
             app:backgroundTint="@null" />
 
-        <!-- 상세 날씨 (비활성) -->
         <com.google.android.material.button.MaterialButton
             android:id="@+id/tabDetail"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
             android:layout_width="0dp"
             android:layout_height="48dp"
             android:layout_weight="1"
-            android:background="@drawable/bg_tab_right"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp"
             android:text="상세 날씨"
-            android:textColor="#B0B0B0"
+            android:textColor="#777777"
             android:textSize="15sp"
-            android:textStyle="bold"
-            android:alpha="0.4"
+            android:background="@drawable/bg_tab_right"
             app:backgroundTint="@null" />
     </LinearLayout>
 

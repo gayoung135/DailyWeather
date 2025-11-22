@@ -123,7 +123,7 @@
             <!-- 메인 아이콘 -->
             <ImageView
                 android:id="@+id/mainWeatherIcon"
-                android:layout_width="245dp"
+                android:layout_width="230dp"
                 android:layout_height="105dp"
                 android:layout_gravity="center"
                 android:layout_marginTop="5dp"

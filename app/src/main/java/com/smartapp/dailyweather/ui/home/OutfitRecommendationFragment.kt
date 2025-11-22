@@ -159,9 +159,9 @@ class OutfitRecommendationFragment : Fragment(R.layout.fragment_outfit_recommend
             // ──────────────
             // 온도 / 미세먼지 / 강수확률
             // ──────────────
-            tempText.text = "코디 온도\n${ui.temperatureText}"
-            pmText.text = "미세먼지\n${ui.airQualityText}"
-            rainText.text = "강수확률\n${ui.rainText}"
+            tempText.text = "${ui.temperatureText}"
+            pmText.text = "${ui.airQualityText}"
+            rainText.text = "${ui.rainText}"
 
             // ──────────────
             // 기분 색상 섹션 처리
