@@ -26,22 +26,18 @@ import kotlinx.coroutines.launch
 class WeatherDetailFragment : Fragment(R.layout.fragment_weather_detail) {
 
     private val viewModel: WeatherDetailViewModel by activityViewModels()
-
     private lateinit var forecastRecycler: RecyclerView
     private lateinit var forecastAdapter: WeatherForecastAdapter
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // 🔹 상단 버튼
         val btnRestartDetail = view.findViewById<TextView>(R.id.btnRestartDetail)
         val btnRefreshWeather = view.findViewById<ImageButton>(R.id.btnRefreshWeather)
 
-        // 탭
         val tabOutfit = view.findViewById<MaterialButton>(R.id.tabOutfit)
         val tabDetail = view.findViewById<MaterialButton>(R.id.tabDetail)
 
-        // 상단 정보
         val locationText = view.findViewById<TextView>(R.id.locationText)
         val dateText = view.findViewById<TextView>(R.id.dateText)
         val temperatureText = view.findViewById<TextView>(R.id.temperatureText)
@@ -51,32 +47,31 @@ class WeatherDetailFragment : Fragment(R.layout.fragment_weather_detail) {
         val pm10Text = view.findViewById<TextView>(R.id.pm10Text)
         val popText = view.findViewById<TextView>(R.id.popText)
 
-        // ▼ 리사이클러뷰 연결
         forecastRecycler = view.findViewById(R.id.forecastRecycler)
         forecastRecycler.layoutManager = LinearLayoutManager(requireContext())
 
-        // 어댑터 최초 생성
         forecastAdapter = WeatherForecastAdapter(emptyList())
         forecastRecycler.adapter = forecastAdapter
 
-        // 🔴 "처음으로" 버튼: 위치 권한 화면으로 이동 + 관련 DB 초기화
+        // 🔥 "처음으로" → DB 삭제 + ViewModel 캐시 초기화 + 네비게이션
         btnRestartDetail.setOnClickListener {
             val db = DailyWeatherApp.instance.db
             val lastRepo = LastUserStateRepository(db)
 
             viewLifecycleOwner.lifecycleScope.launch {
-                // 마지막 사용자 상태 + 코디 관련 테이블 초기화
                 lastRepo.clearLastUserState()
                 lastRepo.clearCoordinationTables()
 
-                // 네비그래프 전체(popUpTo nav_intro) 비우고 GPS 화면으로
+                // 🔥뷰모델 캐시도 초기화 (중요)
+                viewModel.resetForRestart()
+
                 findNavController().navigate(
                     R.id.action_weatherDetailFragment_to_locationGpsFragment_restart
                 )
             }
         }
 
-        // 🔹 상세 날씨 새로고침 버튼 → 로딩 화면으로 이동 (forceRefresh = true)
+        // 🔹 상세 날씨 새로고침
         btnRefreshWeather.setOnClickListener {
             val bundle = Bundle().apply {
                 putBoolean("forceRefresh", true)
@@ -91,7 +86,7 @@ class WeatherDetailFragment : Fragment(R.layout.fragment_weather_detail) {
         tabOutfit.setOnClickListener { findNavController().navigateUp() }
         tabDetail.isClickable = false
 
-        // 첫 로딩 (이미 로딩돼 있으면 ViewModel 쪽에서 막아줌)
+        // 첫 로딩
         viewModel.loadDetailWeather()
 
         viewModel.uiState.observe(viewLifecycleOwner) { ui ->
@@ -106,14 +101,11 @@ class WeatherDetailFragment : Fragment(R.layout.fragment_weather_detail) {
             pm10Text.text = "미세먼지: ${ui.airQualityText}"
             popText.text = "강수확률: ${ui.rainText}"
 
-            // 리스트 반영
             forecastAdapter.updateItems(ui.forecastList)
         }
     }
 
-    // ================================
-    // 어댑터
-    // ================================
+    // =======================================
     inner class WeatherForecastAdapter(
         private var items: List<DailyRow>
     ) : RecyclerView.Adapter<WeatherForecastAdapter.ForecastViewHolder>() {
@@ -121,7 +113,7 @@ class WeatherDetailFragment : Fragment(R.layout.fragment_weather_detail) {
         inner class ForecastViewHolder(view: View) : RecyclerView.ViewHolder(view) {
             val date: TextView = view.findViewById(R.id.itemDate)
             val temp: TextView = view.findViewById(R.id.itemTemp)
-            val rain: TextView = view.findViewById(R.id.itemRain)  // XML에서 gone (텍스트 안 보임)
+            val rain: TextView = view.findViewById(R.id.itemRain)
             val rainIcon: ImageView = view.findViewById(R.id.itemRainIcon)
         }
 
@@ -136,9 +128,9 @@ class WeatherDetailFragment : Fragment(R.layout.fragment_weather_detail) {
 
             holder.date.text = row.dateText
 
-            // 최저 / 최고 색상 처리
             val temp = "${row.minTemp} / ${row.maxTemp}"
             val s = SpannableString(temp)
+
             s.setSpan(
                 ForegroundColorSpan(Color.parseColor("#4A90FF")),
                 0,
@@ -153,23 +145,19 @@ class WeatherDetailFragment : Fragment(R.layout.fragment_weather_detail) {
             )
             holder.temp.text = s
 
-            // "70%" → 70 (UI에는 안 보이고 아이콘만 사용)
             val popPercent = row.rainProb.filter { it.isDigit() }.toIntOrNull() ?: 0
-
-            // 6구간 아이콘 매핑
             val iconRes = getPopIconRes(popPercent)
             holder.rainIcon.setImageResource(iconRes)
         }
 
-        /** 🔥 강수확률 6구간 → 아이콘 매핑 */
         private fun getPopIconRes(pop: Int): Int {
             return when (pop) {
-                in 0..20   -> R.drawable.pop_020     // 0~20
-                in 21..30  -> R.drawable.pop_1030    // 21~30
-                in 31..40  -> R.drawable.pop_3040    // 31~40
-                in 41..60  -> R.drawable.pop_4060    // 41~60
-                in 61..80  -> R.drawable.pop_6080    // 61~80
-                else       -> R.drawable.pop_80100   // 81~100
+                in 0..20   -> R.drawable.pop_020
+                in 21..30  -> R.drawable.pop_1030
+                in 31..40  -> R.drawable.pop_3040
+                in 41..60  -> R.drawable.pop_4060
+                in 61..80  -> R.drawable.pop_6080
+                else       -> R.drawable.pop_80100
             }
         }
 

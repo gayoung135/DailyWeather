@@ -8,6 +8,7 @@ import android.view.View
 import android.widget.ImageButton
 import android.widget.TextView
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.navGraphViewModels
@@ -24,6 +25,9 @@ class OutfitRecommendationFragment : Fragment(R.layout.fragment_outfit_recommend
 
     // nav_intro 그래프 기준으로 OutfitLoadingFragment와 동일 ViewModel 공유
     private val viewModel: RecommendationViewModel by navGraphViewModels(R.id.nav_intro)
+
+    // 🔥 상세날씨 ViewModel(Activity 범위)도 가져와서 초기화에 사용
+    private val weatherDetailViewModel: WeatherDetailViewModel by activityViewModels()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -78,6 +82,9 @@ class OutfitRecommendationFragment : Fragment(R.layout.fragment_outfit_recommend
                 // 마지막 사용자 상태 + 코디 관련 테이블 초기화
                 lastRepo.clearLastUserState()
                 lastRepo.clearCoordinationTables()
+
+                // 🔥 상세날씨 ViewModel 캐시도 완전히 리셋 (중복 로딩 / 이전 값 재사용 방지)
+                weatherDetailViewModel.resetForRestart()
 
                 // 네비게이션 그래프 전체(popUpTo nav_intro) 초기화 후 GPS 화면으로
                 findNavController().navigate(

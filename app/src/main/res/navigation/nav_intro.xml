@@ -102,7 +102,7 @@
         android:label="OutfitRecommendationFragment"
         tools:layout="@layout/fragment_outfit_recommendation">
 
-        <!-- ✅ 상세 날씨 로딩 화면으로 이동 (기존 액션 id 그대로 사용) -->
+        <!-- ✅ 상세 날씨 로딩 화면으로 이동 -->
         <action
             android:id="@+id/action_outfitRecommendationFragment_to_weatherDetailFragment"
             app:destination="@id/detailWeatherLoadingFragment" />
@@ -127,13 +127,11 @@
         android:label="DetailWeatherLoadingFragment"
         tools:layout="@layout/fragment_detailweather_loading">
 
-        <!-- 🔹 새로고침 여부 전달용 인자 -->
         <argument
             android:name="forceRefresh"
             app:argType="boolean"
             android:defaultValue="false" />
 
-        <!-- 로딩 끝나면 진짜 상세 화면으로 이동, 로딩은 스택에서 제거 -->
         <action
             android:id="@+id/action_detailWeatherLoadingFragment_to_weatherDetailFragment"
             app:destination="@id/weatherDetailFragment"
@@ -148,12 +146,11 @@
         android:label="WeatherDetailFragment"
         tools:layout="@layout/fragment_weather_detail">
 
-        <!-- 🔹 상세 화면에서 "상세날씨 새로고침" → 로딩 화면으로 이동 -->
         <action
             android:id="@+id/action_weatherDetailFragment_to_detailWeatherLoadingFragment"
             app:destination="@id/detailWeatherLoadingFragment" />
 
-        <!-- ✅ "처음으로" : GPS 화면으로 이동 + nav_intro 전체 popUpTo -->
+        <!-- "처음으로" : GPS 화면으로 이동 + nav_intro 전체 popUpTo -->
         <action
             android:id="@+id/action_weatherDetailFragment_to_locationGpsFragment_restart"
             app:destination="@id/locationGpsFragment"
@@ -161,7 +158,7 @@
             app:popUpToInclusive="true" />
     </fragment>
 
-    <!-- ✅ 코디 새로고침용 로딩 화면 -->
+    <!-- 코디 새로고침용 로딩 화면 -->
     <fragment
         android:id="@+id/outfitRefreshLoadingFragment"
         android:name="com.smartapp.dailyweather.ui.home.OutfitRefreshLoadingFragment"
