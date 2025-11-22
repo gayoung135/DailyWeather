@@ -17,6 +17,9 @@ import com.smartapp.dailyweather.data.repo.WeatherRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.Locale
@@ -64,23 +67,15 @@ class WeatherDetailViewModel : ViewModel() {
             return
         }
 
-        viewModelScope.launch {
+        // 🔹 네트워크/디스크 작업은 IO 스레드에서
+        viewModelScope.launch(Dispatchers.IO) {
             try {
                 val state = lastUserStateRepo.getLatestState() ?: return@launch
 
                 val grid = GridPoint(state.x, state.y)
                 val now = timeProvider.nowKorea().withSecond(0).withNano(0)
 
-                // 현재 / 오전 / 오후 기온
-                val currentTemp = weatherRepo.getTempAt(grid, now)
-                val amTemp = weatherRepo.getTempAt(grid, now.withHour(9))
-                val pmTemp = weatherRepo.getTempAt(grid, now.withHour(15))
-
-                // 현재 강수확률
-                val pop = weatherRepo.getPopAt(grid, now) ?: 0
-
-                // 위치명 계산
-
+                // ---------------- 위치명 계산 (기존 로직 그대로) ----------------
                 var admin: String? = state.regionName
                 var cityOrGu: String? = state.subRegionName
 
@@ -129,80 +124,96 @@ class WeatherDetailViewModel : ViewModel() {
 
                 val sido = normalizeSidoName(admin ?: locationName)
 
-                // 미세먼지
-                val air = airRepo.getAirForSido(sido)
-                val airText = air?.airQualityLabel ?: "알 수 없음"
-
-
-                // 중기예보(3~10일)
-                val midList = midRepo.getMidTermForecast(sido, now)
-
-
-                // 내일부터 7일 예보
-
-                val forecast = mutableListOf<DailyRow>()
-
-                for (offset in 1..7) {
-                    val date = now.toLocalDate().plusDays(offset.toLong())
-                    val dateStr = date.format(DateTimeFormatter.BASIC_ISO_DATE)
-                    val mid = midList.firstOrNull { it.date == dateStr }
-
-                    val dayStart = date.atStartOfDay(ZoneId.of("Asia/Seoul"))
-
-                    var min = mid?.minTemp
-                    var max = mid?.maxTemp
-                    var rain = mid?.rainProb
-
-                    // 1~2일 / 중기 부족 → 단기 TMP 보완
-                    if (offset <= 2 || min == null || max == null) {
-                        val (shortMin, shortMax) = weatherRepo.getDailyMinMaxTemp(grid, dayStart)
-                        if (shortMin != null) min = shortMin
-                        if (shortMax != null) max = shortMax
-                    }
-
-                    // 내일/모레 POP
-                    if (offset <= 2) {
-                        val noon = dayStart.withHour(12)
-                        val shortPop = weatherRepo.getPopAt(grid, noon)
-
-                        rain = when {
-                            shortPop != null -> shortPop
-                            mid?.rainProb != null -> mid.rainProb
-                            else -> 0
-                        }
-                    } else {
-                        rain = rain ?: 0
-                    }
-
-                    val dateText = dayStart.format(
-                        DateTimeFormatter.ofPattern("MM월 dd일 (E)", Locale.KOREA)
-                    )
-
-                    forecast.add(
-                        DailyRow(
-                            dateText = dateText,
-                            minTemp = min?.let { "${it}°" } ?: "-°",
-                            maxTemp = max?.let { "${it}°" } ?: "-°",
-                            rainProb = "${rain}%"
-                        )
-                    )
-                }
-
+                // ---------------- 병렬로 가져오는 부분 ----------------
                 val todayStr = now.format(
                     DateTimeFormatter.ofPattern("MM월 dd일 | E요일", Locale.KOREA)
                 )
 
-                _uiState.value = WeatherDetailUiModel(
-                    locationName = locationName,
-                    dateText = todayStr,
-                    currentTempText = "${currentTemp}°C",
-                    airQualityText = airText,
-                    rainText = "${pop}%",
-                    amTempText = "${amTemp}°C",
-                    pmTempText = "${pmTemp}°C",
-                    forecastList = forecast
-                )
+                // 여러 API를 동시에 호출
+                val result = coroutineScope {
 
+                    val currentTempDef = async { weatherRepo.getTempAt(grid, now) }
+                    val amTempDef      = async { weatherRepo.getTempAt(grid, now.withHour(9)) }
+                    val pmTempDef      = async { weatherRepo.getTempAt(grid, now.withHour(15)) }
+                    val popDef         = async { weatherRepo.getPopAt(grid, now) ?: 0 }
+
+                    val airDef         = async { airRepo.getAirForSido(sido) }
+                    val midListDef     = async { midRepo.getMidTermForecast(sido, now) }
+
+                    // 3~10일 중기예보 먼저 받아놓고
+                    val midList = midListDef.await()
+
+                    // 🔹 내일부터 7일치 예보도 병렬로 생성
+                    val forecastList: List<DailyRow> = (1..7).map { offset ->
+                        async {
+                            val date = now.toLocalDate().plusDays(offset.toLong())
+                            val dateStr = date.format(DateTimeFormatter.BASIC_ISO_DATE)
+                            val mid = midList.firstOrNull { it.date == dateStr }
+
+                            val dayStart = date.atStartOfDay(ZoneId.of("Asia/Seoul"))
+
+                            var min = mid?.minTemp
+                            var max = mid?.maxTemp
+                            var rain = mid?.rainProb
+
+                            // 1~2일 / 중기 부족 → 단기 TMP 보완
+                            if (offset <= 2 || min == null || max == null) {
+                                val (shortMin, shortMax) =
+                                    weatherRepo.getDailyMinMaxTemp(grid, dayStart)
+                                if (shortMin != null) min = shortMin
+                                if (shortMax != null) max = shortMax
+                            }
+
+                            // 내일/모레 POP: 단기 POP 우선, 없으면 중기 POP, 그래도 없으면 0
+                            if (offset <= 2) {
+                                val noon = dayStart.withHour(12)
+                                val shortPop = weatherRepo.getPopAt(grid, noon)
+                                rain = when {
+                                    shortPop != null -> shortPop
+                                    mid?.rainProb != null -> mid.rainProb
+                                    else -> 0
+                                }
+                            } else {
+                                rain = rain ?: 0
+                            }
+
+                            val dateText = dayStart.format(
+                                DateTimeFormatter.ofPattern("MM월 dd일 (E)", Locale.KOREA)
+                            )
+
+                            DailyRow(
+                                dateText = dateText,
+                                minTemp = min?.let { "${it}°" } ?: "-°",
+                                maxTemp = max?.let { "${it}°" } ?: "-°",
+                                rainProb = "${rain}%"
+                            )
+                        }
+                    }.awaitAll()
+
+                    // 동시에 호출했던 값들 모으기
+                    val currentTemp = currentTempDef.await()
+                    val amTemp = amTempDef.await()
+                    val pmTemp = pmTempDef.await()
+                    val pop = popDef.await()
+                    val air = airDef.await()
+
+                    Triple(
+                        WeatherDetailUiModel(
+                            locationName = locationName,
+                            dateText = todayStr,
+                            currentTempText = "${currentTemp}°C",
+                            airQualityText = air?.airQualityLabel ?: "알 수 없음",
+                            rainText = "${pop}%",
+                            amTempText = "${amTemp}°C",
+                            pmTempText = "${pmTemp}°C",
+                            forecastList = forecastList
+                        ),
+                        true,
+                        Unit
+                    )
+                }
+
+                _uiState.postValue(result.first)
                 hasLoaded = true
 
             } catch (e: Exception) {
@@ -212,7 +223,6 @@ class WeatherDetailViewModel : ViewModel() {
     }
 
     //  Region 기반 좌표 추정 (기존 로직 그대로 유지)
-
     private fun guessRegionFromLatLng(lat: Double, lon: Double): Pair<String, String>? {
         var bestRegion: String? = null
         var bestSub: String? = null

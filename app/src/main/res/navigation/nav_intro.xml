@@ -106,6 +106,11 @@
         <action
             android:id="@+id/action_outfitRecommendationFragment_to_weatherDetailFragment"
             app:destination="@id/detailWeatherLoadingFragment" />
+
+        <!-- ✅ 새로고침 → 코디 새로고침 로딩 화면 -->
+        <action
+            android:id="@+id/action_outfitRecommendationFragment_to_outfitRefreshLoadingFragment"
+            app:destination="@id/outfitRefreshLoadingFragment" />
     </fragment>
 
     <!-- ✅ 상세 날씨 로딩 화면 -->
@@ -129,5 +134,19 @@
         android:name="com.smartapp.dailyweather.ui.home.WeatherDetailFragment"
         android:label="WeatherDetailFragment"
         tools:layout="@layout/fragment_weather_detail" />
+
+    <!-- ✅ 코디 새로고침용 로딩 화면 -->
+    <fragment
+        android:id="@+id/outfitRefreshLoadingFragment"
+        android:name="com.smartapp.dailyweather.ui.home.OutfitRefreshLoadingFragment"
+        android:label="OutfitRefreshLoadingFragment"
+        tools:layout="@layout/fragment_outfit_refresh_loading">
+
+        <action
+            android:id="@+id/action_outfitRefreshLoadingFragment_to_outfitRecommendationFragment"
+            app:destination="@id/outfitRecommendationFragment"
+            app:popUpTo="@id/outfitRefreshLoadingFragment"
+            app:popUpToInclusive="true" />
+    </fragment>
 
 </navigation>

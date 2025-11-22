@@ -47,8 +47,10 @@
         <TextView
             android:text="오늘은 몇시에 나가시나요?"
             android:textSize="18sp"
-            android:textColor="#000000"
+            android:textStyle="bold"
+            android:textColor="#5e5c5c"
             android:layout_marginTop="24dp"
+            android:layout_marginBottom="10dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 
@@ -60,24 +62,24 @@
             android:layout_gravity="center_horizontal"
             android:gravity="center_horizontal"
             android:layout_marginBottom="16dp"
-            android:padding="8dp"
+            android:padding="0dp"
             android:background="@drawable/btn_white_round">
 
             <NumberPicker
                 android:id="@+id/timePicker"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="150dp"
+                android:layout_gravity="center"
                 android:layout_marginStart="50dp"
-                android:layout_marginEnd="50dp"
-                android:layout_gravity="center" />
+                android:layout_marginEnd="50dp" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:gravity="center"
-                android:layout_marginTop="16dp"
-                android:paddingStart="40dp"
+                android:layout_marginTop="0dp"
+                android:paddingStart="20dp"
                 android:paddingEnd="40dp">
 
                 <com.google.android.material.button.MaterialButton
@@ -85,11 +87,13 @@
                     android:layout_width="0dp"
                     android:layout_height="48dp"
                     android:layout_weight="1"
+                    android:layout_margin="8dp"
                     android:text="NO"
                     android:textColor="#3E3E3E"
-                    app:strokeColor="#B0B0B0"
-                    app:strokeWidth="1dp"
-                    app:backgroundTint="@android:color/white" />
+                    app:strokeWidth="0dp"
+                    app:backgroundTint="@android:color/white"
+                    app:elevation="6dp"
+                    app:cornerRadius="28dp" />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnTimeYes"
@@ -98,9 +102,11 @@
                     android:layout_weight="1"
                     android:text="YES"
                     android:textColor="#3E3E3E"
-                    app:strokeColor="#B0B0B0"
-                    app:strokeWidth="1dp"
-                    app:backgroundTint="@android:color/white" />
+                    app:strokeWidth="0dp"
+                    app:backgroundTint="@android:color/white"
+                    app:elevation="6dp"
+                    app:cornerRadius="28dp" />
+
             </LinearLayout>
         </LinearLayout>
 
@@ -108,8 +114,10 @@
         <TextView
             android:text="외출목적은 무엇인가요?"
             android:textSize="18sp"
-            android:textColor="#000000"
+            android:textStyle="bold"
+            android:textColor="#5e5c5c"
             android:layout_marginTop="24dp"
+            android:layout_marginBottom="10dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 
@@ -124,8 +132,10 @@
         <TextView
             android:text="오늘 기분은 어떠신가요?"
             android:textSize="18sp"
-            android:textColor="#000000"
+            android:textStyle="bold"
+            android:textColor="#5e5c5c"
             android:layout_marginTop="24dp"
+            android:layout_marginBottom="10dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 
@@ -140,8 +150,10 @@
         <TextView
             android:text="어떤 스타일을 원하시나요?"
             android:textSize="18sp"
-            android:textColor="#000000"
+            android:textStyle="bold"
+            android:textColor="#5e5c5c"
             android:layout_marginTop="24dp"
+            android:layout_marginBottom="10dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 
@@ -159,7 +171,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="32dp"
-            android:backgroundTint="#2196F3"
+            android:backgroundTint="#1976D2"
             android:textColor="#FFFFFF" />
 
     </LinearLayout>

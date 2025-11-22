@@ -31,6 +31,19 @@ class OutfitRecommendationFragment : Fragment(R.layout.fragment_outfit_recommend
         val outfit2 = view.findViewById<TextView>(R.id.outfit2)
         val essentials = view.findViewById<TextView>(R.id.essentials)
 
+        // 첫 번째 코디 UI 요소 연결
+        val top1 = view.findViewById<TextView>(R.id.outfit_top_1)
+        val bottom1 = view.findViewById<TextView>(R.id.outfit_bottom_1)
+        val outer1 = view.findViewById<TextView>(R.id.outfit_outer_1)
+        val acc1 = view.findViewById<TextView>(R.id.outfit_acc_1)
+
+        // 두 번째 코디 UI 요소 연결
+        val top2 = view.findViewById<TextView>(R.id.outfit_top_2)
+        val bottom2 = view.findViewById<TextView>(R.id.outfit_bottom_2)
+        val outer2 = view.findViewById<TextView>(R.id.outfit_outer_2)
+        val acc2 = view.findViewById<TextView>(R.id.outfit_acc_2)
+
+
         val tempText = view.findViewById<TextView>(R.id.tempText)
         val pmText = view.findViewById<TextView>(R.id.pmText)
         val rainText = view.findViewById<TextView>(R.id.rainText)
@@ -64,6 +77,31 @@ class OutfitRecommendationFragment : Fragment(R.layout.fragment_outfit_recommend
             // ──────────────
             outfit1.text = buildOutfitText(ui.firstSet.items)
             outfit2.text = buildOutfitText(ui.secondSet.items)
+
+            // UI에 직접 추천값 반영
+            val first = ui.firstSet.items
+            val second = ui.secondSet.items
+
+            fun resolveItemText(items: List<CoordinationItemUi>, id: Int): String {
+                return items.firstOrNull { it.categoryId == id }?.displayName ?: "-"
+            }
+
+            // 첫 번째 추천 세트
+            top1.text = resolveItemText(first, CategoryIds.TOP)
+            bottom1.text = resolveItemText(first, CategoryIds.BOTTOM)
+            outer1.text = resolveItemText(first, CategoryIds.OUTER)
+            val accItems1 = first.filter { it.categoryId == CategoryIds.ACC }
+                .joinToString(" / ") { it.displayName }
+            acc1.text = if (accItems1.isBlank()) "-" else accItems1
+
+            // 두 번째 추천 세트
+            top2.text = resolveItemText(second, CategoryIds.TOP)
+            bottom2.text = resolveItemText(second, CategoryIds.BOTTOM)
+            outer2.text = resolveItemText(second, CategoryIds.OUTER)
+            val accItems2 = second.filter { it.categoryId == CategoryIds.ACC }
+                .joinToString(" / ") { it.displayName }
+            acc2.text = if (accItems2.isBlank()) "-" else accItems2
+
 
             // 필수품
             val essentialsText = buildEssentialsText(

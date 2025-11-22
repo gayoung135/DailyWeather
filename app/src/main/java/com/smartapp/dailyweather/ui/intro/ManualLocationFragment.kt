@@ -41,14 +41,11 @@ class ManualLocationFragment : Fragment() {
     /** 상위 스피너가 '사용자 터치'로 열렸는지 표시하는 플래그 */
     private var userTouchTop = false
 
-    // onCreateView(): 프래그먼트가 실제 화면(View)을 생성할 때 호출됨.
-    // fragment_manual_location.xml 레이아웃을 화면에 표시함.
     override fun onCreateView(
-        inflater: LayoutInflater,       // XML을 실제 View 객체로 변환시켜주는 도구
-        container: ViewGroup?,          // 프래그먼트를 담는 부모 컨테이너 (Activity)
-        savedInstanceState: Bundle?     // 화면 복원 시 사용하는 번들 데이터
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
     ): View {
-        // fragment_manual_location.xml 레이아웃 불러오기
         return inflater.inflate(R.layout.fragment_manual_location, container, false)
     }
 
@@ -64,23 +61,24 @@ class ManualLocationFragment : Fragment() {
         // Region.SELECT("시/도")는 실제 목록에서 제외한 리스트
         val regionsNoHint = regions.filter { it != Region.SELECT }
         // 표시용 이름 리스트 + 맨 끝에 힌트 문구 추가
-        val regionNamesWithHint = regionsNoHint.map { it.displayName } + "시/도"
+        val regionNamesWithHint = regionsNoHint.map { it.displayName } + "시/도 선택"
 
-        // 상위(시/도) — 힌트는 드롭다운에서 숨김
+        // ============================
+        // 🔹 상위(시/도) 스피너 어댑터 (UI만 커스텀)
+        // ============================
         spinner.adapter = object : ArrayAdapter<String>(
             requireContext(),
-            android.R.layout.simple_spinner_item,
+            R.layout.item_spinner,          // ← 선택 상태 모양
             regionNamesWithHint
         ) {
             override fun getCount(): Int = super.getCount() - 1 // 힌트 제외
         }.apply {
-            setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+            setDropDownViewResource(R.layout.item_spinner_dropdown)
         }
 
         // 상위 스피너: 처음엔 힌트가 선택된 상태로 시작
         ignoreTopFirstCallback = true
         spinner.setSelection((spinner.adapter as ArrayAdapter<*>).count, false)
-        // setSelection이 콜백을 안 줄 수도 있으니, 다음 프레임에 플래그를 내려줌
         spinner.post { ignoreTopFirstCallback = false }
 
         // 사용자가 실제로 스피너를 터치했는지 기록
@@ -91,14 +89,16 @@ class ManualLocationFragment : Fragment() {
             false
         }
 
-        // 하위(시/군/구) – 최초 placeholder 어댑터
+        // ============================
+        // 🔹 하위(시/군/구) 최초 placeholder
+        // ============================
         fun setSubPlaceholder() {
             val adapter = object : ArrayAdapter<String>(
                 requireContext(),
-                android.R.layout.simple_spinner_item,
-                listOf("시/군/구")
+                R.layout.item_spinner,
+                listOf("시/군/구 선택")
             ) {}.apply {
-                setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+                setDropDownViewResource(R.layout.item_spinner_dropdown)
             }
 
             spinnerSub.adapter = adapter
@@ -107,7 +107,9 @@ class ManualLocationFragment : Fragment() {
         }
         setSubPlaceholder()
 
-        // 시/도 선택 리스너
+        // ============================
+        // 🔹 시/도 선택 리스너
+        // ============================
         spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(
                 parent: AdapterView<*>?,
@@ -142,13 +144,13 @@ class ManualLocationFragment : Fragment() {
                 val dataWithHint = names + "시/군/구 선택"
                 val adapter = object : ArrayAdapter<String>(
                     requireContext(),
-                    android.R.layout.simple_spinner_item,
+                    R.layout.item_spinner,
                     dataWithHint
                 ) {
                     // 드롭다운에는 마지막 힌트를 제외한 실제 항목만 노출
                     override fun getCount(): Int = super.getCount() - 1
                 }.apply {
-                    setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+                    setDropDownViewResource(R.layout.item_spinner_dropdown)
                 }
 
                 spinnerSub.adapter = adapter
@@ -162,7 +164,9 @@ class ManualLocationFragment : Fragment() {
             override fun onNothingSelected(parent: AdapterView<*>?) {}
         }
 
-        // 시/군/구 선택 리스너
+        // ============================
+        // 🔹 시/군/구 선택 리스너
+        // ============================
         spinnerSub.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(
                 parent: AdapterView<*>?,
@@ -199,10 +203,7 @@ class ManualLocationFragment : Fragment() {
                     try {
                         val grid = locationViewModel.requestGrid()
                         if (grid == null) {
-                            Log.e(
-                                "ManualLocation",
-                                "수동 위치 격자 변환 실패 (grid=null)"
-                            )
+                            Log.e("ManualLocation", "수동 위치 격자 변환 실패 (grid=null)")
                             Toast.makeText(
                                 requireContext(),
                                 "위치 변환에 실패했어요. 잠시 후 다시 시도해 주세요.",
@@ -211,10 +212,7 @@ class ManualLocationFragment : Fragment() {
                             return@launch
                         }
 
-                        Log.d(
-                            "ManualLocation",
-                            "수동 위치 격자 변환 성공: x=${grid.x}, y=${grid.y}"
-                        )
+                        Log.d("ManualLocation", "수동 위치 격자 변환 성공: x=${grid.x}, y=${grid.y}")
 
                         val nav = findNavController()
                         if (isAdded &&

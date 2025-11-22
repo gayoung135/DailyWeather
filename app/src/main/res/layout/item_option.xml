@@ -3,6 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
+    android:layout_marginHorizontal="2dp"
+
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <com.google.android.material.button.MaterialButton
@@ -12,6 +14,7 @@
         android:minWidth="100dp"
         android:text="출근"
         android:textColor="#3E3E3E"
+
         app:backgroundTint="@color/white"
         app:cornerRadius="16dp"
         tools:ignore="MissingConstraints" />

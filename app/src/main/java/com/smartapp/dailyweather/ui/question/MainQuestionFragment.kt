@@ -103,7 +103,7 @@ class MainQuestionFragment : Fragment() {
             selectedHourOffset = offset
             mainQuestionViewModel.setSelectedHour(offset)
 
-            btnTimeYes.setBackgroundColor(Color.parseColor("#2196F3"))
+            btnTimeYes.setBackgroundColor(Color.parseColor("#77ADFE"))
             btnTimeYes.setTextColor(Color.WHITE)
             btnTimeNo.setBackgroundColor(Color.WHITE)
             btnTimeNo.setTextColor(Color.parseColor("#3E3E3E"))
@@ -114,7 +114,7 @@ class MainQuestionFragment : Fragment() {
             selectedHourOffset = null
             mainQuestionViewModel.setSelectedHour(null)
 
-            btnTimeNo.setBackgroundColor(Color.parseColor("#F44336"))
+            btnTimeNo.setBackgroundColor(Color.parseColor("#f78d86"))
             btnTimeNo.setTextColor(Color.WHITE)
             btnTimeYes.setBackgroundColor(Color.WHITE)
             btnTimeYes.setTextColor(Color.parseColor("#3E3E3E"))
@@ -289,10 +289,11 @@ class OptionRVAdapter(
                 onItemClick(newPos, option)
             }
 
+
             if (isSelected) {
                 btn.setTextColor(Color.WHITE)
                 btn.backgroundTintList =
-                    ColorStateList.valueOf(Color.BLUE)
+                    ColorStateList.valueOf(Color.parseColor("#77ADFE"))  //질문버튼색상
             } else {
                 btn.setTextColor(Color.parseColor("#3E3E3E"))
                 btn.backgroundTintList =
