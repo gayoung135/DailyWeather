@@ -62,6 +62,13 @@ class WeatherDetailViewModel : ViewModel() {
     private var hasLoaded = false   // 중복 로드 방지
 
     fun loadDetailWeather(force: Boolean = false) {
+
+        // 🔵 새로고침인 경우: 기존 값 초기화 + 강제 재로딩 허용
+        if (force) {
+            hasLoaded = false
+            _uiState.value = null
+        }
+
         if (!force && hasLoaded && _uiState.value != null) {
             Log.d("WeatherDetailVM", "이미 로딩된 상세날씨 → 스킵")
             return
@@ -202,7 +209,7 @@ class WeatherDetailViewModel : ViewModel() {
                             locationName = locationName,
                             dateText = todayStr,
                             currentTempText = "${currentTemp}°C",
-                            airQualityText = air?.airQualityLabel ?: "알 수 없음",
+                            airQualityText = air.airQualityLabel,
                             rainText = "${pop}%",
                             amTempText = "${amTemp}°C",
                             pmTempText = "${pmTemp}°C",
@@ -246,3 +253,4 @@ class WeatherDetailViewModel : ViewModel() {
         } else null
     }
 }
+

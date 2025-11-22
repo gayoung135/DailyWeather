@@ -5,6 +5,7 @@ import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.ImageButton
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
@@ -22,6 +23,10 @@ class OutfitRecommendationFragment : Fragment(R.layout.fragment_outfit_recommend
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        // 🔹 상단 버튼들
+        val btnRestartAll = view.findViewById<TextView>(R.id.btnRestartAll)
+        val btnRefreshOutfit = view.findViewById<ImageButton>(R.id.btnRefreshOutfit)
 
         // 탭 버튼
         val tabOutfit = view.findViewById<MaterialButton>(R.id.tabOutfit)
@@ -43,7 +48,6 @@ class OutfitRecommendationFragment : Fragment(R.layout.fragment_outfit_recommend
         val outer2 = view.findViewById<TextView>(R.id.outfit_outer_2)
         val acc2 = view.findViewById<TextView>(R.id.outfit_acc_2)
 
-
         val tempText = view.findViewById<TextView>(R.id.tempText)
         val pmText = view.findViewById<TextView>(R.id.pmText)
         val rainText = view.findViewById<TextView>(R.id.rainText)
@@ -59,13 +63,34 @@ class OutfitRecommendationFragment : Fragment(R.layout.fragment_outfit_recommend
             view.findViewById<View>(R.id.moodColor5)
         )
 
-        // 현재 화면 탭(맞춤 옷차림)은 동작 없음, 오른쪽 탭을 누르면 상세날씨로 이동
+        // ===================== 버튼 동작 =====================
+
+        // 〈처음으로 : 인트로 플로우 맨 처음(네트워크 게이트)로 이동
+        btnRestartAll.setOnClickListener {
+            // nav_intro의 startDestination이 networkGateFragment 이므로 여기로 보냄
+            findNavController().navigate(R.id.networkGateFragment)
+        }
+
+        // 새로고침 아이콘 → 코디 새로고침 로딩 화면으로
+        btnRefreshOutfit.setOnClickListener {
+            findNavController().navigate(
+                R.id.action_outfitRecommendationFragment_to_outfitRefreshLoadingFragment
+            )
+        }
+
+        // 현재 화면 탭(맞춤 옷차림)은 별도 동작 없음
+        tabOutfit.setOnClickListener {
+            // 아무것도 안 해도 되지만, 혹시 나중에 스크롤 맨 위로 등 넣고 싶으면 여기
+        }
+
+        // 오른쪽 탭을 누르면 상세날씨(로딩 → 상세)로 이동
         tabDetail.setOnClickListener {
             findNavController().navigate(
                 R.id.action_outfitRecommendationFragment_to_weatherDetailFragment
             )
         }
 
+        // ===================== UI State 관찰 =====================
         // 여기서는 "관찰만" 한다. 로직 실행 X
         viewModel.uiState.observe(viewLifecycleOwner) { ui ->
             if (ui == null) return@observe
@@ -73,7 +98,7 @@ class OutfitRecommendationFragment : Fragment(R.layout.fragment_outfit_recommend
             Log.d("OutfitFragment", "=== 추천 결과 수신 ===")
 
             // ──────────────
-            // 코디 텍스트
+            // 코디 텍스트 (기존 TextView 호환용)
             // ──────────────
             outfit1.text = buildOutfitText(ui.firstSet.items)
             outfit2.text = buildOutfitText(ui.secondSet.items)
@@ -101,7 +126,6 @@ class OutfitRecommendationFragment : Fragment(R.layout.fragment_outfit_recommend
             val accItems2 = second.filter { it.categoryId == CategoryIds.ACC }
                 .joinToString(" / ") { it.displayName }
             acc2.text = if (accItems2.isBlank()) "-" else accItems2
-
 
             // 필수품
             val essentialsText = buildEssentialsText(

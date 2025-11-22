@@ -42,13 +42,20 @@ class RecommendationViewModel(app: Application) : AndroidViewModel(app) {
     private val _uiState = MutableLiveData<RecommendationUiModel>()
     val uiState: LiveData<RecommendationUiModel> = _uiState
 
-    fun loadRecommendationAutoSido() {
+    /**
+     * 코디 추천 + 화면용 날씨 정보 로딩
+     *
+     * @param forceRecreate
+     *  - false (기본): DB에 저장된 코디 세트가 있으면 재사용, 없으면 새로 생성
+     *  - true (새로고침): skipped=true(스킵/시간NO)이면 온도 재계산 + 항상 코디 세트 새로 생성
+     */
+    fun loadRecommendationAutoSido(forceRecreate: Boolean = false) {
         viewModelScope.launch {
             try {
-                Log.d("RecommendVM", "=== 추천 로직 시작 ===")
+                Log.d("RecommendVM", "=== 추천 로직 시작 (forceRecreate=$forceRecreate) ===")
 
                 // 1) 마지막 사용자 상태 로드
-                val state = lastUserStateRepo.getLatestState()
+                var state = lastUserStateRepo.getLatestState()
                     ?: run {
                         Log.e("RecommendVM", "최근 LastUserState 없음")
                         return@launch
@@ -56,10 +63,20 @@ class RecommendationViewModel(app: Application) : AndroidViewModel(app) {
 
                 Log.d(
                     "RecommendVM",
-                    "최근 상태: tempId=${state.tempId}, tempCelsius=${state.tempCelsius}, " +
+                    "최근 상태(초기): tempId=${state.tempId}, tempCelsius=${state.tempCelsius}, " +
                             "purpose=${state.purposeId}, style=${state.styleId}, " +
-                            "grid=(${state.x}, ${state.y}), moodCode=${state.moodCode}"
+                            "grid=(${state.x}, ${state.y}), moodCode=${state.moodCode}, skipped=${state.skipped}"
                 )
+
+                // 🔵 새로고침 + skipped=true(스킵 OR 시간 NO) → now 기준으로 temp 다시 조회 + UPDATE
+                if (forceRecreate && state.skipped) {
+                    state = lastUserStateRepo.refreshLatestStateTempIfSkipped(state)
+                    Log.d(
+                        "RecommendVM",
+                        "새로고침: skipped=true라 현재 기온으로 상태 갱신 후 사용 → " +
+                                "tempId=${state.tempId}, tempCelsius=${state.tempCelsius}, lastAccess=${state.lastAccessTime}"
+                    )
+                }
 
                 val grid = GridPoint(state.x, state.y)
 
@@ -144,30 +161,49 @@ class RecommendationViewModel(app: Application) : AndroidViewModel(app) {
                 Log.d("RecommendVM", "POP(%)=$popPercent, rainText=$rainText")
 
                 // ─────────────────────────────
-                // 4) 코디 추천: DB에 있으면 재사용, 없으면 새로 생성
+                // 4) 코디 추천: forceRecreate 여부에 따라 처리
                 // ─────────────────────────────
-                val cachedDomain: RecommendationWithMood? = try {
-                    val domain = recommendRepo.loadRecommendationFromDbForLatestState()
-                    Log.d("RecommendVM", "기존 저장된 코디 세트 발견 → 재사용")
-                    domain
-                } catch (e: Exception) {
-                    Log.w(
-                        "RecommendVM",
-                        "저장된 코디 세트 없음 또는 로드 실패 → 새로 생성 예정: ${e.message}"
-                    )
-                    null
-                }
 
-                val finalDomain: RecommendationWithMood = if (cachedDomain != null) {
-                    cachedDomain
-                } else {
-                    Log.d("RecommendVM", "저장된 코디 없음 → 새 추천 생성 시작...")
-                    recommendRepo.createRecommendationForLatestState(
-                        sidoName = sidoName,
-                        moodCode = state.moodCode
-                    )
-                    recommendRepo.loadRecommendationFromDbForLatestState()
-                }
+                // 기본 모드에서는 DB에 저장된 코디 세트가 있으면 재사용
+                val cachedDomain: RecommendationWithMood? =
+                    if (!forceRecreate) {
+                        try {
+                            val domain = recommendRepo.loadRecommendationFromDbForLatestState()
+                            Log.d("RecommendVM", "기존 저장된 코디 세트 발견 → 재사용")
+                            domain
+                        } catch (e: Exception) {
+                            Log.w(
+                                "RecommendVM",
+                                "저장된 코디 세트 없음 또는 로드 실패 → 새로 생성 예정: ${e.message}"
+                            )
+                            null
+                        }
+                    } else {
+                        // 새로고침 모드에서는 무조건 새로 생성할 것이므로 캐시는 사용 안 함
+                        null
+                    }
+
+                val finalDomain: RecommendationWithMood =
+                    if (cachedDomain != null) {
+                        cachedDomain
+                    } else {
+                        Log.d(
+                            "RecommendVM",
+                            if (forceRecreate)
+                                "forceRecreate=true → 항상 새 추천 생성 시작..."
+                            else
+                                "저장된 코디 없음 → 새 추천 생성 시작..."
+                        )
+
+                        // 최신 LastUserState 기준으로 코디 2세트 생성 + DB 저장
+                        recommendRepo.createRecommendationForLatestState(
+                            sidoName = sidoName,
+                            moodCode = state.moodCode
+                        )
+
+                        // 방금 만든 코디 세트를 다시 로드
+                        recommendRepo.loadRecommendationFromDbForLatestState()
+                    }
 
                 // 5) moodId 기반 색상 로드
                 val moodColors = loadMoodColorsForMood(finalDomain.moodId)

@@ -17,12 +17,14 @@ class DetailLoadingFragment :
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        // 🔹 새로고침 여부 인자 (기본값 false)
+        val forceRefresh = arguments?.getBoolean("forceRefresh", false) ?: false
+
         // 탭 버튼 찾기
         val tabOutfit = view.findViewById<MaterialButton>(R.id.tabOutfit)
         val tabDetail = view.findViewById<MaterialButton>(R.id.tabDetail)
 
         //  예전 backButton 이 하던 일을 "맞춤 옷차림" 탭이 대신 수행
-        // → navigateUp()이라서 로직 재계산 없이 이전 화면으로 돌아감
         tabOutfit.setOnClickListener {
             findNavController().navigateUp()
         }
@@ -32,18 +34,22 @@ class DetailLoadingFragment :
             // Do nothing
         }
 
-        //  이미 상세 날씨가 로딩돼 있다면 바로 상세 화면으로 이동
-        if (viewModel.uiState.value != null) {
+        // 이미 상세 날씨가 로딩돼 있고, 새로고침이 아니라면 → 바로 상세 화면으로 이동
+        if (viewModel.uiState.value != null && !forceRefresh) {
             findNavController().navigate(
                 R.id.action_detailWeatherLoadingFragment_to_weatherDetailFragment
             )
             return
         }
 
-        //  아직이면 로딩 시작 (ViewModel 쪽 hasLoaded 체크로 한 번만 호출)
-        viewModel.loadDetailWeather()
+        // 로딩 시작
+        if (forceRefresh) {
+            viewModel.loadDetailWeather(force = true)
+        } else {
+            viewModel.loadDetailWeather()
+        }
 
-        //  uiState 가 채워지는 순간 상세 화면으로 이동
+        // uiState 가 채워지는 순간 상세 화면으로 이동
         viewModel.uiState.observe(viewLifecycleOwner) { ui ->
             if (ui != null) {
                 findNavController().navigate(

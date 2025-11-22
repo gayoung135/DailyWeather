@@ -8,6 +8,7 @@ import android.text.Spannable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.fragment.app.Fragment
@@ -27,6 +28,10 @@ class WeatherDetailFragment : Fragment(R.layout.fragment_weather_detail) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        // 🔹 상단 버튼
+        val btnRestartDetail = view.findViewById<TextView>(R.id.btnRestartDetail)
+        val btnRefreshWeather = view.findViewById<ImageButton>(R.id.btnRefreshWeather)
 
         // 탭
         val tabOutfit = view.findViewById<MaterialButton>(R.id.tabOutfit)
@@ -50,11 +55,27 @@ class WeatherDetailFragment : Fragment(R.layout.fragment_weather_detail) {
         forecastAdapter = WeatherForecastAdapter(emptyList())
         forecastRecycler.adapter = forecastAdapter
 
+        // 🔹 "처음으로" 버튼: 일단 이전 화면(코디 추천)으로 돌아가도록
+        btnRestartDetail.setOnClickListener {
+            findNavController().navigateUp()
+        }
+
+        // 🔹 상세 날씨 새로고침 버튼 → 로딩 화면으로 이동 (forceRefresh = true)
+        btnRefreshWeather.setOnClickListener {
+            val bundle = Bundle().apply {
+                putBoolean("forceRefresh", true)
+            }
+            findNavController().navigate(
+                R.id.action_weatherDetailFragment_to_detailWeatherLoadingFragment,
+                bundle
+            )
+        }
+
         // 탭 이동
         tabOutfit.setOnClickListener { findNavController().navigateUp() }
         tabDetail.isClickable = false
 
-        // 첫 로딩
+        // 첫 로딩 (이미 로딩돼 있으면 ViewModel 쪽에서 막아줌)
         viewModel.loadDetailWeather()
 
         viewModel.uiState.observe(viewLifecycleOwner) { ui ->

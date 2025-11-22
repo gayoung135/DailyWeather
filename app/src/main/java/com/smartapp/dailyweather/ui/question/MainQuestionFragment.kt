@@ -29,12 +29,10 @@ import com.smartapp.dailyweather.ui.intro.LocationViewModelFactory
 import kotlinx.coroutines.launch
 
 class MainQuestionFragment : Fragment() {
-    private var isTimeSelected = false //시간 토스트창관련 코드추가
+    private var isTimeSelected = false
     private val mainQuestionViewModel: MainQuestionViewModel by viewModels()
     lateinit var binding: FragmentMainQuestionBinding
 
-
-    // OutfitLoading 으로 이미 이동했는지 여부
     private var hasNavigatedToOutfitLoading = false
 
     private val locationViewModel: LocationViewModel by navGraphViewModels(R.id.nav_intro) {
@@ -62,15 +60,14 @@ class MainQuestionFragment : Fragment() {
 
         val timePicker = view.findViewById<NumberPicker>(R.id.timePicker)
 
-        // KST 기준 현재 시간 (분/초 0초로 정규화)
+        // 현재 시간
         val now = SystemTimeProvider().nowKorea()
             .withMinute(0)
             .withSecond(0)
             .withNano(0)
 
-        // "지금 이후 24시간" 라벨 생성 (오늘/내일)
         val hourLabels = Array(24) { idx ->
-            val t = now.plusHours((idx + 1).toLong())  // idx 0 → +1시간
+            val t = now.plusHours((idx + 1).toLong())
 
             val dayLabel = if (t.toLocalDate().isEqual(now.toLocalDate())) {
                 "오늘"
@@ -82,25 +79,27 @@ class MainQuestionFragment : Fragment() {
             "$dayLabel ${hourStr}시"
         }
 
-        // NumberPicker 세팅
-        timePicker.displayedValues = null // 기존 값 초기화
+        // NumberPicker 설정
+        timePicker.displayedValues = null
         timePicker.minValue = 0
-        timePicker.maxValue = hourLabels.size - 1   // 0 ~ 23
+        timePicker.maxValue = hourLabels.size - 1
         timePicker.wrapSelectorWheel = false
         timePicker.displayedValues = hourLabels
-        timePicker.value = 0  // 기본값: "지금 기준 다음 정시"
+        timePicker.value = 0
 
         var selectedHourOffset: Int? = null
+        var isSkipped: Boolean = false // 🔥 추가: 스킵 여부 저장할 변수
 
         val btnTimeYes = view.findViewById<Button>(R.id.btnTimeYes)
         val btnTimeNo = view.findViewById<Button>(R.id.btnTimeNo)
 
         btnTimeYes.setOnClickListener {
             isTimeSelected = true
-            val index = timePicker.value       // 0 ~ 23
-            val offset = index + 1            // +1시간 ~ +24시간
+            val index = timePicker.value
+            val offset = index + 1
 
             selectedHourOffset = offset
+            isSkipped = false  // 🔥 시간 YES → skipped=false
             mainQuestionViewModel.setSelectedHour(offset)
 
             btnTimeYes.setBackgroundColor(Color.parseColor("#77ADFE"))
@@ -110,8 +109,9 @@ class MainQuestionFragment : Fragment() {
         }
 
         btnTimeNo.setOnClickListener {
-            isTimeSelected = true //시간토스트창관련코드추가
+            isTimeSelected = true
             selectedHourOffset = null
+            isSkipped = true   // 🔥 시간 NO → skipped=true
             mainQuestionViewModel.setSelectedHour(null)
 
             btnTimeNo.setBackgroundColor(Color.parseColor("#f78d86"))
@@ -136,39 +136,21 @@ class MainQuestionFragment : Fragment() {
             val styleCode = answerMap["스타일"]
             val moodCode = answerMap["기분"]
 
-            Log.d(
-                "MainQuestion",
-                "grid=(${grid.x},${grid.y}), purpose=$purposeCode, style=$styleCode, mood=$moodCode"
-            )
-
-            // LocationViewModel 에서 선택된 시/도 / 시·군·구 이름 가져오기
             val regionName = locationViewModel.selectedRegion.value?.displayName
             val subRegionName = locationViewModel.selectedSubRegion.value?.name
 
-            Log.d(
-                "MainQuestion",
-                "grid=(${grid.x},${grid.y}), purpose=$purposeCode, style=$styleCode, mood=$moodCode"
-            )
-            Log.d(
-                "MainQuestion",
-                "regionName=$regionName, subRegionName=$subRegionName"
-            )
-
             viewLifecycleOwner.lifecycleScope.launch {
                 mainQuestionViewModel.saveLastUserStateWithApi(
-                    grid = grid ,
+                    grid = grid,
                     regionName = regionName,
                     subRegionName = subRegionName,
                     selectedHourOffset = selectedHourOffset,
                     purposeCode = purposeCode,
                     styleCode = styleCode,
                     moodCode = moodCode,
-                    skipped = false
+                    skipped = isSkipped   // 🔥 핵심 수정
                 )
 
-                Log.d("MainQuestion", "질문 응답 저장 완료 → 추천 화면 이동")
-
-                // 현재 목적지가 mainQuestionFragment 이고, 아직 안 갔을 때만 이동
                 val navController = findNavController()
                 if (!hasNavigatedToOutfitLoading &&
                     navController.currentDestination?.id == R.id.mainQuestionFragment
@@ -177,15 +159,9 @@ class MainQuestionFragment : Fragment() {
                     navController.navigate(
                         R.id.action_mainQuestionFragment_to_outfitLoadingFragment
                     )
-                } else {
-                    Log.d(
-                        "MainQuestion",
-                        "이미 이동했거나 현재 목적지가 아님 → navigate 스킵. currentDest=${navController.currentDestination}"
-                    )
                 }
             }
         }
-
     }
 
     private fun setFilterOptions() {
@@ -289,11 +265,10 @@ class OptionRVAdapter(
                 onItemClick(newPos, option)
             }
 
-
             if (isSelected) {
                 btn.setTextColor(Color.WHITE)
                 btn.backgroundTintList =
-                    ColorStateList.valueOf(Color.parseColor("#77ADFE"))  //질문버튼색상
+                    ColorStateList.valueOf(Color.parseColor("#77ADFE"))
             } else {
                 btn.setTextColor(Color.parseColor("#3E3E3E"))
                 btn.backgroundTintList =
