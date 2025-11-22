@@ -53,7 +53,7 @@ class WeatherDetailFragment : Fragment(R.layout.fragment_weather_detail) {
         forecastAdapter = WeatherForecastAdapter(emptyList())
         forecastRecycler.adapter = forecastAdapter
 
-        // 🔥 "처음으로" → DB 삭제 + ViewModel 캐시 초기화 + 네비게이션
+        // "처음으로" → DB 삭제 + ViewModel 캐시 초기화 + 네비게이션
         btnRestartDetail.setOnClickListener {
             val db = DailyWeatherApp.instance.db
             val lastRepo = LastUserStateRepository(db)
@@ -62,7 +62,7 @@ class WeatherDetailFragment : Fragment(R.layout.fragment_weather_detail) {
                 lastRepo.clearLastUserState()
                 lastRepo.clearCoordinationTables()
 
-                // 🔥뷰모델 캐시도 초기화 (중요)
+                // 뷰모델 캐시도 초기화 (중요)
                 viewModel.resetForRestart()
 
                 findNavController().navigate(
@@ -71,7 +71,7 @@ class WeatherDetailFragment : Fragment(R.layout.fragment_weather_detail) {
             }
         }
 
-        // 🔹 상세 날씨 새로고침
+        // 상세 날씨 새로고침
         btnRefreshWeather.setOnClickListener {
             val bundle = Bundle().apply {
                 putBoolean("forceRefresh", true)

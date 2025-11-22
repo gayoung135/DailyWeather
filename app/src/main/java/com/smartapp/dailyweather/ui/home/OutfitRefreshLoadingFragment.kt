@@ -44,10 +44,10 @@ class OutfitRefreshLoadingFragment : Fragment(R.layout.fragment_outfit_refresh_l
             findNavController().navigate(R.id.detailWeatherLoadingFragment)
         }
 
-        // 🔵 새로고침용: 캐시 무시하고 코디 다시 생성 (forceRecreate = true)
+        // 새로고침용: 캐시 무시하고 코디 다시 생성 (forceRecreate = true)
         viewModel.loadRecommendationAutoSido(forceRecreate = true)
 
-        // 🔵 기존 uiState 값 때문에 바로 튕겨나가지 않도록 첫 emit 한 번 무시
+        // 기존 uiState 값 때문에 바로 튕겨나가지 않도록 첫 emit 한 번 무시
         var firstEmission = true
 
         viewModel.uiState.observe(viewLifecycleOwner) { ui ->

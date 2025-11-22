@@ -7,7 +7,7 @@ import com.smartapp.dailyweather.data.local.entity.*
 interface LastUserStateDao {
 
     /**
-     * 🔵 단일행 모드 전제로 사용하는 DAO
+     *    단일행 모드 전제로 사용하는 DAO
      * - 항상 last_user_state 테이블에는 0 또는 1건만 존재하도록
      *   Repository 단에서 clearAll() 후 insert() 또는 update()만 사용.
      */
@@ -66,7 +66,7 @@ interface CoordinationSetDao {
     @Query("DELETE FROM coordination_set WHERE last_user_state_id = :lusId")
     suspend fun deleteByLastUserState(lusId: Int)
 
-    // 🔴 "처음으로" 초기화용: 전체 삭제
+    // "처음으로" 초기화용: 전체 삭제
     @Query("DELETE FROM coordination_set")
     suspend fun clearAll()
 }
@@ -88,7 +88,7 @@ interface CoordinationItemDao {
     @Query("DELETE FROM coordination_item WHERE set_id = :setId")
     suspend fun deleteBySetId(setId: Int)
 
-    // 🔴 "처음으로" 초기화용: 전체 삭제
+    // "처음으로" 초기화용: 전체 삭제
     @Query("DELETE FROM coordination_item")
     suspend fun clearAll()
 }

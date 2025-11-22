@@ -88,7 +88,7 @@ class MainQuestionFragment : Fragment() {
         timePicker.value = 0
 
         var selectedHourOffset: Int? = null
-        var isSkipped: Boolean = false // 🔥 추가: 스킵 여부 저장할 변수
+        var isSkipped: Boolean = false // 추가: 스킵 여부 저장할 변수
 
         val btnTimeYes = view.findViewById<Button>(R.id.btnTimeYes)
         val btnTimeNo = view.findViewById<Button>(R.id.btnTimeNo)
@@ -99,7 +99,7 @@ class MainQuestionFragment : Fragment() {
             val offset = index + 1
 
             selectedHourOffset = offset
-            isSkipped = false  // 🔥 시간 YES → skipped=false
+            isSkipped = false  // 시간 YES → skipped=false
             mainQuestionViewModel.setSelectedHour(offset)
 
             btnTimeYes.setBackgroundColor(Color.parseColor("#77ADFE"))
@@ -111,7 +111,7 @@ class MainQuestionFragment : Fragment() {
         btnTimeNo.setOnClickListener {
             isTimeSelected = true
             selectedHourOffset = null
-            isSkipped = true   // 🔥 시간 NO → skipped=true
+            isSkipped = true   // 시간 NO → skipped=true
             mainQuestionViewModel.setSelectedHour(null)
 
             btnTimeNo.setBackgroundColor(Color.parseColor("#f78d86"))
@@ -148,7 +148,7 @@ class MainQuestionFragment : Fragment() {
                     purposeCode = purposeCode,
                     styleCode = styleCode,
                     moodCode = moodCode,
-                    skipped = isSkipped   // 🔥 핵심 수정
+                    skipped = isSkipped   //  핵심 수정
                 )
 
                 val navController = findNavController()

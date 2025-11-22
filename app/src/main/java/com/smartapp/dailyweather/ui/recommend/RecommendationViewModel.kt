@@ -68,7 +68,7 @@ class RecommendationViewModel(app: Application) : AndroidViewModel(app) {
                             "grid=(${state.x}, ${state.y}), moodCode=${state.moodCode}, skipped=${state.skipped}"
                 )
 
-                // 🔵 새로고침 + skipped=true(스킵 OR 시간 NO) → now 기준으로 temp 다시 조회 + UPDATE
+                // 새로고침 + skipped=true(스킵 OR 시간 NO) → now 기준으로 temp 다시 조회 + UPDATE
                 if (forceRecreate && state.skipped) {
                     state = lastUserStateRepo.refreshLatestStateTempIfSkipped(state)
                     Log.d(

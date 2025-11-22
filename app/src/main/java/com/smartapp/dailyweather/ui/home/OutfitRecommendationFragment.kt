@@ -73,7 +73,7 @@ class OutfitRecommendationFragment : Fragment(R.layout.fragment_outfit_recommend
 
         // ===================== 버튼 동작 =====================
 
-        // 🔴 〈처음으로 : 위치 권한 화면(locationGpsFragment)으로 이동 + 관련 DB 초기화
+        // 〈처음으로 : 위치 권한 화면(locationGpsFragment)으로 이동 + 관련 DB 초기화
         btnRestartAll.setOnClickListener {
             val db = DailyWeatherApp.instance.db
             val lastRepo = LastUserStateRepository(db)
@@ -83,7 +83,7 @@ class OutfitRecommendationFragment : Fragment(R.layout.fragment_outfit_recommend
                 lastRepo.clearLastUserState()
                 lastRepo.clearCoordinationTables()
 
-                // 🔥 상세날씨 ViewModel 캐시도 완전히 리셋 (중복 로딩 / 이전 값 재사용 방지)
+                // 상세날씨 ViewModel 캐시도 완전히 리셋 (중복 로딩 / 이전 값 재사용 방지)
                 weatherDetailViewModel.resetForRestart()
 
                 // 네비게이션 그래프 전체(popUpTo nav_intro) 초기화 후 GPS 화면으로

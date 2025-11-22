@@ -109,7 +109,7 @@ class LastUserStateRepository(
         dao.getLatest()
 
     // ===========================
-    // 🔴 "처음으로" 버튼 전용 API
+    // "처음으로" 버튼 전용 API
     // ===========================
 
     /** last_user_state 테이블만 전체 삭제 */

@@ -17,7 +17,7 @@ class DetailLoadingFragment :
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // 🔹 새로고침 여부 인자 (기본값 false)
+        //  새로고침 여부 인자 (기본값 false)
         val forceRefresh = arguments?.getBoolean("forceRefresh", false) ?: false
 
         // 탭 버튼 찾기

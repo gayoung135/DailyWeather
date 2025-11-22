@@ -59,7 +59,7 @@ class WeatherDetailViewModel : ViewModel() {
 
     private var hasLoaded = false
 
-    /** 🔥 처음으로 이동할 때 상세날씨 캐시 초기화 */
+    /** 처음으로 이동할 때 상세날씨 캐시 초기화 */
     fun resetForRestart() {
         hasLoaded = false
         _uiState.value = null

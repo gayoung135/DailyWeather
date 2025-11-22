@@ -64,7 +64,7 @@ class ManualLocationFragment : Fragment() {
         val regionNamesWithHint = regionsNoHint.map { it.displayName } + "시/도 선택"
 
         // ============================
-        // 🔹 상위(시/도) 스피너 어댑터 (UI만 커스텀)
+        // 상위(시/도) 스피너 어댑터 (UI만 커스텀)
         // ============================
         spinner.adapter = object : ArrayAdapter<String>(
             requireContext(),
@@ -90,7 +90,7 @@ class ManualLocationFragment : Fragment() {
         }
 
         // ============================
-        // 🔹 하위(시/군/구) 최초 placeholder
+        // 하위(시/군/구) 최초 placeholder
         // ============================
         fun setSubPlaceholder() {
             val adapter = object : ArrayAdapter<String>(
@@ -108,7 +108,7 @@ class ManualLocationFragment : Fragment() {
         setSubPlaceholder()
 
         // ============================
-        // 🔹 시/도 선택 리스너
+        // 시/도 선택 리스너
         // ============================
         spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(
@@ -165,7 +165,7 @@ class ManualLocationFragment : Fragment() {
         }
 
         // ============================
-        // 🔹 시/군/구 선택 리스너
+        // 시/군/구 선택 리스너
         // ============================
         spinnerSub.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(
