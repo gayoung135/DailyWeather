@@ -8,13 +8,17 @@ import android.view.View
 import android.widget.ImageButton
 import android.widget.TextView
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.navGraphViewModels
 import com.google.android.material.button.MaterialButton
 import com.smartapp.dailyweather.R
+import com.smartapp.dailyweather.DailyWeatherApp
 import com.smartapp.dailyweather.data.repo.CategoryIds
+import com.smartapp.dailyweather.data.repo.LastUserStateRepository
 import com.smartapp.dailyweather.ui.recommend.CoordinationItemUi
 import com.smartapp.dailyweather.ui.recommend.RecommendationViewModel
+import kotlinx.coroutines.launch
 
 class OutfitRecommendationFragment : Fragment(R.layout.fragment_outfit_recommendation) {
 
@@ -65,10 +69,21 @@ class OutfitRecommendationFragment : Fragment(R.layout.fragment_outfit_recommend
 
         // ===================== 버튼 동작 =====================
 
-        // 〈처음으로 : 인트로 플로우 맨 처음(네트워크 게이트)로 이동
+        // 🔴 〈처음으로 : 위치 권한 화면(locationGpsFragment)으로 이동 + 관련 DB 초기화
         btnRestartAll.setOnClickListener {
-            // nav_intro의 startDestination이 networkGateFragment 이므로 여기로 보냄
-            findNavController().navigate(R.id.networkGateFragment)
+            val db = DailyWeatherApp.instance.db
+            val lastRepo = LastUserStateRepository(db)
+
+            viewLifecycleOwner.lifecycleScope.launch {
+                // 마지막 사용자 상태 + 코디 관련 테이블 초기화
+                lastRepo.clearLastUserState()
+                lastRepo.clearCoordinationTables()
+
+                // 네비게이션 그래프 전체(popUpTo nav_intro) 초기화 후 GPS 화면으로
+                findNavController().navigate(
+                    R.id.action_outfitRecommendationFragment_to_locationGpsFragment_restart
+                )
+            }
         }
 
         // 새로고침 아이콘 → 코디 새로고침 로딩 화면으로
@@ -80,7 +95,7 @@ class OutfitRecommendationFragment : Fragment(R.layout.fragment_outfit_recommend
 
         // 현재 화면 탭(맞춤 옷차림)은 별도 동작 없음
         tabOutfit.setOnClickListener {
-            // 아무것도 안 해도 되지만, 혹시 나중에 스크롤 맨 위로 등 넣고 싶으면 여기
+            // 필요 시 스크롤 맨 위로 등 추가 가능
         }
 
         // 오른쪽 탭을 누르면 상세날씨(로딩 → 상세)로 이동

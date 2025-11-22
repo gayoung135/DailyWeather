@@ -107,4 +107,19 @@ class LastUserStateRepository(
 
     suspend fun getLatestState(): LastUserStateEntity? =
         dao.getLatest()
+
+    // ===========================
+    // 🔴 "처음으로" 버튼 전용 API
+    // ===========================
+
+    /** last_user_state 테이블만 전체 삭제 */
+    suspend fun clearLastUserState() {
+        dao.clearAll()
+    }
+
+    /** coordination_set + coordination_item 전체 삭제 */
+    suspend fun clearCoordinationTables() {
+        db.coordinationSetDao().clearAll()
+        db.coordinationItemDao().clearAll()
+    }
 }

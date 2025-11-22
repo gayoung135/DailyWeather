@@ -65,6 +65,10 @@ interface CoordinationSetDao {
 
     @Query("DELETE FROM coordination_set WHERE last_user_state_id = :lusId")
     suspend fun deleteByLastUserState(lusId: Int)
+
+    // 🔴 "처음으로" 초기화용: 전체 삭제
+    @Query("DELETE FROM coordination_set")
+    suspend fun clearAll()
 }
 
 @Dao
@@ -83,4 +87,8 @@ interface CoordinationItemDao {
 
     @Query("DELETE FROM coordination_item WHERE set_id = :setId")
     suspend fun deleteBySetId(setId: Int)
+
+    // 🔴 "처음으로" 초기화용: 전체 삭제
+    @Query("DELETE FROM coordination_item")
+    suspend fun clearAll()
 }

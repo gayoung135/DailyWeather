@@ -13,11 +13,15 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.button.MaterialButton
 import com.smartapp.dailyweather.R
+import com.smartapp.dailyweather.DailyWeatherApp
+import com.smartapp.dailyweather.data.repo.LastUserStateRepository
+import kotlinx.coroutines.launch
 
 class WeatherDetailFragment : Fragment(R.layout.fragment_weather_detail) {
 
@@ -55,9 +59,21 @@ class WeatherDetailFragment : Fragment(R.layout.fragment_weather_detail) {
         forecastAdapter = WeatherForecastAdapter(emptyList())
         forecastRecycler.adapter = forecastAdapter
 
-        // 🔹 "처음으로" 버튼: 일단 이전 화면(코디 추천)으로 돌아가도록
+        // 🔴 "처음으로" 버튼: 위치 권한 화면으로 이동 + 관련 DB 초기화
         btnRestartDetail.setOnClickListener {
-            findNavController().navigateUp()
+            val db = DailyWeatherApp.instance.db
+            val lastRepo = LastUserStateRepository(db)
+
+            viewLifecycleOwner.lifecycleScope.launch {
+                // 마지막 사용자 상태 + 코디 관련 테이블 초기화
+                lastRepo.clearLastUserState()
+                lastRepo.clearCoordinationTables()
+
+                // 네비그래프 전체(popUpTo nav_intro) 비우고 GPS 화면으로
+                findNavController().navigate(
+                    R.id.action_weatherDetailFragment_to_locationGpsFragment_restart
+                )
+            }
         }
 
         // 🔹 상세 날씨 새로고침 버튼 → 로딩 화면으로 이동 (forceRefresh = true)
