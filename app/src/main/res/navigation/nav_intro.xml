@@ -120,6 +120,12 @@
         android:label="DetailWeatherLoadingFragment"
         tools:layout="@layout/fragment_detailweather_loading">
 
+        <!-- 🔹 새로고침 여부 전달용 인자 -->
+        <argument
+            android:name="forceRefresh"
+            app:argType="boolean"
+            android:defaultValue="false" />
+
         <!-- 로딩 끝나면 진짜 상세 화면으로 이동, 로딩은 스택에서 제거 -->
         <action
             android:id="@+id/action_detailWeatherLoadingFragment_to_weatherDetailFragment"
@@ -133,7 +139,13 @@
         android:id="@+id/weatherDetailFragment"
         android:name="com.smartapp.dailyweather.ui.home.WeatherDetailFragment"
         android:label="WeatherDetailFragment"
-        tools:layout="@layout/fragment_weather_detail" />
+        tools:layout="@layout/fragment_weather_detail">
+
+        <!-- 🔹 상세 화면에서 "상세날씨 새로고침" → 로딩 화면으로 이동 -->
+        <action
+            android:id="@+id/action_weatherDetailFragment_to_detailWeatherLoadingFragment"
+            app:destination="@id/detailWeatherLoadingFragment" />
+    </fragment>
 
     <!-- ✅ 코디 새로고침용 로딩 화면 -->
     <fragment
