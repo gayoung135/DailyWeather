@@ -1,66 +1,102 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/bg_gradient">
+    android:background="#FAFAFA"
+    android:fillViewport="true">
 
-    <!-- 상단 탭 바 -->
-    <LinearLayout
-        android:id="@+id/tabBar"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        android:padding="4dp"
-        android:orientation="horizontal"
-        android:background="@drawable/bg_tab_group"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
-        <!-- 🔹 맞춤 옷차림 (비활성) -->
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/tabOutfit"
+        <!-- 🔹 상단 버튼 추가 (상세날씨 화면 전용) -->
+        <LinearLayout
+            android:id="@+id/topButtonsDetail"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingStart="20dp"
+            android:paddingEnd="12dp"
+            android:paddingBottom="10dp"
+            android:paddingTop="20dp"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <TextView
+                android:id="@+id/btnRestartDetail"
+                android:layout_width="wrap_content"
+                android:layout_height="44dp"
+                android:text="&lt; 처음으로"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:textColor="#FFFFFF"
+                android:gravity="center"
+                android:paddingHorizontal="18dp"
+                android:background="@drawable/bg_restart_text_button" />
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1" />
+
+            <ImageButton
+                android:id="@+id/btnRefreshWeather"
+                android:layout_width="66dp"
+                android:layout_height="60dp"
+                android:src="@drawable/ic_reset"
+                android:scaleType="centerInside"
+                android:adjustViewBounds="true"
+                android:background="@android:color/transparent"
+                android:contentDescription="상세날씨 새로고침" />
+        </LinearLayout>
+
+        <!-- 🔽 기존 탭 바: 버튼 아래로 내림 -->
+        <LinearLayout
+            android:id="@+id/tabBar"
             android:layout_width="0dp"
-            android:layout_height="48dp"
-            android:layout_weight="1"
-            android:background="@drawable/bg_tab_right"
-            android:padding="0dp"
-            android:text="맞춤 옷차림"
-            android:textColor="#B0B0B0"
-            android:textSize="15sp"
-            android:textStyle="bold"
-            android:alpha="0.4"
-            android:elevation="0dp"
-            app:backgroundTint="@null" />
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:padding="4dp"
+            android:orientation="horizontal"
+            android:background="@drawable/bg_tab_group"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/topButtonsDetail">
 
-        <!-- 🔹 상세 날씨 (현재 선택) -->
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/tabDetail"
-            android:layout_width="0dp"
-            android:layout_height="48dp"
-            android:layout_weight="1"
-            android:background="@drawable/bg_tab_left"
-            android:padding="0dp"
-            android:text="상세 날씨"
-            android:textColor="#333333"
-            android:textSize="15sp"
-            android:textStyle="bold"
-            android:alpha="1"
-            android:elevation="0dp"
-            app:backgroundTint="@null" />
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/tabOutfit"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_weight="1"
+                android:text="맞춤 옷차림"
+                android:textColor="#777777"
+                android:background="@drawable/bg_tab_right"
+                app:backgroundTint="@null" />
 
-    </LinearLayout>
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/tabDetail"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_weight="1"
+                android:text="상세 날씨"
+                android:textStyle="bold"
+                android:textColor="#333333"
+                android:background="@drawable/bg_tab_left"
+                app:backgroundTint="@null" />
+        </LinearLayout>
 
-    <!-- 🔹 로딩 카드 영역 (화면 중앙 근처) -->
+    <!-- 로딩 카드 -->
     <LinearLayout
-        android:id="@+id/weatherCard"
-        android:layout_width="331dp"
-        android:layout_height="358dp"
+        android:id="@+id/outfitCard"
+        android:layout_width="380dp"
+        android:layout_height="555dp"
         android:layout_marginStart="32dp"
         android:layout_marginTop="20dp"
         android:layout_marginEnd="32dp"
@@ -73,8 +109,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tabBar"
-        app:layout_constraintVertical_bias="0.321">
-
+        app:layout_constraintVertical_bias="0.32">
 
         <!-- 로딩 타이틀 -->
         <TextView
@@ -84,7 +119,7 @@
             android:layout_marginBottom="8dp"
             android:gravity="center"
             android:lineSpacingExtra="2dp"
-            android:text="상세 날씨 준비 중이에요"
+            android:text="날씨 정보를 불러오는 중입니다"
             android:textColor="#000000"
             android:textSize="20sp"
             android:textStyle="bold" />
@@ -103,18 +138,18 @@
 
         <ImageView
             android:id="@+id/loadingImage"
-            android:layout_width="153dp"
-            android:layout_height="114dp"
+            android:layout_width="178dp"
+            android:layout_height="159dp"
             android:layout_marginTop="8dp"
-            android:layout_marginBottom="16dp"
+            android:layout_marginBottom="30dp"
             android:src="@drawable/detailload" />
 
         <!-- 로딩 인디케이터 -->
         <ProgressBar
             android:id="@+id/loadingProgress"
             style="?android:attr/progressBarStyleLarge"
-            android:layout_width="97dp"
-            android:layout_height="48dp"
+            android:layout_width="102dp"
+            android:layout_height="76dp"
             android:layout_marginTop="10dp"
             android:layout_marginBottom="12dp"
             android:indeterminate="true" />
@@ -122,3 +157,4 @@
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.core.widget.NestedScrollView>

@@ -23,7 +23,7 @@
             android:id="@+id/loadingTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="추천 결과를 불러오는 중..."
+            android:text="추천 결과를 불러오는 중입니다"
             android:textSize="22sp"
             android:textColor="#333333"
             android:layout_marginBottom="8dp" />

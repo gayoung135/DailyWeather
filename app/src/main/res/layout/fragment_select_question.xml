@@ -36,7 +36,7 @@
             android:gravity="center"
             android:text="환영합니다! \n맞춤 설계를 위한 질문을 진행하겠습니다"
             android:textColor="#1E1E1E"
-            android:textSize="18sp"
+            android:textSize="15sp"
             android:lineSpacingExtra="4dp"
             android:textStyle="bold" />
 

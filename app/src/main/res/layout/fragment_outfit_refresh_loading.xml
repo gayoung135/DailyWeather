@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FAFAFA">
+
+    <LinearLayout
+        android:id="@+id/topButtons"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="20dp"
+        android:paddingEnd="12dp"
+        android:paddingBottom="10dp"
+        android:paddingTop="20dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+        <TextView
+            android:id="@+id/btnRestartAll"
+            android:layout_width="wrap_content"
+            android:layout_height="44dp"
+            android:text="&lt; 처음으로"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:textColor="#FFFFFF"
+            android:gravity="center"
+            android:paddingHorizontal="18dp"
+            android:background="@drawable/bg_restart_text_button" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1" />
+
+        <ImageButton
+            android:id="@+id/btnRefreshOutfit"
+            android:layout_width="66dp"
+            android:layout_height="60dp"
+            android:src="@drawable/ic_reset"
+            android:scaleType="centerInside"
+            android:adjustViewBounds="true"
+            android:background="@android:color/transparent"
+            android:contentDescription="새로고침" />
+    </LinearLayout>
+
+    <!-- 상단 탭 바 -->
+    <LinearLayout
+        android:id="@+id/tabBar"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:padding="4dp"
+        android:orientation="horizontal"
+        android:background="@drawable/bg_tab_group"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/topButtons">
+
+        <!-- 맞춤 옷차림 (현재 선택) -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/tabOutfit"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_weight="1"
+            android:background="@drawable/bg_tab_left"
+            android:text="맞춤 옷차림"
+            android:textColor="#333333"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            app:backgroundTint="@null" />
+
+        <!-- 상세 날씨 (비활성) -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/tabDetail"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_weight="1"
+            android:background="@drawable/bg_tab_right"
+            android:text="상세 날씨"
+            android:textColor="#B0B0B0"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            android:alpha="0.4"
+            app:backgroundTint="@null" />
+    </LinearLayout>
+
+    <!-- 로딩 카드 -->
+    <LinearLayout
+        android:id="@+id/outfitCard"
+        android:layout_width="380dp"
+        android:layout_height="555dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="32dp"
+        android:layout_marginBottom="32dp"
+        android:background="@drawable/bg_gradient_round"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:padding="24dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tabBar"
+        app:layout_constraintVertical_bias="0.32">
+
+        <TextView
+            android:id="@+id/loadingTitleText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:gravity="center"
+            android:text="맞춤 옷차림 새로 고치는 중이에요"
+            android:textColor="#000000"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/loadingDescText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            android:gravity="center"
+            android:lineSpacingExtra="2dp"
+            android:text="답변과 날씨를 다시 반영해서\n새로운 코디를 준비하고 있어요."
+            android:textColor="#555555"
+            android:textSize="14sp" />
+
+        <ImageView
+            android:id="@+id/loadingImage"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="60dp"
+            android:src="@drawable/outfit_load" />
+
+        <ProgressBar
+            android:id="@+id/loadingProgress"
+            style="?android:attr/progressBarStyleLarge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:indeterminate="true" />
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
