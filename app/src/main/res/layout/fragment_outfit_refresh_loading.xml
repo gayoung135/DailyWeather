@@ -139,7 +139,8 @@
             android:layout_height="120dp"
             android:layout_marginTop="8dp"
             android:layout_marginBottom="60dp"
-            android:src="@drawable/outfit_load" />
+            android:src="@drawable/outfit_load"
+            android:alpha="0.7"/>
 
         <ProgressBar
             android:id="@+id/loadingProgress"
