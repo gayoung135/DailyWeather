@@ -10,7 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <!-- 🔹 상단 버튼 추가 (상세날씨 화면 전용) -->
+        <!--  상단 버튼 추가 (상세날씨 화면 전용) -->
         <LinearLayout
             android:id="@+id/topButtonsDetail"
             android:layout_width="match_parent"
