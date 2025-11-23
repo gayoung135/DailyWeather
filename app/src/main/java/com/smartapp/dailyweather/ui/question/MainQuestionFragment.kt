@@ -132,10 +132,21 @@ class MainQuestionFragment : Fragment() {
                 return@setOnClickListener
             }
 
+            // 2) 목적 / 기분 / 스타일 선택 여부 확인
             val purposeCode = answerMap["목적"]
             val styleCode = answerMap["스타일"]
             val moodCode = answerMap["기분"]
 
+            val missingFields = mutableListOf<String>()
+            if (purposeCode == null) missingFields += "외출 목적"
+            if (moodCode == null)   missingFields += "기분"
+            if (styleCode == null)  missingFields += "스타일"
+
+            if (missingFields.isNotEmpty()) {
+                val msg = missingFields.joinToString(", ") + "을(를) 선택해주세요."
+                Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
             val regionName = locationViewModel.selectedRegion.value?.displayName
             val subRegionName = locationViewModel.selectedSubRegion.value?.name
 
