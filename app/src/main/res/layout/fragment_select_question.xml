@@ -52,8 +52,10 @@
             android:textStyle="bold"
             android:textAllCaps="false"
             app:backgroundTint="#FFFFFF"
-            app:rippleColor="#99FFFFFF"
-            app:cornerRadius="28dp" />
+            app:cornerRadius="28dp"
+            app:strokeWidth="1dp"
+            app:strokeColor="#D5D5D5"
+            app:rippleColor="#33000000" />
 
         <!-- 보조 버튼 -->
         <com.google.android.material.button.MaterialButton
@@ -61,9 +63,9 @@
             android:layout_width="match_parent"
             android:layout_height="60dp"
             android:text="스킵할게요"
-            android:textSize="15sp"
-            android:textAllCaps="false"
+            android:textSize="17sp"
             android:textStyle="bold"
+            android:textAllCaps="false"
             android:textColor="#4A4A4A"
             app:backgroundTint="#FFFFFF"
             app:cornerRadius="28dp"
