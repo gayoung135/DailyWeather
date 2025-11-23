@@ -32,6 +32,9 @@ class SelectQuestionFragment : Fragment() {
     // OutfitLoading 으로 이미 이동했는지 여부 (스킵 버튼용)
     private var hasNavigatedToOutfitLoading = false
 
+    // 스킵할래요 버튼 중복 클릭 방지(db에 두개 저장 x)
+    private var isSkipSaving = false
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -69,6 +72,13 @@ class SelectQuestionFragment : Fragment() {
 
         // "스킵할래요" 버튼 클릭 시 → 바로 LastUserStateEntity 저장 + 이동
         btnSkip.setOnClickListener {
+
+            // 이미 스킵 저장 중이면 더블클릭 무시
+            if (isSkipSaving) {
+                Log.d("SelectQuestion", "skip 버튼 중복 클릭 무시")
+                return@setOnClickListener
+            }
+
             val grid = locationViewModel.grid.value
 
             if (grid == null) {
@@ -82,43 +92,54 @@ class SelectQuestionFragment : Fragment() {
             val subRegionName = locationViewModel.selectedSubRegion.value?.name
 
             viewLifecycleOwner.lifecycleScope.launch {
-                val now = SystemTimeProvider().nowKorea()
-                Log.d("SelectQuestion", "스킵 흐름 - now(KST) = $now")
 
-                // suspend 함수라 여기서 끝날 때까지 기다렸다가
-                mainQuestionViewModel.saveLastUserStateWithApi(
-                    grid = grid,
-                    regionName = regionName,
-                    subRegionName = subRegionName,
-                    selectedHourOffset = null,
-                    purposeCode = null,
-                    styleCode = null,
-                    moodCode = null,
-                    skipped = true
-                )
+                try {
+                    // 저장 시작: 플래그 + 버튼 비활성화
+                    isSkipSaving = true
+                    btnSkip.isEnabled = false
 
-                Log.d("SelectQuestion", "LastUserState 저장 완료 → 추천 화면으로 이동")
+                    val now = SystemTimeProvider().nowKorea()
+                    Log.d("SelectQuestion", "스킵 흐름 - now(KST) = $now")
 
-                // 현재 목적지가 selectQuestionFragment 이고,
-                //  아직 OutfitLoading 으로 이동한 적이 없을 때만 네비게이션
-                val navController = findNavController()
-                if (!hasNavigatedToOutfitLoading &&
-                    navController.currentDestination?.id == R.id.selectQuestionFragment
-                ) {
-                    hasNavigatedToOutfitLoading = true
-                    navController.navigate(
-                        R.id.action_selectQuestionFragment_to_outfitLoadingFragment
+                    mainQuestionViewModel.saveLastUserStateWithApi(
+                        grid = grid,
+                        regionName = regionName,
+                        subRegionName = subRegionName,
+                        selectedHourOffset = null,
+                        purposeCode = null,
+                        styleCode = null,
+                        moodCode = null,
+                        skipped = true
                     )
-                } else {
-                    Log.d(
-                        "SelectQuestion",
-                        "이미 이동했거나 현재 목적지가 아님 → navigate 스킵. current=${navController.currentDestination}"
-                    )
+
+                    Log.d("SelectQuestion", "LastUserState 저장 완료 → 추천 화면으로 이동")
+
+                    val navController = findNavController()
+                    if (!hasNavigatedToOutfitLoading &&
+                        navController.currentDestination?.id == R.id.selectQuestionFragment
+                    ) {
+                        hasNavigatedToOutfitLoading = true
+                        navController.navigate(
+                            R.id.action_selectQuestionFragment_to_outfitLoadingFragment
+                        )
+                    } else {
+                        Log.d(
+                            "SelectQuestion",
+                            "이미 이동했거나 현재 목적지가 아님 → navigate 스킵. current=${navController.currentDestination}"
+                        )
+                    }
+
+                } finally {
+                    // 저장 끝났으니 다시 눌러도 되게 복구
+                    isSkipSaving = false
+                    btnSkip.isEnabled = true
                 }
             }
+
         }
     }
-}
+    }
+
 
 //요약
 //위치 설정 완료 후 사용자에게
