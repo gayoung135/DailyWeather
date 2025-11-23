@@ -10,7 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <!-- 🔹 상단 버튼 추가 (상세날씨 화면 전용) -->
+        <!-- 상단 버튼 추가 (상세날씨 화면 전용) -->
         <LinearLayout
             android:id="@+id/topButtonsDetail"
             android:layout_width="match_parent"
@@ -53,7 +53,7 @@
                 android:contentDescription="상세날씨 새로고침" />
         </LinearLayout>
 
-        <!-- 🔽 기존 탭 바: 버튼 아래로 내림 -->
+        <!-- 기존 탭 바: 버튼 아래로 내림 -->
         <LinearLayout
             android:id="@+id/tabBar"
             android:layout_width="0dp"
@@ -142,7 +142,8 @@
             android:layout_height="159dp"
             android:layout_marginTop="8dp"
             android:layout_marginBottom="30dp"
-            android:src="@drawable/detailload" />
+            android:src="@drawable/detailload"
+            android:alpha="0.7"/>
 
         <!-- 로딩 인디케이터 -->
         <ProgressBar
