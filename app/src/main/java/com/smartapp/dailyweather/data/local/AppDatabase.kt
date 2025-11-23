@@ -34,7 +34,7 @@ import com.smartapp.dailyweather.data.local.entity.*
         CoordinationSetEntity::class,
         CoordinationItemEntity::class
     ],
-    version = 11,
+    version = 17,
     exportSchema = true
 )
 abstract class AppDatabase : RoomDatabase() {
