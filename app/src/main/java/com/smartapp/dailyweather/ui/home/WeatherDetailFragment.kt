@@ -152,8 +152,8 @@ class WeatherDetailFragment : Fragment(R.layout.fragment_weather_detail) {
 
         private fun getPopIconRes(pop: Int): Int {
             return when (pop) {
-                in 0..20   -> R.drawable.pop_020
-                in 21..30  -> R.drawable.pop_1030
+                in 0..10   -> R.drawable.pop_010
+                in 11..30  -> R.drawable.pop_1030
                 in 31..40  -> R.drawable.pop_3040
                 in 41..60  -> R.drawable.pop_4060
                 in 61..80  -> R.drawable.pop_6080
