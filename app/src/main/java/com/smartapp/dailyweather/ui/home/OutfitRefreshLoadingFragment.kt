@@ -25,14 +25,6 @@ class OutfitRefreshLoadingFragment : Fragment(R.layout.fragment_outfit_refresh_l
         val tabOutfit = view.findViewById<MaterialButton>(R.id.tabOutfit)
         val tabDetail = view.findViewById<MaterialButton>(R.id.tabDetail)
 
-        // 〈처음으로 : 인트로 맨 처음으로
-        btnRestartAll.setOnClickListener {
-            findNavController().navigate(R.id.networkGateFragment)
-        }
-
-        // 로딩 화면에서 새로고침 아이콘은 이미 새로고침 중이니까 비활성 느낌으로
-        btnRefreshOutfit.isEnabled = false
-        btnRefreshOutfit.alpha = 0.4f
 
         // 현재 탭(맞춤 옷차림) → 이전 화면(코디 화면)으로 돌아가기
         tabOutfit.setOnClickListener {
