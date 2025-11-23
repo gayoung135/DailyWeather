@@ -43,10 +43,10 @@ class AirQualityRepository(
             return "normal"
         }
 
-        // 🔥 가장 최신 시간 데이터 선택
+        // 가장 최신 시간 데이터 선택
         val latest = items.maxByOrNull { it.dataTime ?: "" }!!
 
-        // 🔥 등급 우선순위: pm25Grade1h > pm25Grade > khaiGrade
+        // 등급 우선순위: pm25Grade1h > pm25Grade > khaiGrade
         val gradeRaw = latest.pm25Grade1h?.trim()
             ?.takeIf { it.isNotEmpty() && it != "-" }
             ?: latest.pm25Grade?.trim()
