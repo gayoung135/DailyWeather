@@ -179,7 +179,7 @@
                 android:layout_height="wrap_content"
                 android:text="추천 받기 >"
                 android:textSize="25sp"
-                android:textColor="#7C8197"
+                android:textColor="#5e5c5c"
                 android:textStyle="bold"
                 android:padding="6dp"
                 android:gravity="end"
