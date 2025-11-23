@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:background="@drawable/bg_gradient">
 
-    <!-- ▼ 카드형 하단 패널 -->
+    <!-- 카드형 하단 패널 -->
     <LinearLayout
         android:id="@+id/bottomContainer"
         android:layout_width="0dp"
