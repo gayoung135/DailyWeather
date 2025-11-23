@@ -30,7 +30,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:layout_marginBottom="8dp" />
+                android:layout_marginBottom="3dp" />
 
             <Button
                 android:id="@+id/skipButton"
@@ -164,17 +164,29 @@
             app:layoutManager="com.google.android.flexbox.FlexboxLayoutManager"
             tools:listitem="@layout/item_option" />
 
-        <!-- 제출 버튼 -->
-        <Button
-            android:id="@+id/submitButton"
-            android:text="추천 받기"
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="32dp"
-            android:layout_marginBottom="50dp"
-            android:backgroundTint="#1976D2"
-            android:textColor="#FFFFFF" />
+            android:layout_marginTop="30dp"
+            android:layout_marginBottom="20dp"
+            android:layout_marginRight="10dp"
+            android:gravity="end">
+
+            <TextView
+                android:id="@+id/submitButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="추천 받기 >"
+                android:textSize="25sp"
+                android:textColor="#3B467C"
+                android:textStyle="bold"
+                android:padding="6dp"
+                android:gravity="end"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="@drawable/ripple_recommend"/>
+        </LinearLayout>
 
     </LinearLayout>
-
 </ScrollView>
