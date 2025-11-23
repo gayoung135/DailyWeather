@@ -35,6 +35,9 @@ class MainQuestionFragment : Fragment() {
 
     private var hasNavigatedToOutfitLoading = false
 
+    // 추가: 저장 중인지 여부 (더블 클릭 방지용)
+    private var isSaving = false
+
     private val locationViewModel: LocationViewModel by navGraphViewModels(R.id.nav_intro) {
         LocationViewModelFactory((requireActivity() as MainActivity).sharedLocationRepo)
     }
@@ -121,6 +124,12 @@ class MainQuestionFragment : Fragment() {
         }
 
         binding.submitButton.setOnClickListener {
+
+            // 추가: 이미 저장 중이면 바로 무시 → 더블클릭 막기
+            if (isSaving) {
+                Log.d("MainQuestion", "이미 저장 중이라 클릭 무시")
+                return@setOnClickListener
+            }
             if (!isTimeSelected) {
                 Toast.makeText(requireContext(), "YES 또는 NO를 선택해주세요.", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
@@ -151,25 +160,36 @@ class MainQuestionFragment : Fragment() {
             val subRegionName = locationViewModel.selectedSubRegion.value?.name
 
             viewLifecycleOwner.lifecycleScope.launch {
-                mainQuestionViewModel.saveLastUserStateWithApi(
-                    grid = grid,
-                    regionName = regionName,
-                    subRegionName = subRegionName,
-                    selectedHourOffset = selectedHourOffset,
-                    purposeCode = purposeCode,
-                    styleCode = styleCode,
-                    moodCode = moodCode,
-                    skipped = isSkipped   //  핵심 수정
-                )
 
-                val navController = findNavController()
-                if (!hasNavigatedToOutfitLoading &&
-                    navController.currentDestination?.id == R.id.mainQuestionFragment
-                ) {
-                    hasNavigatedToOutfitLoading = true
-                    navController.navigate(
-                        R.id.action_mainQuestionFragment_to_outfitLoadingFragment
+                try {
+                    //  추가: 저장 시작 플래그 + 버튼 잠시 비활성화
+                    isSaving = true
+                    binding.submitButton.isEnabled = false
+
+                    mainQuestionViewModel.saveLastUserStateWithApi(
+                        grid = grid,
+                        regionName = regionName,
+                        subRegionName = subRegionName,
+                        selectedHourOffset = selectedHourOffset,
+                        purposeCode = purposeCode,
+                        styleCode = styleCode,
+                        moodCode = moodCode,
+                        skipped = isSkipped   //  핵심 수정
                     )
+
+                    val navController = findNavController()
+                    if (!hasNavigatedToOutfitLoading &&
+                        navController.currentDestination?.id == R.id.mainQuestionFragment
+                    ) {
+                        hasNavigatedToOutfitLoading = true
+                        navController.navigate(
+                            R.id.action_mainQuestionFragment_to_outfitLoadingFragment
+                        )
+                    }
+                } finally {
+                    // 추가: 저장 끝 → 다시 클릭 가능
+                    isSaving = false
+                    binding.submitButton.isEnabled = true
                 }
             }
         }
