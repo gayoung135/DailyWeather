@@ -26,7 +26,7 @@ class OutfitRecommendationFragment : Fragment(R.layout.fragment_outfit_recommend
     // nav_intro 그래프 기준으로 OutfitLoadingFragment와 동일 ViewModel 공유
     private val viewModel: RecommendationViewModel by navGraphViewModels(R.id.nav_intro)
 
-    // 🔥 상세날씨 ViewModel(Activity 범위)도 가져와서 초기화에 사용
+    //  상세날씨 ViewModel(Activity 범위)도 가져와서 초기화에 사용
     private val weatherDetailViewModel: WeatherDetailViewModel by activityViewModels()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -60,7 +60,7 @@ class OutfitRecommendationFragment : Fragment(R.layout.fragment_outfit_recommend
         val pmText = view.findViewById<TextView>(R.id.pmText)
         val rainText = view.findViewById<TextView>(R.id.rainText)
 
-        // 🔹 오늘의 추천 색깔 전체 영역 (제목 + 박스)
+        // 오늘의 추천 색깔 전체 영역 (제목 + 박스)
         val moodSection = view.findViewById<View>(R.id.moodSection)
 
         val moodViews = listOf(
