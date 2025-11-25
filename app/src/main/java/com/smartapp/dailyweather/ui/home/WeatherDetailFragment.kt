@@ -86,8 +86,8 @@ class WeatherDetailFragment : Fragment(R.layout.fragment_weather_detail) {
         tabOutfit.setOnClickListener { findNavController().navigateUp() }
         tabDetail.isClickable = false
 
-        // 첫 로딩
-        viewModel.loadDetailWeather()
+        // 삭제 부분 -> 여기는 뷰모델 관찰하게
+       // viewModel.loadDetailWeather()
 
         viewModel.uiState.observe(viewLifecycleOwner) { ui ->
             ui ?: return@observe
