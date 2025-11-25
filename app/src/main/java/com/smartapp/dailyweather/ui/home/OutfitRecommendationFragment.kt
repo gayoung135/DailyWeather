@@ -32,7 +32,7 @@ class OutfitRecommendationFragment : Fragment(R.layout.fragment_outfit_recommend
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // 🔹 상단 버튼들
+        // 상단 버튼들
         val btnRestartAll = view.findViewById<TextView>(R.id.btnRestartAll)
         val btnRefreshOutfit = view.findViewById<ImageButton>(R.id.btnRefreshOutfit)
 
