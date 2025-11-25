@@ -46,8 +46,16 @@ object RetrofitClient {
         OkHttpClient.Builder()
             .addInterceptor(authQueryInterceptor)
             .addInterceptor(logging)
-            .connectTimeout(20, TimeUnit.SECONDS)
-            .readTimeout(20, TimeUnit.SECONDS)
+            // 타임아웃 여유 있게 늘리기
+            .connectTimeout(30, TimeUnit.SECONDS)   // 연결 시도 최대 30초
+            .readTimeout(40, TimeUnit.SECONDS)      // 응답 읽기 최대 40초
+            .writeTimeout(40, TimeUnit.SECONDS)
+
+            // 전체 호출 최대 시간 (연결+전송+응답 포함)
+            .callTimeout(60, TimeUnit.SECONDS)
+
+            // 일시적인 네트워크 끊김일 때 재시도 (선택)
+            .retryOnConnectionFailure(true)
             .build()
     }
 
@@ -78,8 +86,11 @@ object RetrofitClient {
     private val airOkHttp: OkHttpClient by lazy {
         OkHttpClient.Builder()
             .addInterceptor(logging)   // 로그만 공유, authKey는 안 붙임
-            .connectTimeout(20, TimeUnit.SECONDS)
-            .readTimeout(20, TimeUnit.SECONDS)
+            .connectTimeout(30, TimeUnit.SECONDS)
+            .readTimeout(40, TimeUnit.SECONDS)
+            .writeTimeout(40, TimeUnit.SECONDS)
+            .callTimeout(60, TimeUnit.SECONDS)
+            .retryOnConnectionFailure(true)
             .build()
     }
 
