@@ -73,9 +73,9 @@ class LastUserStateRepository(
     }
 
     /**
-     * 새로고침 시: "시간 선택 안함(skipped=true)" → now 기준 temp 재계산 + update
-     *  - 스킵/시간 NO : skipped = true → 여기서 UPDATE
-     *  - 시간 YES     : skipped = false → 그대로 유지
+     * 새로고침 시:
+     *  - "시간 선택 안함(skipped=true)" 인 경우에만 now 기준 temp + lastAccessTime 재계산
+     *  - "시간 YES(skipped=false)" 이면 그대로 유지 (외출시간 고정)
      */
     suspend fun refreshLatestStateTempIfSkipped(
         latestState: LastUserStateEntity
@@ -85,20 +85,28 @@ class LastUserStateRepository(
         if (!latestState.skipped) return latestState
 
         val grid = GridPoint(latestState.x, latestState.y)
-        val nowKst: ZonedDateTime = timeProvider.nowKorea()
 
+        // ✓ 현재 KST 시각을 "시 단위"로 맞춰서 사용 (분/초/나노 0으로)
+        val nowKst: ZonedDateTime = timeProvider.nowKorea()
+            .withMinute(0)
+            .withSecond(0)
+            .withNano(0)
+
+        // now 기준 기온
         val tempValue: Int = weatherRepository.getTempAt(grid, nowKst)
 
         val tempBucket = db.tempRangeDao().findBucketByTemp(tempValue)
             ?: error("해당 온도($tempValue℃)에 맞는 temp_range 버킷이 없습니다.")
 
+        // nowKst를 문자열로 저장 → 이후 미세먼지/POP/우산 전부 이 시간 기준으로 사용
         val lastAccessStr = timeProvider.kstDateTimeString(nowKst)
 
         val updatedEntity = latestState.copy(
             tempId = tempBucket.tempId,
             tempCelsius = tempValue,
             lastAccessTime = lastAccessStr,
-            skipped = true   // 계속 "스킵/시간NO 계열"로 취급
+            // 여전히 "시간 선택 안함" 계열이므로 skipped=true 유지
+            skipped = true
         )
 
         dao.update(updatedEntity)
