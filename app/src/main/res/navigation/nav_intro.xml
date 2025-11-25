@@ -137,6 +137,13 @@
             app:destination="@id/weatherDetailFragment"
             app:popUpTo="@id/detailWeatherLoadingFragment"
             app:popUpToInclusive="true" />
+
+        <!-- "처음으로" : nav_intro 전체 리셋 후 GPS 화면으로 -->
+        <action
+            android:id="@+id/action_detailWeatherLoadingFragment_to_locationGpsFragment_restart"
+            app:destination="@id/locationGpsFragment"
+            app:popUpTo="@id/nav_intro"
+            app:popUpToInclusive="true" />
     </fragment>
 
     <!-- 상세 날씨 화면 -->
@@ -169,6 +176,19 @@
             android:id="@+id/action_outfitRefreshLoadingFragment_to_outfitRecommendationFragment"
             app:destination="@id/outfitRecommendationFragment"
             app:popUpTo="@id/outfitRefreshLoadingFragment"
+            app:popUpToInclusive="true" />
+        <!-- 새로 추가: 코디 로딩 → 상세 로딩 전환 -->
+        <action
+            android:id="@+id/action_outfitRefreshLoadingFragment_to_detailWeatherLoadingFragment"
+            app:destination="@id/detailWeatherLoadingFragment"
+            app:popUpTo="@id/outfitRefreshLoadingFragment"
+            app:popUpToInclusive="true" />
+
+        <!--  "처음으로" : nav_intro 전체 리셋 후 GPS 화면으로 -->
+        <action
+            android:id="@+id/action_outfitRefreshLoadingFragment_to_locationGpsFragment_restart"
+            app:destination="@id/locationGpsFragment"
+            app:popUpTo="@id/nav_intro"
             app:popUpToInclusive="true" />
     </fragment>
 
