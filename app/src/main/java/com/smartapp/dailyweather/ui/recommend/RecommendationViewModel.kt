@@ -11,6 +11,7 @@ import com.smartapp.dailyweather.DailyWeatherApp
 import com.smartapp.dailyweather.core.KmaGridConverter
 import com.smartapp.dailyweather.core.SystemTimeProvider
 import com.smartapp.dailyweather.core.normalizeSidoName
+import com.smartapp.dailyweather.core.parseKstDateTime
 import com.smartapp.dailyweather.data.mapper.JsonToDto
 import com.smartapp.dailyweather.data.model.GridPoint
 import com.smartapp.dailyweather.data.repo.AirQualityRepository
@@ -22,6 +23,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.util.Locale
+
 
 class RecommendationViewModel(app: Application) : AndroidViewModel(app) {
 
@@ -42,6 +44,9 @@ class RecommendationViewModel(app: Application) : AndroidViewModel(app) {
     private val _uiState = MutableLiveData<RecommendationUiModel>()
     val uiState: LiveData<RecommendationUiModel> = _uiState
 
+    // 추가: 중복 호출 방지용 플래그
+    private var isLoading = false
+
     /**
      * 코디 추천 + 화면용 날씨 정보 로딩
      *
@@ -50,6 +55,16 @@ class RecommendationViewModel(app: Application) : AndroidViewModel(app) {
      *  - true (새로고침): skipped=true(스킵/시간NO)이면 온도 재계산 + 항상 코디 세트 새로 생성
      */
     fun loadRecommendationAutoSido(forceRecreate: Boolean = false) {
+
+        // 이미 로딩 중이고, 그냥 재사용 모드면(=forceRecreate=false) 호출 스킵
+        if (isLoading && !forceRecreate) {
+            Log.d("RecommendVM", "이미 추천 로딩 중 → 추가 호출 스킵 (forceRecreate=false)")
+            return
+        }
+
+        // 실제 로딩 시작
+        isLoading = true
+
         viewModelScope.launch {
             try {
                 Log.d("RecommendVM", "=== 추천 로직 시작 (forceRecreate=$forceRecreate) ===")
@@ -146,19 +161,18 @@ class RecommendationViewModel(app: Application) : AndroidViewModel(app) {
                 }
                 Log.d("RecommendVM", "airCode=$airCode, airText=$airText")
 
-                // (3) 강수확률 POP (%): 현재 시각 기준으로 조회
-                val nowKst = timeProvider.nowKorea()
-                    .withSecond(0)
-                    .withNano(0)
+                //  강수확률 POP (%): "외출 시간(lastAccessTime)" 기준으로 조회하도록 수정
+                val targetTimeKst = timeProvider.parseKstDateTime(state.lastAccessTime)
+                Log.d("RecommendVM", "화면용 POP 기준 시간(KST) = $targetTimeKst")
 
                 val popPercent: Int = try {
-                    weatherRepo.getPopAt(grid, nowKst) ?: 0
+                    weatherRepo.getPopAt(grid, targetTimeKst) ?: 0
                 } catch (e: Exception) {
                     Log.e("RecommendVM", "POP 조회 실패(뷰모델): ${e.message}", e)
                     0
                 }
                 val rainText = "${popPercent}%"
-                Log.d("RecommendVM", "POP(%)=$popPercent, rainText=$rainText")
+                Log.d("RecommendVM", "POP(외출시간 기준 %)=$popPercent, rainText=$rainText")
 
                 // ─────────────────────────────
                 // 4) 코디 추천: forceRecreate 여부에 따라 처리
@@ -222,9 +236,13 @@ class RecommendationViewModel(app: Application) : AndroidViewModel(app) {
 
             } catch (e: Exception) {
                 Log.e("RecommendVM", "추천 로직 실패: ${e.message}", e)
+            } finally {
+                // 로딩 끝났으니 상태 해제
+                isLoading = false
             }
         }
     }
+
 
     private suspend fun loadMoodColorsForMood(moodId: Int?): List<MoodColorUi> {
         if (moodId == null) return emptyList()
