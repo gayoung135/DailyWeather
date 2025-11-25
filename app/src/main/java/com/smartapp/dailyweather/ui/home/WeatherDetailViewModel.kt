@@ -59,6 +59,10 @@ class WeatherDetailViewModel : ViewModel() {
 
     private var hasLoaded = false
 
+
+    // 중복 호출 방지용 플래그
+    private var isLoading = false
+
     /** 처음으로 이동할 때 상세날씨 캐시 초기화 */
     fun resetForRestart() {
         hasLoaded = false
@@ -66,6 +70,12 @@ class WeatherDetailViewModel : ViewModel() {
     }
 
     fun loadDetailWeather(force: Boolean = false) {
+
+        // 이미 로딩 중인데 force=false면 추가 호출 무시
+        if (isLoading && !force) {
+            Log.d("WeatherDetailVM", "이미 로딩 중 → 추가 호출 스킵 (force=false)")
+            return
+        }
 
         if (force) {
             hasLoaded = false
@@ -76,6 +86,8 @@ class WeatherDetailViewModel : ViewModel() {
             Log.d("WeatherDetailVM", "이미 로딩된 상세날씨 → 스킵")
             return
         }
+        // 여기서부터 실제 로딩 시작
+        isLoading = true
 
         viewModelScope.launch(Dispatchers.IO) {
             try {
@@ -203,6 +215,9 @@ class WeatherDetailViewModel : ViewModel() {
 
             } catch (e: Exception) {
                 Log.e("WeatherDetailVM", "loadDetailWeather 실패: ${e.message}", e)
+            } finally {
+                // 로딩 끝났으니 상태 리셋
+                isLoading = false
             }
         }
     }
