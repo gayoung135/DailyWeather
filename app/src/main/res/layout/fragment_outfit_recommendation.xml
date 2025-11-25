@@ -255,7 +255,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="강수량"
+                            android:text="강수확률"
                             android:textSize="15sp"
                             android:textStyle="bold"
                             android:textColor="#555555" />
