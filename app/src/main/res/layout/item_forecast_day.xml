@@ -21,6 +21,7 @@
     <!-- 최저 / 최고 -->
     <TextView
         android:id="@+id/itemTemp"
+        android:layout_marginLeft="5px"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
@@ -47,8 +48,9 @@
 
         <ImageView
             android:id="@+id/itemRainIcon"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
+            android:layout_width="115dp"
+            android:layout_marginLeft="7px"
+            android:layout_height="115dp"
             android:layout_gravity="center"
             android:adjustViewBounds="true"
             android:scaleType="fitCenter"
