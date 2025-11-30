@@ -24,7 +24,7 @@ android {
 
     defaultConfig {
         applicationId = "com.smartapp.dailyweather"
-        minSdk = 31
+        minSdk = 21
         targetSdk = 36
         versionCode = 1
         versionName = "1.0"
@@ -126,4 +126,7 @@ dependencies {
 
     //Flexbox
     implementation("com.google.android.flexbox:flexbox:3.0.0")
+
+    //Lottie
+    implementation("com.airbnb.android:lottie:6.5.0")
 }

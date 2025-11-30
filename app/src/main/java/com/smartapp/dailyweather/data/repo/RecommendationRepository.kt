@@ -10,7 +10,6 @@ import com.smartapp.dailyweather.data.local.entity.CoordinationItemEntity
 import com.smartapp.dailyweather.data.local.entity.CoordinationSetEntity
 import com.smartapp.dailyweather.data.local.entity.LastUserStateEntity
 import com.smartapp.dailyweather.data.model.GridPoint
-import java.time.format.DateTimeFormatter
 
 object CategoryIds {
     const val OUTER = 1
@@ -27,7 +26,6 @@ object CategoryIds {
 class RecommendationRepository(
     private val db: AppDatabase,
     private val lastUserStateRepository: LastUserStateRepository,
-    private val airQualityRepository: AirQualityRepository,
     private val timeProvider: TimeProvider = SystemTimeProvider(),
     private val weatherRepository: WeatherRepository = WeatherRepository(timeProvider)
 ) {
@@ -45,17 +43,18 @@ class RecommendationRepository(
     private val coordinationSetDao = db.coordinationSetDao()
     private val coordinationItemDao = db.coordinationItemDao()
 
-    private val createdAtFormatter =
-        DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
-
     /**
      * 최근 LastUserState를 기준으로 추천 2세트를 생성하고,
      * coordination_set / coordination_item 테이블에 저장한다.
      *
+     * @param airQualityCode24h
+     *  - PM2.5 24시간 평균 기준 코드 (good / normal / bad / hazard)
+     *  - null 이면 대기질 기반 마스크 추천은 생략
+     *
      * @param moodCode 사용자가 선택한 mood_code (good/normal/bad)
      */
     suspend fun createRecommendationForLatestState(
-        sidoName: String,
+        airQualityCode24h: String?,
         moodCode: String?
     ): RecommendationResult {
 
@@ -74,11 +73,14 @@ class RecommendationRepository(
         val purposeId = state.purposeId
         val styleId = state.styleId
 
-        /* ① 대기질 → 마스크 NECESSITY */
-        val airCode = airQualityRepository.getAirQualityCodeForRegion(sidoName)
-        Log.d("RecommendRepo", "airCode = $airCode")
-
-        val airNecessityItemIds = getNecessityItemIdsByAir(airCode)
+        /* ① 대기질 → 마스크 NECESSITY (PM2.5 24시간 평균 기준 코드 사용) */
+        val airNecessityItemIds =
+            if (airQualityCode24h != null) {
+                getNecessityItemIdsByAir(airQualityCode24h)
+            } else {
+                Log.w("RecommendRepo", "airQualityCode24h=null → 마스크 NECESSITY 생략")
+                emptyList()
+            }
         Log.d("RecommendRepo", "air necessity items = $airNecessityItemIds")
 
         /* ② POP(강수확률) → 우산 NECESSITY */
@@ -187,6 +189,7 @@ class RecommendationRepository(
         }
 
         val list = necessityRuleAirDao.findMaskByAir(airEntity.airQualityId)
+        Log.d("RecommendRepo", "airCode=$airCode → mask items=$list")
         return list
     }
 

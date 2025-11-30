@@ -41,6 +41,9 @@
         <action
             android:id="@+id/action_locationGpsFragment_to_manualLocationFragment"
             app:destination="@id/manualLocationFragment" />
+        <action
+            android:id="@+id/action_locationGpsFragment_to_outfitLoadingFragment"
+            app:destination="@id/outfitLoadingFragment" />
     </fragment>
 
     <!-- 수동 위치 -->

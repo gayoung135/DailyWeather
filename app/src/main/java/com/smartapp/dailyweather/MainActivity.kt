@@ -2,6 +2,7 @@ package com.smartapp.dailyweather
 
 import android.os.Bundle
 import android.util.Log
+import androidx.activity.addCallback
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
@@ -49,6 +50,10 @@ class MainActivity : AppCompatActivity() {
 
         // 화면 레이아웃 설정
         setContentView(R.layout.activity_main)
+
+        onBackPressedDispatcher.addCallback(this) {
+            // 아무 것도 안 함 → 시스템 뒤로가기 완전 무시
+        }
 
         // 시스템 바(상태바/내비게이션바) 높이만큼 패딩을 자동으로 적용해
         // 콘텐츠가 바 밑으로 깎이지 않도록 조정해줌.

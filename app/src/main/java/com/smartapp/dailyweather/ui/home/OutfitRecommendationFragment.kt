@@ -40,6 +40,9 @@ class OutfitRecommendationFragment : Fragment(R.layout.fragment_outfit_recommend
         val tabOutfit = view.findViewById<MaterialButton>(R.id.tabOutfit)
         val tabDetail = view.findViewById<MaterialButton>(R.id.tabDetail)
 
+        // 제목 TextView
+        val titleText = view.findViewById<TextView>(R.id.titleText)
+
         val outfit1 = view.findViewById<TextView>(R.id.outfit1)
         val outfit2 = view.findViewById<TextView>(R.id.outfit2)
         val essentials = view.findViewById<TextView>(R.id.essentials)
@@ -119,6 +122,9 @@ class OutfitRecommendationFragment : Fragment(R.layout.fragment_outfit_recommend
 
             Log.d("OutfitFragment", "=== 추천 결과 수신 ===")
 
+            // 제목: "MM월 dd일 오전/오후 h시 추천 옷차림"
+            titleText.text = ui.recommendationTitle
+
             // ──────────────
             // 코디 텍스트 (기존 TextView 호환용)
             // ──────────────
@@ -159,9 +165,9 @@ class OutfitRecommendationFragment : Fragment(R.layout.fragment_outfit_recommend
             // ──────────────
             // 온도 / 미세먼지 / 강수확률
             // ──────────────
-            tempText.text = "${ui.temperatureText}"
-            pmText.text = "${ui.airQualityText}"
-            rainText.text = "${ui.rainText}"
+            tempText.text = ui.temperatureText
+            pmText.text = ui.airQualityText
+            rainText.text = ui.rainText
 
             // ──────────────
             // 기분 색상 섹션 처리

@@ -15,6 +15,7 @@ import com.smartapp.dailyweather.core.parseKstDateTime
 import com.smartapp.dailyweather.data.mapper.JsonToDto
 import com.smartapp.dailyweather.data.model.GridPoint
 import com.smartapp.dailyweather.data.repo.AirQualityRepository
+import com.smartapp.dailyweather.data.repo.AirQualityUi
 import com.smartapp.dailyweather.data.repo.LastUserStateRepository
 import com.smartapp.dailyweather.data.repo.RecommendationRepository
 import com.smartapp.dailyweather.data.repo.RecommendationWithMood
@@ -22,6 +23,8 @@ import com.smartapp.dailyweather.data.repo.WeatherRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
 import java.util.Locale
 
 
@@ -37,14 +40,13 @@ class RecommendationViewModel(app: Application) : AndroidViewModel(app) {
     private val recommendRepo = RecommendationRepository(
         db,
         lastUserStateRepo,
-        airRepo,
         timeProvider
     )
 
     private val _uiState = MutableLiveData<RecommendationUiModel>()
     val uiState: LiveData<RecommendationUiModel> = _uiState
 
-    // 추가: 중복 호출 방지용 플래그
+    // 중복 호출 방지용 플래그
     private var isLoading = false
 
     /**
@@ -97,6 +99,8 @@ class RecommendationViewModel(app: Application) : AndroidViewModel(app) {
 
                 // ─────────────────────────────
                 // 2) 위치 정보 (격자 → 위경도 → 행정구역)
+                //   - 수동 선택(regionName/subRegionName) 우선
+                //   - 없으면 Geocoder(GPS)로 admin/cityOrGu 추론
                 // ─────────────────────────────
                 val latLng = KmaGridConverter.toLatLng(grid.x, grid.y)
                 Log.d(
@@ -107,28 +111,49 @@ class RecommendationViewModel(app: Application) : AndroidViewModel(app) {
                 val context = getApplication<Application>()
                 val geocoder = Geocoder(context, Locale.KOREA)
 
-                val address = withContext(Dispatchers.IO) {
-                    try {
-                        geocoder.getFromLocation(
-                            latLng.latitude,
-                            latLng.longitude,
-                            1
-                        )?.firstOrNull()
-                    } catch (e: Exception) {
-                        Log.e("RecommendVM", "Geocoder 실패: ${e.message}")
-                        null
+                var admin: String? = state.regionName
+                var cityOrGu: String? = state.subRegionName
+
+                val address = if (admin.isNullOrBlank() || cityOrGu.isNullOrBlank()) {
+                    withContext(Dispatchers.IO) {
+                        try {
+                            geocoder.getFromLocation(
+                                latLng.latitude,
+                                latLng.longitude,
+                                1
+                            )?.firstOrNull()
+                        } catch (e: Exception) {
+                            Log.e("RecommendVM", "Geocoder 실패: ${e.message}")
+                            null
+                        }
+                    }
+                } else {
+                    null
+                }
+
+                if (address != null) {
+                    if (admin.isNullOrBlank()) {
+                        admin = address.adminArea
+                    }
+                    if (cityOrGu.isNullOrBlank()) {
+                        cityOrGu =
+                            address.locality ?: address.subLocality ?: address.subAdminArea
                     }
                 }
 
-                if (address == null) {
-                    Log.w("RecommendVM", "Geocoder에서 주소를 찾지 못함 → 기본값 서울 사용")
+                if (admin.isNullOrBlank()) {
+                    admin = "서울특별시"
                 }
 
-                val adminArea = address?.adminArea ?: "서울특별시"
-                Log.d("RecommendVM", "Geocoder adminArea = $adminArea")
+                val locationName = when {
+                    !admin.isNullOrBlank() && !cityOrGu.isNullOrBlank() -> "$admin $cityOrGu"
+                    !admin.isNullOrBlank() -> admin!!
+                    !cityOrGu.isNullOrBlank() -> cityOrGu!!
+                    else -> "알 수 없음"
+                }
 
-                val sidoName = normalizeSidoName(adminArea)
-                Log.d("RecommendVM", "정규화된 sidoName(에어코리아용) = $sidoName")
+                val sidoName = normalizeSidoName(admin!!)
+                Log.d("RecommendVM", "정규화된 sidoName(에어코리아용) = $sidoName, cityOrGu=$cityOrGu")
 
                 // ─────────────────────────────
                 // 3) 화면용 날씨 정보 계산
@@ -143,25 +168,22 @@ class RecommendationViewModel(app: Application) : AndroidViewModel(app) {
                 }
                 Log.d("RecommendVM", "화면용 온도 tempCelsius=$tempC, text=$tempText")
 
-                // (2) 미세먼지 등급 문자열
-                val airCode = try {
-                    airRepo.getAirQualityCodeForRegion(sidoName)
+                // (2) 미세먼지 등급 (24시간 평균 기준으로 Outfit 화면에 표시)
+                val airUi: AirQualityUi = try {
+                    airRepo.getAirForOutfit(
+                        sidoName = sidoName,
+                        stationNameHint = cityOrGu
+                    )
                 } catch (e: Exception) {
                     Log.e("RecommendVM", "대기질 조회 실패: ${e.message}", e)
-                    null
+                    AirQualityUi(code = "normal", airQualityLabel = "보통")
                 }
 
-                val airText = when (airCode) {
-                    "good" -> "좋음"
-                    "normal" -> "보통"
-                    "bad" -> "나쁨"
-                    "very_bad" -> "매우 나쁨"
-                    null -> "정보 없음"
-                    else -> airCode
-                }
-                Log.d("RecommendVM", "airCode=$airCode, airText=$airText")
+                val airText = airUi.airQualityLabel
+                val airCode24h = airUi.code
+                Log.d("RecommendVM", "air(code24h=${airUi.code}, label=${airText})")
 
-                //  강수확률 POP (%): "외출 시간(lastAccessTime)" 기준으로 조회하도록 수정
+                // (3) 강수확률 POP (%): "외출 시간(lastAccessTime)" 기준으로 조회
                 val targetTimeKst = timeProvider.parseKstDateTime(state.lastAccessTime)
                 Log.d("RecommendVM", "화면용 POP 기준 시간(KST) = $targetTimeKst")
 
@@ -211,7 +233,7 @@ class RecommendationViewModel(app: Application) : AndroidViewModel(app) {
 
                         // 최신 LastUserState 기준으로 코디 2세트 생성 + DB 저장
                         recommendRepo.createRecommendationForLatestState(
-                            sidoName = sidoName,
+                            airQualityCode24h = airCode24h,
                             moodCode = state.moodCode
                         )
 
@@ -222,13 +244,17 @@ class RecommendationViewModel(app: Application) : AndroidViewModel(app) {
                 // 5) moodId 기반 색상 로드
                 val moodColors = loadMoodColorsForMood(finalDomain.moodId)
 
-                // 6) UI 모델로 변환
+                // 6) 제목에 쓸 "추천 시간" 라벨 생성
+                val titleText = buildRecommendationTitle(targetTimeKst)
+
+                // 7) UI 모델로 변환
                 val uiModel = RecommendationUiModel.fromDomain(
                     domain = finalDomain,
                     moodColors = moodColors,
                     temperatureText = tempText,
                     airQualityText = airText,
-                    rainText = rainText
+                    rainText = rainText,
+                    recommendationTitle = titleText
                 )
                 _uiState.value = uiModel
 
@@ -243,7 +269,6 @@ class RecommendationViewModel(app: Application) : AndroidViewModel(app) {
         }
     }
 
-
     private suspend fun loadMoodColorsForMood(moodId: Int?): List<MoodColorUi> {
         if (moodId == null) return emptyList()
 
@@ -255,6 +280,29 @@ class RecommendationViewModel(app: Application) : AndroidViewModel(app) {
                 hex = it.hex
             )
         }
+    }
+
+    /**
+     * 제목 문자열 생성
+     */
+    private fun buildRecommendationTitle(targetTimeKst: ZonedDateTime): String {
+        val datePart = targetTimeKst.format(
+            DateTimeFormatter.ofPattern("MM월 dd일", Locale.KOREA)
+        )
+
+        val hour = targetTimeKst.hour
+        val minute = targetTimeKst.minute
+
+        val (ampmLabel, hour12) = when {
+            hour == 0 -> "AM" to 12
+            hour in 1..11 -> "AM" to hour
+            hour == 12 -> "PM" to 12
+            else -> "PM" to (hour - 12)
+        }
+
+        val timePart = String.format("%s %d:%02d", ampmLabel, hour12, minute)
+
+        return "$datePart $timePart 추천 옷차림"
     }
 
     // (지금은 사용 안하지만 참고용)
@@ -295,7 +343,8 @@ data class RecommendationUiModel(
     val moodColors: List<MoodColorUi>,
     val temperatureText: String,   // 예: "14°C"
     val airQualityText: String,    // 예: "좋음"
-    val rainText: String           // 예: "20%" 또는 "정보 없음"
+    val rainText: String,          // 예: "20%" 또는 "정보 없음"
+    val recommendationTitle: String // 예: "11월 26일 오전 5시 추천 옷차림"
 ) {
     companion object {
         fun fromDomain(
@@ -303,7 +352,8 @@ data class RecommendationUiModel(
             moodColors: List<MoodColorUi>,
             temperatureText: String,
             airQualityText: String,
-            rainText: String
+            rainText: String,
+            recommendationTitle: String
         ): RecommendationUiModel {
 
             val first = CoordinationUiSet(
@@ -332,7 +382,8 @@ data class RecommendationUiModel(
                 moodColors = moodColors,
                 temperatureText = temperatureText,
                 airQualityText = airQualityText,
-                rainText = rainText
+                rainText = rainText,
+                recommendationTitle = recommendationTitle
             )
         }
     }

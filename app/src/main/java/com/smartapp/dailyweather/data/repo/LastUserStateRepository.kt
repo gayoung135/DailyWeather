@@ -3,10 +3,18 @@ package com.smartapp.dailyweather.data.repo
 import com.smartapp.dailyweather.core.SystemTimeProvider
 import com.smartapp.dailyweather.core.TimeProvider
 import com.smartapp.dailyweather.core.kstDateTimeString
+import com.smartapp.dailyweather.core.parseKstDateTime
 import com.smartapp.dailyweather.data.local.AppDatabase
 import com.smartapp.dailyweather.data.local.entity.LastUserStateEntity
 import com.smartapp.dailyweather.data.model.GridPoint
 import java.time.ZonedDateTime
+import java.time.Duration
+
+data class LastStateFreshness(
+    val state: LastUserStateEntity,
+    val hoursDiff: Long,
+    val isSameDay: Boolean
+)
 
 class LastUserStateRepository(
     private val db: AppDatabase,
@@ -86,8 +94,10 @@ class LastUserStateRepository(
 
         val grid = GridPoint(latestState.x, latestState.y)
 
-        // ✓ 현재 KST 시각을 "시 단위"로 맞춰서 사용 (분/초/나노 0으로)
-        val nowKst: ZonedDateTime = timeProvider.nowKorea()
+        val baseNow = timeProvider.nowKorea()
+
+        val nowKst = baseNow
+            .plusHours(1)
             .withMinute(0)
             .withSecond(0)
             .withNano(0)
@@ -129,5 +139,32 @@ class LastUserStateRepository(
     suspend fun clearCoordinationTables() {
         db.coordinationSetDao().clearAll()
         db.coordinationItemDao().clearAll()
+    }
+
+
+    /**
+     * 마지막 상태와 현재 시간 차이를 계산해서
+     * - 몇 시간 지났는지(hoursDiff)
+     * - 같은 달력 날짜인지(isSameDay)
+     *
+     * 24시간 기준 로직에서 hoursDiff >= 24 이면 "다른 날로 취급" 하는 식으로 사용.
+     */
+    suspend fun getLatestStateFreshness(): LastStateFreshness? {
+        val state = dao.getLatest() ?: return null
+
+        val last = timeProvider.parseKstDateTime(state.lastAccessTime)
+        val now = timeProvider.nowKorea()
+
+        val hoursDiff = kotlin.math.abs(
+            Duration.between(last, now).toHours()
+        )
+
+        val isSameDay = last.toLocalDate() == now.toLocalDate()
+
+        return LastStateFreshness(
+            state = state,
+            hoursDiff = hoursDiff,
+            isSameDay = isSameDay
+        )
     }
 }

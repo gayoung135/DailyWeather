@@ -1,6 +1,5 @@
 package com.smartapp.dailyweather.ui.home
 
-import android.location.Geocoder
 import android.util.Log
 import androidx.lifecycle.*
 import com.smartapp.dailyweather.DailyWeatherApp
@@ -15,11 +14,11 @@ import com.smartapp.dailyweather.data.repo.LastUserStateRepository
 import com.smartapp.dailyweather.data.repo.MidTermRepository
 import com.smartapp.dailyweather.data.repo.WeatherRepository
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.Locale
@@ -58,12 +57,9 @@ class WeatherDetailViewModel : ViewModel() {
     val uiState: LiveData<WeatherDetailUiModel?> = _uiState
 
     private var hasLoaded = false
-
-
-    // 중복 호출 방지용 플래그
     private var isLoading = false
 
-    /** 처음으로 이동할 때 상세날씨 캐시 초기화 */
+    /** "처음으로" 눌렀을 때 상세날씨 캐시 초기화 */
     fun resetForRestart() {
         hasLoaded = false
         _uiState.value = null
@@ -71,7 +67,6 @@ class WeatherDetailViewModel : ViewModel() {
 
     fun loadDetailWeather(force: Boolean = false) {
 
-        // 이미 로딩 중인데 force=false면 추가 호출 무시
         if (isLoading && !force) {
             Log.d("WeatherDetailVM", "이미 로딩 중 → 추가 호출 스킵 (force=false)")
             return
@@ -86,7 +81,7 @@ class WeatherDetailViewModel : ViewModel() {
             Log.d("WeatherDetailVM", "이미 로딩된 상세날씨 → 스킵")
             return
         }
-        // 여기서부터 실제 로딩 시작
+
         isLoading = true
 
         viewModelScope.launch(Dispatchers.IO) {
@@ -95,36 +90,23 @@ class WeatherDetailViewModel : ViewModel() {
                 val grid = GridPoint(state.x, state.y)
                 val now = timeProvider.nowKorea().withSecond(0).withNano(0)
 
+                // 1) DB에 저장된 값 우선 사용 (예: "서울특별시", "구로구")
                 var admin: String? = state.regionName
                 var cityOrGu: String? = state.subRegionName
 
-                val geocoder = Geocoder(appContext, Locale.KOREA)
-                val latLng = KmaGridConverter.toLatLng(grid.x, grid.y)
-
-                val address = if (admin.isNullOrBlank() || cityOrGu.isNullOrBlank()) {
-                    withContext(Dispatchers.IO) {
-                        try {
-                            geocoder.getFromLocation(latLng.latitude, latLng.longitude, 1)
-                                ?.firstOrNull()
-                        } catch (_: Exception) { null }
-                    }
-                } else null
-
-                if (address != null) {
-                    admin = admin ?: address.adminArea
-                    cityOrGu = cityOrGu ?: (
-                            address.locality ?: address.subLocality ?: address.subAdminArea
-                            )
-                }
-
+                // 2) 둘 중 하나라도 비어 있으면 → Region 테이블 기반으로 보완
                 if (admin.isNullOrBlank() || cityOrGu.isNullOrBlank()) {
+                    // grid → 위경도로 변환 후, Region/SubRegion에서 가장 가까운 곳 찾기
+                    val latLng = KmaGridConverter.toLatLng(grid.x, grid.y)
+
                     val guess = guessRegionFromLatLng(latLng.latitude, latLng.longitude)
                     if (guess != null) {
-                        if (admin.isNullOrBlank()) admin = guess.first
-                        if (cityOrGu.isNullOrBlank()) cityOrGu = guess.second
+                        if (admin.isNullOrBlank()) admin = guess.first   // ex) "서울특별시"
+                        if (cityOrGu.isNullOrBlank()) cityOrGu = guess.second // ex) "구로구"
                     }
                 }
 
+                // ★ 여기서부터는 Geocoder 전혀 안 씀 → 안드로이드가 "광명시"로 바꾸는 걸 막음
                 val locationName = when {
                     !admin.isNullOrBlank() && !cityOrGu.isNullOrBlank() -> "$admin $cityOrGu"
                     !admin.isNullOrBlank() -> admin!!
@@ -132,6 +114,7 @@ class WeatherDetailViewModel : ViewModel() {
                     else -> "알 수 없음"
                 }
 
+                // 초미세먼지 조회용 시/도 이름
                 val sido = normalizeSidoName(admin ?: locationName)
 
                 val todayStr = now.format(
@@ -145,7 +128,13 @@ class WeatherDetailViewModel : ViewModel() {
                     val pmTempDef      = async { weatherRepo.getTempAt(grid, now.withHour(15)) }
                     val popDef         = async { weatherRepo.getPopAt(grid, now) ?: 0 }
 
-                    val airDef         = async { airRepo.getAirForSido(sido) }
+                    // PM2.5 1시간 기준 등급 사용
+                    val airDef         = async {
+                        airRepo.getAirForCurrent(
+                            sidoName = sido,
+                            stationNameHint = cityOrGu
+                        )
+                    }
                     val midListDef     = async { midRepo.getMidTermForecast(sido, now) }
 
                     val midList = midListDef.await()
@@ -154,8 +143,8 @@ class WeatherDetailViewModel : ViewModel() {
                         async {
                             val date = now.toLocalDate().plusDays(offset.toLong())
                             val dateStr = date.format(DateTimeFormatter.BASIC_ISO_DATE)
-
                             val mid = midList.firstOrNull { it.date == dateStr }
+
                             val dayStart = date.atStartOfDay(ZoneId.of("Asia/Seoul"))
 
                             var min = mid?.minTemp
@@ -216,12 +205,15 @@ class WeatherDetailViewModel : ViewModel() {
             } catch (e: Exception) {
                 Log.e("WeatherDetailVM", "loadDetailWeather 실패: ${e.message}", e)
             } finally {
-                // 로딩 끝났으니 상태 리셋
                 isLoading = false
             }
         }
     }
 
+    /**
+     * Region/SubRegion 테이블에서 가장 가까운 행정구역 추정
+     * (자동 위치 → 우리가 정의한 행정구역 기준으로 맞춰 주는 용도)
+     */
     private fun guessRegionFromLatLng(lat: Double, lon: Double): Pair<String, String>? {
         var bestRegion: String? = null
         var bestSub: String? = null
@@ -238,8 +230,11 @@ class WeatherDetailViewModel : ViewModel() {
                 }
             }
         }
+
+        // threshold는 필요하면 조절 (지금은 대략적인 검사)
         return if (bestRegion != null && bestSub != null && bestDist < 0.25)
             bestRegion!! to bestSub!!
-        else null
+        else
+            null
     }
 }

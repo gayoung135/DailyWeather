@@ -123,8 +123,8 @@
             <!-- 메인 아이콘 -->
             <ImageView
                 android:id="@+id/mainWeatherIcon"
-                android:layout_width="230dp"
-                android:layout_height="105dp"
+                android:layout_width="200dp"
+                android:layout_height="100dp"
                 android:layout_gravity="center"
                 android:layout_marginTop="5dp"
                 android:adjustViewBounds="false"
@@ -257,7 +257,7 @@
                         android:textStyle="bold"
                         android:gravity="center"
                         android:singleLine="true"
-                        android:text="미세먼지: 좋음" />
+                        android:text="초미세먼지: 좋음" />
                 </LinearLayout>
 
                 <!-- 4) 강수확률 -->

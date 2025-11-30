@@ -98,7 +98,7 @@ class WeatherDetailFragment : Fragment(R.layout.fragment_weather_detail) {
 
             summaryAmPmText.text = "오전: ${ui.amTempText} / 오후: ${ui.pmTempText}"
             currentTempSummaryText.text = "현재 온도: ${ui.currentTempText}"
-            pm10Text.text = "미세먼지: ${ui.airQualityText}"
+            pm10Text.text = "초미세먼지: ${ui.airQualityText}"
             popText.text = "강수확률: ${ui.rainText}"
 
             forecastAdapter.updateItems(ui.forecastList)

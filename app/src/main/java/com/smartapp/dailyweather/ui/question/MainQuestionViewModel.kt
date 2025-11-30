@@ -118,11 +118,21 @@ class MainQuestionViewModel(app: Application) : AndroidViewModel(app) {
             .withSecond(0)
             .withNano(0)
 
-        val targetTime = if (selectedHourOffset != null) {
-            now.plusHours(selectedHourOffset.toLong())
-        } else {
-            now
-        }
+
+        val targetTime =
+            if (selectedHourOffset != null) {
+                now
+                    .withMinute(0)
+                    .withSecond(0)
+                    .withNano(0)
+                    .plusHours(selectedHourOffset.toLong())
+            } else {
+                now
+                    .plusHours(1)
+                    .withMinute(0)
+                    .withSecond(0)
+                    .withNano(0)
+            }
 
         // 여기서 UI 한글 값을 DB 코드(영어)로 변환
         val normalizedPurposeCode = purposeCode?.let { uiToCode(it) }

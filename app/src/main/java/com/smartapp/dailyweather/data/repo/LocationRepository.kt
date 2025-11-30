@@ -2,9 +2,11 @@ package com.smartapp.dailyweather.data.repo
 
 import android.util.Log
 import com.smartapp.dailyweather.data.model.GridPoint
+import com.smartapp.dailyweather.data.model.Region
 import com.smartapp.dailyweather.data.remote.RetrofitClient
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import kotlin.math.pow
 
 class LocationRepository {
 
@@ -17,7 +19,10 @@ class LocationRepository {
      */
     suspend fun convertLatLngToGrid(longitude: Double, latitude: Double): GridPoint =
         withContext(Dispatchers.IO) {
-            val body = RetrofitClient.kmaConvertApi.convertLonLatToGrid(lon = longitude, lat = latitude)
+            val body = RetrofitClient.kmaConvertApi.convertLonLatToGrid(
+                lon = longitude,
+                lat = latitude
+            )
 
             // 1) 우선 서버가 준 charset 시도 → 실패/없으면 UTF-8 → 실패 기미(깨짐)면 EUC-KR 재시도
             val raw = runCatching {
@@ -61,4 +66,41 @@ class LocationRepository {
 
         throw IllegalStateException("격자 변환 응답 파싱 실패: $cleaned")
     }
+
+    /**
+     * Region enum 기반으로
+     *  - (lat, lon)에 가장 가까운 (시/도, 시/군/구)를 추정
+     *  - threshold보다 너무 멀면 null 반환
+     *
+     * @return Pair<regionName(시/도), subRegionName(시/군/구)> 또는 null
+     */
+    fun guessRegionFromLatLng(
+        lat: Double,
+        lon: Double
+    ): Pair<String, String>? {
+        var bestRegion: String? = null
+        var bestSub: String? = null
+        var bestDist = Double.MAX_VALUE
+
+        for (region in Region.entries) {
+            if (region == Region.SELECT) continue
+
+            for (sub in region.subRegions) {
+                val dist = (lat - sub.latitude).pow(2) + (lon - sub.longitude).pow(2)
+                if (dist < bestDist) {
+                    bestDist = dist
+                    bestRegion = region.displayName
+                    bestSub = sub.name
+                }
+            }
+        }
+
+        // threshold: 대략 위도/경도 0.5도 이내 (루트(0.25) ≈ 0.5)
+        return if (bestRegion != null && bestSub != null && bestDist < 0.25) {
+            bestRegion!! to bestSub!!
+        } else {
+            null
+        }
+    }
+
 }
