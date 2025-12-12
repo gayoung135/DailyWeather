@@ -1,8 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 
+<!-- circle_white.xml -->
+<!-- 흰색 원형 도형(Shape Drawable) 정의 파일 -->
+<!-- 버튼, 아이콘, 카드 등의 배경으로 사용됨 (둥근 원 형태 표현용) -->
+
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
     android:shape="oval">
-
-    <solid android:color="#FFFFFF"/>
+    <!-- solid: 내부 채우기 색상 지정 -->
+    <solid android:color="#FFFFFF"/>  <!-- 흰색 원 -->
 
 </shape>

@@ -1,53 +1,198 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-
 <navigation
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_intro"
-    app:startDestination="@id/splashFragment">
+    app:startDestination="@id/networkGateFragment">
 
-
+    <!-- 네트워크 게이트 -->
     <fragment
-        android:id="@+id/splashFragment"
-        android:name="com.smartapp.dailyweather.ui.intro.SplashFragment"
-        android:label="SplashFragment">
+        android:id="@+id/networkGateFragment"
+        android:name="com.smartapp.dailyweather.ui.intro.NetworkGateFragment"
+        android:label="Gate" />
 
+    <!-- 위치 실패 -->
+    <fragment
+        android:id="@+id/locationFailFragment"
+        android:name="com.smartapp.dailyweather.ui.intro.LocationFailFragment"
+        android:label="LocationFailFragment"
+        tools:layout="@layout/fragment_location_fail">
 
         <action
-            android:id="@+id/action_splash_to_locationGps"
-            app:destination="@id/locationGpsFragment" />
+            android:id="@+id/action_locationFailFragment_to_manualLocationFragment"
+            app:destination="@id/manualLocationFragment" />
     </fragment>
 
-
+    <!-- GPS 자동 위치 -->
     <fragment
         android:id="@+id/locationGpsFragment"
         android:name="com.smartapp.dailyweather.ui.intro.LocationGpsFragment"
         android:label="LocationGpsFragment">
 
-
-        <action
-            android:id="@+id/action_locationGps_to_manualLocation"
-            app:destination="@id/manualLocationFragment" />
-
         <action
             android:id="@+id/action_locationGps_to_selectQuestion"
             app:destination="@id/selectQuestionFragment" />
+
+        <action
+            android:id="@+id/action_locationGpsFragment_to_locationFailFragment"
+            app:destination="@id/locationFailFragment" />
+
+        <action
+            android:id="@+id/action_locationGpsFragment_to_manualLocationFragment"
+            app:destination="@id/manualLocationFragment" />
+        <action
+            android:id="@+id/action_locationGpsFragment_to_outfitLoadingFragment"
+            app:destination="@id/outfitLoadingFragment" />
     </fragment>
 
-
+    <!-- 수동 위치 -->
     <fragment
         android:id="@+id/manualLocationFragment"
         android:name="com.smartapp.dailyweather.ui.intro.ManualLocationFragment"
         android:label="ManualLocationFragment">
 
         <action
-            android:id="@+id/action_manualLocation_to_selectQuestion"
+            android:id="@+id/action_manualLocationFragment_to_selectQuestionFragment"
             app:destination="@id/selectQuestionFragment" />
     </fragment>
 
+    <!-- 질문 선택 -->
     <fragment
         android:id="@+id/selectQuestionFragment"
         android:name="com.smartapp.dailyweather.ui.intro.SelectQuestionFragment"
-        android:label="SelectQuestionFragment" />
+        android:label="SelectQuestionFragment">
+
+        <action
+            android:id="@+id/action_selectQuestionFragment_to_mainQuestionFragment"
+            app:destination="@id/mainQuestionFragment" />
+
+        <!-- 로딩 화면 (코디 준비) -->
+        <action
+            android:id="@+id/action_selectQuestionFragment_to_outfitLoadingFragment"
+            app:destination="@id/outfitLoadingFragment" />
+    </fragment>
+
+    <!-- 질문 상세 -->
+    <fragment
+        android:id="@+id/mainQuestionFragment"
+        android:name="com.smartapp.dailyweather.ui.question.MainQuestionFragment"
+        android:label="MainQuestionFragment">
+
+        <action
+            android:id="@+id/action_mainQuestionFragment_to_outfitLoadingFragment"
+            app:destination="@id/outfitLoadingFragment" />
+    </fragment>
+
+    <!-- 공통 로딩 화면 (코디 추천 + 오늘 날씨 준비) -->
+    <fragment
+        android:id="@+id/outfitLoadingFragment"
+        android:name="com.smartapp.dailyweather.ui.home.OutfitLoadingFragment"
+        android:label="OutfitLoadingFragment"
+        tools:layout="@layout/fragment_outfit_loading">
+
+        <action
+            android:id="@+id/action_outfitLoadingFragment_to_outfitRecommendationFragment"
+            app:destination="@id/outfitRecommendationFragment"
+            app:popUpTo="@id/outfitLoadingFragment"
+            app:popUpToInclusive="true" />
+    </fragment>
+
+    <!-- 코디 추천 화면 -->
+    <fragment
+        android:id="@+id/outfitRecommendationFragment"
+        android:name="com.smartapp.dailyweather.ui.home.OutfitRecommendationFragment"
+        android:label="OutfitRecommendationFragment"
+        tools:layout="@layout/fragment_outfit_recommendation">
+
+        <!-- 상세 날씨 로딩 화면으로 이동 -->
+        <action
+            android:id="@+id/action_outfitRecommendationFragment_to_weatherDetailFragment"
+            app:destination="@id/detailWeatherLoadingFragment" />
+
+        <!-- 새로고침 → 코디 새로고침 로딩 화면 -->
+        <action
+            android:id="@+id/action_outfitRecommendationFragment_to_outfitRefreshLoadingFragment"
+            app:destination="@id/outfitRefreshLoadingFragment" />
+
+        <!-- "처음으로" : GPS 화면으로 이동 + nav_intro 전체 popUpTo -->
+        <action
+            android:id="@+id/action_outfitRecommendationFragment_to_locationGpsFragment_restart"
+            app:destination="@id/locationGpsFragment"
+            app:popUpTo="@id/nav_intro"
+            app:popUpToInclusive="true" />
+    </fragment>
+
+    <!-- 상세 날씨 로딩 화면 -->
+    <fragment
+        android:id="@+id/detailWeatherLoadingFragment"
+        android:name="com.smartapp.dailyweather.ui.home.DetailLoadingFragment"
+        android:label="DetailWeatherLoadingFragment"
+        tools:layout="@layout/fragment_detailweather_loading">
+
+        <argument
+            android:name="forceRefresh"
+            app:argType="boolean"
+            android:defaultValue="false" />
+
+        <action
+            android:id="@+id/action_detailWeatherLoadingFragment_to_weatherDetailFragment"
+            app:destination="@id/weatherDetailFragment"
+            app:popUpTo="@id/detailWeatherLoadingFragment"
+            app:popUpToInclusive="true" />
+
+        <!-- "처음으로" : nav_intro 전체 리셋 후 GPS 화면으로 -->
+        <action
+            android:id="@+id/action_detailWeatherLoadingFragment_to_locationGpsFragment_restart"
+            app:destination="@id/locationGpsFragment"
+            app:popUpTo="@id/nav_intro"
+            app:popUpToInclusive="true" />
+    </fragment>
+
+    <!-- 상세 날씨 화면 -->
+    <fragment
+        android:id="@+id/weatherDetailFragment"
+        android:name="com.smartapp.dailyweather.ui.home.WeatherDetailFragment"
+        android:label="WeatherDetailFragment"
+        tools:layout="@layout/fragment_weather_detail">
+
+        <action
+            android:id="@+id/action_weatherDetailFragment_to_detailWeatherLoadingFragment"
+            app:destination="@id/detailWeatherLoadingFragment" />
+
+        <!-- "처음으로" : GPS 화면으로 이동 + nav_intro 전체 popUpTo -->
+        <action
+            android:id="@+id/action_weatherDetailFragment_to_locationGpsFragment_restart"
+            app:destination="@id/locationGpsFragment"
+            app:popUpTo="@id/nav_intro"
+            app:popUpToInclusive="true" />
+    </fragment>
+
+    <!-- 코디 새로고침용 로딩 화면 -->
+    <fragment
+        android:id="@+id/outfitRefreshLoadingFragment"
+        android:name="com.smartapp.dailyweather.ui.home.OutfitRefreshLoadingFragment"
+        android:label="OutfitRefreshLoadingFragment"
+        tools:layout="@layout/fragment_outfit_refresh_loading">
+
+        <action
+            android:id="@+id/action_outfitRefreshLoadingFragment_to_outfitRecommendationFragment"
+            app:destination="@id/outfitRecommendationFragment"
+            app:popUpTo="@id/outfitRefreshLoadingFragment"
+            app:popUpToInclusive="true" />
+        <!-- 새로 추가: 코디 로딩 → 상세 로딩 전환 -->
+        <action
+            android:id="@+id/action_outfitRefreshLoadingFragment_to_detailWeatherLoadingFragment"
+            app:destination="@id/detailWeatherLoadingFragment"
+            app:popUpTo="@id/outfitRefreshLoadingFragment"
+            app:popUpToInclusive="true" />
+
+        <!--  "처음으로" : nav_intro 전체 리셋 후 GPS 화면으로 -->
+        <action
+            android:id="@+id/action_outfitRefreshLoadingFragment_to_locationGpsFragment_restart"
+            app:destination="@id/locationGpsFragment"
+            app:popUpTo="@id/nav_intro"
+            app:popUpToInclusive="true" />
+    </fragment>
+
 </navigation>

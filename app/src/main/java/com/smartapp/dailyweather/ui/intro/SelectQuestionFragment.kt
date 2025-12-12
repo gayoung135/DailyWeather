@@ -1,12 +1,22 @@
 package com.smartapp.dailyweather.ui.intro
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
+import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
+import androidx.navigation.navGraphViewModels
+import com.smartapp.dailyweather.MainActivity
 import com.smartapp.dailyweather.R
-
+import com.smartapp.dailyweather.core.SystemTimeProvider
+import com.smartapp.dailyweather.ui.question.MainQuestionViewModel
+import kotlinx.coroutines.launch
 
 // 사용자가 위치 설정(자동/수동)을 완료한 뒤,
 // "질문 선택 화면"으로 진입하는 단계.
@@ -14,19 +24,122 @@ import com.smartapp.dailyweather.R
 // Intro Flow의 마지막 단계로, 이후 HomeFragment(메인 탭)으로 이동 예정.
 class SelectQuestionFragment : Fragment() {
 
-    // onCreateView(): 프래그먼트 UI를 실제로 그릴 때 호출됨.
-    // fragment_select_question.xml 레이아웃을 화면에 표시함.
-    override fun onCreateView(
-        inflater: LayoutInflater,       // XML을 View로 변환하는 객체
-        container: ViewGroup?,          // 프래그먼트를 담는 부모 뷰 (MainActivity)
-        savedInstanceState: Bundle?    // 상태 복원용 번들
-    ): View {
+    private val mainQuestionViewModel: MainQuestionViewModel by activityViewModels()
+    private val locationViewModel: LocationViewModel by navGraphViewModels(R.id.nav_intro) {
+        LocationViewModelFactory((requireActivity() as MainActivity).sharedLocationRepo)
+    }
 
+    // OutfitLoading 으로 이미 이동했는지 여부 (스킵 버튼용)
+    private var hasNavigatedToOutfitLoading = false
+
+    // 스킵할래요 버튼 중복 클릭 방지(db에 두개 저장 x)
+    private var isSkipSaving = false
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
         // fragment_select_question.xml 불러와서 View 객체로 변환
-        // 이 화면에는 사용자의 선택 버튼들이 배치될 예정
         return inflater.inflate(R.layout.fragment_select_question, container, false)
     }
-}
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        val btnYes = view.findViewById<Button>(R.id.btnYes)
+        val btnSkip = view.findViewById<Button>(R.id.btnSkip)
+
+        // "좋아요" 버튼 클릭 시
+        btnYes.setOnClickListener {
+            // 여러 번 눌러도 한 번만 동작하도록 현재 목적지 체크
+            val navController = findNavController()
+            if (navController.currentDestination?.id == R.id.selectQuestionFragment) {
+                navController.navigate(
+                    R.id.action_selectQuestionFragment_to_mainQuestionFragment,
+                    null,
+                    androidx.navigation.NavOptions.Builder()
+                        .setPopUpTo(R.id.selectQuestionFragment, true)
+                        .build()
+                )
+            } else {
+                Log.d(
+                    "SelectQuestion",
+                    "btnYes 클릭 시 현재 목적지가 selectQuestionFragment 가 아님 → navigate 스킵. current=${navController.currentDestination}"
+                )
+            }
+        }
+
+        // "스킵할래요" 버튼 클릭 시 → 바로 LastUserStateEntity 저장 + 이동
+        btnSkip.setOnClickListener {
+
+            // 이미 스킵 저장 중이면 더블클릭 무시
+            if (isSkipSaving) {
+                Log.d("SelectQuestion", "skip 버튼 중복 클릭 무시")
+                return@setOnClickListener
+            }
+
+            val grid = locationViewModel.grid.value
+
+            if (grid == null) {
+                Toast.makeText(requireContext(), "위치 정보가 아직 없습니다.", Toast.LENGTH_SHORT).show()
+                Log.d("SelectQuestion", "grid LiveData is null")
+                return@setOnClickListener
+            }
+
+            // 선택된 시/도 / 시·군·구 가져오기 (수동 선택이면 값 있고, GPS면 null)
+            val regionName = locationViewModel.selectedRegion.value?.displayName
+            val subRegionName = locationViewModel.selectedSubRegion.value?.name
+
+            viewLifecycleOwner.lifecycleScope.launch {
+
+                try {
+                    // 저장 시작: 플래그 + 버튼 비활성화
+                    isSkipSaving = true
+                    btnSkip.isEnabled = false
+
+                    val now = SystemTimeProvider().nowKorea()
+                    Log.d("SelectQuestion", "스킵 흐름 - now(KST) = $now")
+
+                    mainQuestionViewModel.saveLastUserStateWithApi(
+                        grid = grid,
+                        regionName = regionName,
+                        subRegionName = subRegionName,
+                        selectedHourOffset = null,
+                        purposeCode = null,
+                        styleCode = null,
+                        moodCode = null,
+                        skipped = true
+                    )
+
+                    Log.d("SelectQuestion", "LastUserState 저장 완료 → 추천 화면으로 이동")
+
+                    val navController = findNavController()
+                    if (!hasNavigatedToOutfitLoading &&
+                        navController.currentDestination?.id == R.id.selectQuestionFragment
+                    ) {
+                        hasNavigatedToOutfitLoading = true
+                        navController.navigate(
+                            R.id.action_selectQuestionFragment_to_outfitLoadingFragment
+                        )
+                    } else {
+                        Log.d(
+                            "SelectQuestion",
+                            "이미 이동했거나 현재 목적지가 아님 → navigate 스킵. current=${navController.currentDestination}"
+                        )
+                    }
+
+                } finally {
+                    // 저장 끝났으니 다시 눌러도 되게 복구
+                    isSkipSaving = false
+                    btnSkip.isEnabled = true
+                }
+            }
+
+        }
+    }
+    }
+
 
 //요약
 //위치 설정 완료 후 사용자에게

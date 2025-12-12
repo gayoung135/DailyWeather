@@ -1,5 +1,6 @@
 package com.smartapp.dailyweather.data.remote
 
+import com.smartapp.dailyweather.data.remote.dto.VilageFcstResponse
 import okhttp3.ResponseBody
 import retrofit2.http.GET
 import retrofit2.http.Query
@@ -16,9 +17,9 @@ interface WeatherApi {
         @Query("nx") nx: Int,
         @Query("ny") ny: Int,
         @Query("pageNo") pageNo: Int = 1,
-        @Query("numOfRows") numOfRows: Int = 50,
+        @Query("numOfRows") numOfRows: Int = 1000,
         @Query("dataType") dataType: String = "JSON"
-    ): ResponseBody // 이후 DTO 클래스로 교체
+    ): VilageFcstResponse
 
     // 중기기온조회
     @GET("openApi/MidFcstInfoService/getMidTa")

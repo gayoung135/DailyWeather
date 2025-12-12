@@ -1,0 +1,351 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FAFAFA"
+    android:fillViewport="true">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <!--  상단 버튼 추가 (상세날씨 화면 전용) -->
+        <LinearLayout
+            android:id="@+id/topButtonsDetail"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingStart="20dp"
+            android:paddingEnd="12dp"
+            android:paddingBottom="10dp"
+            android:paddingTop="20dp"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <TextView
+                android:id="@+id/btnRestartDetail"
+                android:layout_width="wrap_content"
+                android:layout_height="44dp"
+                android:text="&lt; 처음으로"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:textColor="#FFFFFF"
+                android:gravity="center"
+                android:paddingHorizontal="18dp"
+                android:background="@drawable/bg_restart_text_button" />
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1" />
+
+            <ImageButton
+                android:id="@+id/btnRefreshWeather"
+                android:layout_width="66dp"
+                android:layout_height="60dp"
+                android:src="@drawable/ic_reset"
+                android:scaleType="centerInside"
+                android:adjustViewBounds="true"
+                android:background="@android:color/transparent"
+                android:contentDescription="상세날씨 새로고침" />
+        </LinearLayout>
+
+        <!-- 🔽 기존 탭 바: 버튼 아래로 내림 -->
+        <LinearLayout
+            android:id="@+id/tabBar"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:padding="4dp"
+            android:orientation="horizontal"
+            android:background="@drawable/bg_tab_group"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/topButtonsDetail">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/tabOutfit"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_weight="1"
+                android:text="맞춤 옷차림"
+                android:textColor="#777777"
+                android:background="@drawable/bg_tab_right"
+                app:backgroundTint="@null" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/tabDetail"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_weight="1"
+                android:text="상세 날씨"
+                android:textStyle="bold"
+                android:textColor="#333333"
+                android:background="@drawable/bg_tab_left"
+                app:backgroundTint="@null" />
+        </LinearLayout>
+
+        <!-- ================= 메인 날씨 카드 ================= -->
+        <LinearLayout
+            android:id="@+id/weatherCard"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="20dp"
+            android:background="@drawable/bg_gradient2"
+            android:layout_marginTop="20dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="20dp"
+            android:clipToOutline="true"
+            app:layout_constraintTop_toBottomOf="@id/tabBar"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <!-- 위치 -->
+            <TextView
+                android:id="@+id/locationText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="선택 지역"
+                android:textColor="#333333"
+                android:textSize="19sp"
+                android:textStyle="bold"
+                android:layout_gravity="center" />
+
+            <!-- 메인 아이콘 -->
+            <ImageView
+                android:id="@+id/mainWeatherIcon"
+                android:layout_width="200dp"
+                android:layout_height="100dp"
+                android:layout_gravity="center"
+                android:layout_marginTop="5dp"
+                android:adjustViewBounds="false"
+                android:scaleType="fitXY"
+                android:src="@drawable/logo" />
+
+            <!-- 날짜 -->
+            <TextView
+                android:id="@+id/dateText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="--월 --일 | -요일"
+                android:textColor="#2F2F2F"
+                android:textSize="15sp"
+                android:layout_gravity="center" />
+
+            <!-- 현재 온도 -->
+            <TextView
+                android:id="@+id/temperatureText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="NULL°C"
+                android:textColor="#333333"
+                android:textSize="54sp"
+                android:textStyle="bold"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="15dp"
+                android:layout_gravity="center" />
+
+
+
+            <!-- 구분선 -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:background="#55FFFFFF"
+                android:layout_marginBottom="20dp" />
+
+            <!-- 요약 2x2 박스 -->
+            <GridLayout
+                android:id="@+id/summaryGrid"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:columnCount="2"
+                android:alignmentMode="alignMargins"
+                android:useDefaultMargins="true"
+                android:layout_marginBottom="20dp">
+
+                <!-- 1) 오전/오후 -->
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:padding="8dp"
+                    android:background="@drawable/bg_summary_box"
+                    android:gravity="center"
+                    android:layout_width="0dp"
+                    android:layout_height="70dp"
+                    android:layout_columnWeight="1"
+                    android:layout_rowWeight="1">
+
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@drawable/ic_summary_morning" />
+
+                    <TextView
+                        android:id="@+id/summaryAmPmText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:textSize="12sp"
+                        android:textColor="#878787"
+                        android:gravity="center"
+                        android:textStyle="bold"
+                        android:singleLine="true"
+                        android:text="오전: 2°C / 오후: 11°C" />
+                </LinearLayout>
+
+                <!-- 2) 현재 온도 -->
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:padding="8dp"
+                    android:background="@drawable/bg_summary_box"
+                    android:gravity="center"
+                    android:layout_width="0dp"
+                    android:layout_height="70dp"
+                    android:layout_columnWeight="1"
+                    android:layout_rowWeight="1">
+
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@drawable/ic_summary_current" />
+
+                    <TextView
+                        android:id="@+id/currentTempSummaryText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:textSize="12sp"
+                        android:textColor="#878787"
+                        android:gravity="center"
+                        android:textStyle="bold"
+                        android:singleLine="true"
+                        android:text="현재 온도: --℃" />
+                </LinearLayout>
+
+                <!-- 3) 미세먼지 -->
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:padding="8dp"
+                    android:background="@drawable/bg_summary_box"
+                    android:gravity="center"
+                    android:layout_width="0dp"
+                    android:layout_height="70dp"
+                    android:layout_columnWeight="1"
+                    android:layout_rowWeight="1">
+
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@drawable/ic_summary_pm10" />
+
+                    <TextView
+                        android:id="@+id/pm10Text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:textSize="12sp"
+                        android:textColor="#878787"
+                        android:textStyle="bold"
+                        android:gravity="center"
+                        android:singleLine="true"
+                        android:text="초미세먼지: 좋음" />
+                </LinearLayout>
+
+                <!-- 4) 강수확률 -->
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:padding="8dp"
+                    android:background="@drawable/bg_summary_box"
+                    android:gravity="center"
+                    android:layout_width="0dp"
+                    android:layout_height="70dp"
+                    android:layout_columnWeight="1"
+                    android:layout_rowWeight="1">
+
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@drawable/ic_summary_pop" />
+
+                    <TextView
+                        android:id="@+id/popText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:textSize="12sp"
+                        android:textColor="#878787"
+                        android:textStyle="bold"
+                        android:gravity="center"
+                        android:singleLine="true"
+                        android:text="강수확률: 0%" />
+                </LinearLayout>
+
+            </GridLayout>
+
+            <!-- ========== 7일 예보 헤더 줄 ========== -->
+            <LinearLayout
+                android:id="@+id/forecastHeaderRow"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp"
+                android:layout_marginBottom="8dp"
+                android:gravity="center_vertical">
+
+                <!-- 날짜 -->
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="날짜"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    android:textColor="#717171"
+                    android:gravity="center" />
+
+                <!-- 최저/최고 -->
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="최저/최고"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    android:textColor="#717171"
+                    android:gravity="center" />
+
+                <!-- 강수량 -->
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="강수"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    android:textColor="#717171"
+                    android:gravity="center" />
+            </LinearLayout>
+
+            <!-- ========== 7일 예보 리스트(RecyclerView) ========== -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/forecastRecycler"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:nestedScrollingEnabled="false"
+                android:overScrollMode="never"
+                android:padding="4dp" />
+
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.core.widget.NestedScrollView>
